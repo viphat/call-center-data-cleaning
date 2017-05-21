@@ -9,10 +9,42 @@ import { app, Menu } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
 import { editMenuTemplate } from './menu/edit_menu_template';
 import createWindow from './helpers/window';
+import { extractFile } from './main/extract_file';
+
+const electron = require('electron');
+const _ = require('lodash');
+// const dialog = electron.dialog;
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from './env';
+
+let mainWindow;
+// let outputPath;
+// exports.outputPath = outputPath;
+
+// function selectDirectory() {
+//   dialog.showOpenDialog(mainWindow, {
+//     properties: ['openDirectory']
+//   }, (folderPath) => {
+//     outputPath = folderPath;
+//   });
+// }
+
+function processData(inputFile, outputDirectory) {
+  inputFile = _.first(inputFile);
+  outputDirectory = _.first(outputDirectory);
+  return new Promise((resolve, reject) => {
+    extractFile(inputFile, outputDirectory).then(response => {
+      resolve(response);
+    }, errRes => {
+      reject(errRes);
+    });
+  });
+}
+
+exports.processData = processData;
+//
 
 const setApplicationMenu = () => {
   const menus = [editMenuTemplate];
@@ -33,7 +65,7 @@ if (env.name !== 'production') {
 app.on('ready', () => {
   setApplicationMenu();
 
-  const mainWindow = createWindow('main', {
+  mainWindow = createWindow('main', {
     width: 1000,
     height: 600,
   });
