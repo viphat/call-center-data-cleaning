@@ -10,6 +10,8 @@ import { devMenuTemplate } from './menu/dev_menu_template';
 import { editMenuTemplate } from './menu/edit_menu_template';
 import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
+import { readExcelFiles } from './main/read_excel_files';
+import { processExcelFiles } from './main/process_excel_files';
 
 const electron = require('electron');
 const _ = require('lodash');
@@ -34,9 +36,18 @@ let mainWindow;
 function processData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
+  let extractFolder = outputDirectory + '/';
   return new Promise((resolve, reject) => {
-    extractFile(inputFile, outputDirectory).then(response => {
-      resolve(response);
+    extractFile(inputFile, extractFolder).then(response => {
+      return readExcelFiles(extractFolder);
+    }, errRes => {
+      reject(errRes);
+    }).then(excelFiles =>{
+      if (excelFiles.length === 0) {
+        reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
+      } else {
+        return processExcelFiles(excelFiles, extractFolder);
+      }
     }, errRes => {
       reject(errRes);
     });

@@ -80,6 +80,10 @@ function showFailedBox(content) {
 }
 
 document.getElementById('btnProcess').addEventListener('click', _=>{
+  // For Quick Development Purpose
+  inputFile = ['/Users/viphat/Downloads/data-test.zip']
+  outputDirectory = ['/Users/viphat/Downloads/2017']
+  // End
   if (outputDirectory === undefined || inputFile === undefined) {
     dialog.showErrorBox('Lỗi!!!', 'Phải khai báo File nén (.zip) chứa dữ liệu chưa qua xử lý cũng như Thư mục chứa kết quả xử lý.');
     return null;

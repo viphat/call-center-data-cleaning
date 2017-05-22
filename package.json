@@ -32,7 +32,9 @@
   "dependencies": {
     "extract-zip": "^1.6.5",
     "fs-jetpack": "^1.0.0",
-    "lodash": "^4.17.4"
+    "glob": "^7.1.2",
+    "lodash": "^4.17.4",
+    "xlsx": "^0.10.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",
