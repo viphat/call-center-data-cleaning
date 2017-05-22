@@ -1,6 +1,22 @@
 const _  = require('lodash');
-const xlsx = require('xlsx');
-const beginDataRow = 6;
+const Excel = require('exceljs');
+
+const dataBeginRow = 6;
+const hospitalName = [2, 6];
+const provinceName = [3, 6];
+
+const indexCol = 1;
+const nameCol = 2;
+const districtCol = 3;
+const provinceCol = 4;
+const phoneCol = 5;
+const dayCol = 7;
+const monthCol = 8;
+const yearCol = 9;
+
+const commentCell = 'L4';
+const commentMergedCell = 'L5';
+const commentCol = 12;
 
 export const processExcelFiles = (excelFiles, extractedFolder) => {
   if (!_.endsWith('/')) {
@@ -13,43 +29,116 @@ export const processExcelFiles = (excelFiles, extractedFolder) => {
     let province = fileNameArr[0]; // Ten Tinh Thanh
     let hospital = fileNameArr[1]; // Ten Benh Vien
     let samplingMethod = fileNameArr[2]; // BAU or DE
-    let workbook = xlsx.readFile(excelFile);
-    let worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    let row = beginDataRow;
-    while (isEndOfDataSheet(worksheet, row) === false) {
-      console.log(worksheet['A' + row].v);
-      if (worksheet['F' + row] === undefined) {
-        delete_row(worksheet, row);
+    let workbook = new Excel.Workbook();
+    workbook.xlsx.readFile(excelFile).then(() => {
+      let worksheet = workbook.getWorksheet(1);
+      worksheet.getCell(commentCell).value = 'Comment';
+      worksheet.mergeCells(commentCell + ':' + commentMergedCell);
+      worksheet.getCell(commentCell).border = {
+        top: {style: 'thin'},
+        left: {style: 'thin'},
+        bottom: {style: 'thin'},
+        right: {style: 'thin'}
+      };
+      worksheet.getCell(commentCell).font = {
+        bold: true
       }
-      row += 1;
-    }
-    xlsx.writeFile(workbook, excelFile);
-    // _.each(excelFiles, (excelFile) =>{
-    //   let workbook = xlsx.readFile(excelFile)
-    // });
+      worksheet.getCell(commentCell).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { theme: 0, tint: -0.249977111117893 },
+        bgColor: { indexed: 64 }
+      }
+      worksheet.getCell(commentCell).alignment = {
+        vertical: 'middle', horizontal: 'center'
+      };
+      worksheet.getColumn(commentCol).width = 40;
+      let lastRow = dataBeginRow;
+      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+        if (rowNumber >= dataBeginRow) {
+          if (validateRow(worksheet, row, rowNumber)){
+            row.getCell(commentCol).border = {
+              top: {style: 'thin'},
+              left: {style: 'thin'},
+              bottom: {style: 'thin'},
+              right: {style: 'thin'}
+            };
+          };
+          lastRow = rowNumber;
+        }
+      });
+
+      // Auto Filters
+      worksheet.autoFilter = {
+        from: 'A4',
+        to: {
+          row: lastRow,
+          column: commentCol
+        }
+      };
+
+      workbook.xlsx.writeFile(excelFile);
+    });
+
   });
 }
 
-function isEndOfDataSheet(worksheet, row) {
-  return worksheet['A' + row] === undefined && worksheet['B' + row] === undefined
-}
-
-const ec = (r, c) => {
-  return xlsx.utils.encode_cell({r:r,c:c})
-}
-
-const delete_row = (ws, row_index) => {
-  let range = xlsx.utils.decode_range(ws["!ref"])
-  for(var R = row_index; R < range.e.r; ++R){
-    for(var C = range.s.c; C <= range.e.c; ++C){
-      ws[ec(R, C)] = ws[ec(R+1, C)]
-    }
+function validateRow(worksheet, row, rowNumber) {
+  // Kiểm tra thiếu thông tin
+  if (row.getCell(indexCol).value === null &&
+      row.getCell(nameCol).value === null  &&
+      row.getCell(districtCol).value === null &&
+      row.getCell(provinceCol).value === null &&
+      row.getCell(phoneCol).value === null    &&
+      row.getCell(dayCol).value === null      &&
+      row.getCell(monthCol).value === null    &&
+      row.getCell(yearCol).value === null
+    ) {
+    // Empty Row.
+    return false;
   }
-  range.e.r--
-  ws['!ref'] = xlsx.utils.encode_range(range.s, range.e)
+
+  let comment = '';
+  let missingFields = [];
+  if (row.getCell(indexCol).value === null) {
+    // Thiếu STT
+    missingFields.push('STT');
+  }
+
+  if (row.getCell(nameCol).value === null) {
+    missingFields.push('Họ Tên');
+  }
+
+  if (row.getCell(districtCol).value === null) {
+    missingFields.push('Quận/Huyện');
+  }
+
+  if (row.getCell(provinceCol).value === null) {
+    missingFields.push('Tỉnh/Thành');
+  }
+
+  if (row.getCell(phoneCol).value === null) {
+    missingFields.push('Điện Thoại');
+  }
+
+  if (row.getCell(dayCol).value === null ||
+      row.getCell(monthCol).value === null ||
+      row.getCell(yearCol).value === null
+    ) {
+    missingFields.push('Ngày tháng');
+  }
+
+  if (missingFields.length > 0) {
+    comment = 'Missing fields: ' + missingFields.join(', ')
+  }
+
+  if (comment.length > 0) {
+    row.getCell(commentCol).value = comment;
+    row.hidden = true;
+  }
+
+  return true;
 }
-
-
 
 // Kết quả đã lọc bớt các record thiếu thông tin.
 // Thống kê lỗi cho từng đợt import (Thiếu thông tin, thông tin không logic)
@@ -69,4 +158,6 @@ const delete_row = (ws, row_index) => {
 
 // - ~~Check luôn Quận Huyện với Tỉnh Thành (Nếu có Database)~~
 // -> Khó check lắm, vì nhiều khi nhập sai chính tả đồ, không dấu đồ, viết tắt đồ
+
+//
 
