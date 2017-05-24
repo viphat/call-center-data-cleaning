@@ -13,6 +13,8 @@ import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
+import { buildTemplate } from './main/build_excel_template';
+
 import { db } from './db/sqlite3.js';
 
 const electron = require('electron');
@@ -29,19 +31,21 @@ function processData(inputFile, outputDirectory) {
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/';
   return new Promise((resolve, reject) => {
-    extractFile(inputFile, extractFolder).then(response => {
-      return readExcelFiles(extractFolder);
-    }, errRes => {
-      reject(errRes);
-    }).then(excelFiles =>{
-      if (excelFiles.length === 0) {
-        reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
-      } else {
-        return validateSourceData(excelFiles, extractFolder);
-      }
-    }, errRes => {
-      reject(errRes);
-    });
+    let templateFilePath = '/Users/viphat/Downloads/2017/valid.xlsx';
+    buildTemplate(templateFilePath);
+    // extractFile(inputFile, extractFolder).then(response => {
+    //   return readExcelFiles(extractFolder);
+    // }, errRes => {
+    //   reject(errRes);
+    // }).then(excelFiles =>{
+    //   if (excelFiles.length === 0) {
+    //     reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
+    //   } else {
+    //     return validateSourceData(excelFiles, extractFolder);
+    //   }
+    // }, errRes => {
+    //   reject(errRes);
+    // });
   });
 }
 

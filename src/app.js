@@ -81,6 +81,7 @@ function showFailedBox(content) {
 
 document.getElementById('btnProcess').addEventListener('click', _=>{
   // For Quick Development Purpose
+  // TODO: Clean it.
   inputFile = ['/Users/viphat/Downloads/data-test.zip']
   outputDirectory = ['/Users/viphat/Downloads/2017']
   // End
