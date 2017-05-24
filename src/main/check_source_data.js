@@ -18,7 +18,7 @@ const commentCell = 'L4';
 const commentMergedCell = 'L5';
 const commentCol = 12;
 
-export const processExcelFiles = (excelFiles, extractedFolder) => {
+export const validateSourceData = (excelFiles, extractedFolder) => {
   if (!_.endsWith('/')) {
     extractedFolder += '/'
   }
@@ -30,6 +30,7 @@ export const processExcelFiles = (excelFiles, extractedFolder) => {
     let hospital = fileNameArr[1]; // Ten Benh Vien
     let samplingMethod = fileNameArr[2]; // BAU or DE
     let workbook = new Excel.Workbook();
+
     workbook.xlsx.readFile(excelFile).then(() => {
       let worksheet = workbook.getWorksheet(1);
       worksheet.getCell(commentCell).value = 'Comment';
@@ -49,14 +50,16 @@ export const processExcelFiles = (excelFiles, extractedFolder) => {
         fgColor: { theme: 0, tint: -0.249977111117893 },
         bgColor: { indexed: 64 }
       }
+
       worksheet.getCell(commentCell).alignment = {
         vertical: 'middle', horizontal: 'center'
       };
+
       worksheet.getColumn(commentCol).width = 40;
       let lastRow = dataBeginRow;
       worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
         if (rowNumber >= dataBeginRow) {
-          if (validateRow(worksheet, row, rowNumber)){
+          if (checkMissingData(worksheet, row, rowNumber)){
             row.getCell(commentCol).border = {
               top: {style: 'thin'},
               left: {style: 'thin'},
@@ -83,10 +86,9 @@ export const processExcelFiles = (excelFiles, extractedFolder) => {
   });
 }
 
-function validateRow(worksheet, row, rowNumber) {
+function checkMissingData(worksheet, row, rowNumber) {
   // Kiểm tra thiếu thông tin
-  if (row.getCell(indexCol).value === null &&
-      row.getCell(nameCol).value === null  &&
+  if (row.getCell(nameCol).value === null     &&
       row.getCell(districtCol).value === null &&
       row.getCell(provinceCol).value === null &&
       row.getCell(phoneCol).value === null    &&
@@ -94,16 +96,12 @@ function validateRow(worksheet, row, rowNumber) {
       row.getCell(monthCol).value === null    &&
       row.getCell(yearCol).value === null
     ) {
-    // Empty Row.
+    // Empty Row
     return false;
   }
 
   let comment = '';
   let missingFields = [];
-  if (row.getCell(indexCol).value === null) {
-    // Thiếu STT
-    missingFields.push('STT');
-  }
 
   if (row.getCell(nameCol).value === null) {
     missingFields.push('Họ Tên');
@@ -134,7 +132,8 @@ function validateRow(worksheet, row, rowNumber) {
 
   if (comment.length > 0) {
     row.getCell(commentCol).value = comment;
-    row.hidden = true;
+    // Không ẩn nữa mà copy qua template mới.
+    // row.hidden = true;
   }
 
   return true;

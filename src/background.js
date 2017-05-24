@@ -8,30 +8,21 @@ import url from 'url';
 import { app, Menu } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
 import { editMenuTemplate } from './menu/edit_menu_template';
+import { databaseMenuTemplate } from './menu/database_menu_template';
 import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
-import { processExcelFiles } from './main/process_excel_files';
+import { validateSourceData } from './main/check_source_data';
+import { db } from './db/sqlite3.js';
 
 const electron = require('electron');
 const _ = require('lodash');
-// const dialog = electron.dialog;
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from './env';
 
 let mainWindow;
-// let outputPath;
-// exports.outputPath = outputPath;
-
-// function selectDirectory() {
-//   dialog.showOpenDialog(mainWindow, {
-//     properties: ['openDirectory']
-//   }, (folderPath) => {
-//     outputPath = folderPath;
-//   });
-// }
 
 function processData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
@@ -46,7 +37,7 @@ function processData(inputFile, outputDirectory) {
       if (excelFiles.length === 0) {
         reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
       } else {
-        return processExcelFiles(excelFiles, extractFolder);
+        return validateSourceData(excelFiles, extractFolder);
       }
     }, errRes => {
       reject(errRes);
@@ -58,7 +49,7 @@ exports.processData = processData;
 //
 
 const setApplicationMenu = () => {
-  const menus = [editMenuTemplate];
+  const menus = [editMenuTemplate, databaseMenuTemplate];
   if (env.name !== 'production') {
     menus.push(devMenuTemplate);
   }
