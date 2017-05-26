@@ -7,7 +7,7 @@ export const setupDatabase = () => {
   db.serialize(()=>{
     insertTableAreas();
     insertTableProvinces();
-    insertTableHospitals();
+    // insertTableHospitals();
   });
   db.close();
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
@@ -97,7 +97,7 @@ function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 12, 'Bv Bạch Mai', 2, 2);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 13, 'Bv Bưu Điện', 2, 2);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 14, 'Bv Nông Nghiệp', 2, 2);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 15, '108', 2, 2);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 15, 'Bv 108', 2, 2);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 16, 'Hà Đông', 2, 2);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 17, 'Sản Nhi Đà Nẵng', 3, 3);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 18, 'Bv Quận Sơn Trà', 3, 3);
@@ -132,14 +132,14 @@ function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 47, 'Sản Nhi Bắc Ninh', 17, 7);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 48, 'Bv ĐK Từ Sơn', 17, 7);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 49, 'Bv ĐK Tiên Du', 17, 7);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 50, 'ĐK TW Huế', 18, 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 50, 'Bv ĐK TW Huế', 18, 8);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 51, 'Y Dược Huế', 18, 8);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 52, 'Bv Dk Tp Quảng Ngãi', 19, 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 52, 'Bv ĐK Tp Quảng Ngãi', 19, 8);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 53, 'Bv ĐK Thiện Hạnh', 20, 8);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 54, 'Bv ĐK Daklak', 20, 8);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 55, 'Bv ĐK Thị Xã Buôn hồ', 20, 8);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 56, 'ĐK Bình Định', 21, 8);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 57, 'ĐK KV Quảng Nam', 22, 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 56, 'Bv ĐK Bình Định', 21, 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 57, 'Bv ĐK KV Quảng Nam', 22, 8);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 58, 'TTCSSK SS Bình Dương', 23, 9);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 59, 'Bv Quân Đoàn 4', 23, 9);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 60, 'Bv ĐK Bình Dương', 23, 9);
@@ -204,7 +204,7 @@ function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 119, 'TT Y Tế Huyện An Nhơn', 44, 12);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 120, 'Bv Huyện Tuy Phước', 44, 12);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 121, 'Bv Huyện Phù Cát', 44, 12);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 122, 'Bv DK TW Quảng Nam', 45, 12);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 122, 'Bv ĐK TW Quảng Nam', 45, 12);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 123, 'TT Y Tế Huyện Thăng Bình', 45, 12);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 124, 'Bv Huyện Tiên Phước', 45, 12);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id, area_id) VALUES(?,?,?,?);', 125, 'TT Y Tế Huyện Hiệp Đức', 45, 12);

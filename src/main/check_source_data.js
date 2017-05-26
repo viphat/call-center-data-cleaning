@@ -107,7 +107,6 @@ function checkMissingData(worksheet, row, rowNumber) {
     return false;
   }
 
-  let comment = '';
   let missingFields = [];
 
   if (row.getCell(lastNameCol).value === null) {
@@ -115,6 +114,10 @@ function checkMissingData(worksheet, row, rowNumber) {
   }
 
   if (row.getCell(firstNameCol).value === null) {
+
+  }
+
+  if (row.getCell(emailCol).value === null) {
 
   }
 
@@ -130,6 +133,22 @@ function checkMissingData(worksheet, row, rowNumber) {
 
   }
 
+  if (row.getCell(s1Col).value === null) {
+
+  }
+
+  if (row.getCell(s2Col).value === null) {
+
+  }
+
+  if (row.getCell(babyName).value === null) {
+
+  }
+
+  if (row.getCell(babyGender).value === null) {
+
+  }
+
   if (row.getCell(dayCol).value === null ||
       row.getCell(monthCol).value === null ||
       row.getCell(yearCol).value === null
@@ -137,10 +156,6 @@ function checkMissingData(worksheet, row, rowNumber) {
   }
 
   if (missingFields.length > 0) {
-
-  }
-
-  if (comment.length > 0) {
 
   }
 

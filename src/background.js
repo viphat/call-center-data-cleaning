@@ -7,24 +7,24 @@ import path from 'path';
 import url from 'url';
 import { app, Menu } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
-import { editMenuTemplate } from './menu/edit_menu_template';
-import { databaseMenuTemplate } from './menu/database_menu_template';
+import { mainMenuTemplate } from './menu/main_menu_template';
 import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
 import { buildTemplate } from './main/build_excel_template';
-
 import { db } from './db/sqlite3.js';
 
 const electron = require('electron');
+const ipcMain = electron.ipcMain;
 const _ = require('lodash');
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from './env';
 
-let mainWindow;
+export let mainWindow;
+export let helpWindow;
 
 function processData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
@@ -53,7 +53,7 @@ exports.processData = processData;
 //
 
 const setApplicationMenu = () => {
-  const menus = [editMenuTemplate, databaseMenuTemplate];
+  const menus = [mainMenuTemplate];
   if (env.name !== 'production') {
     menus.push(devMenuTemplate);
   }
@@ -72,8 +72,8 @@ app.on('ready', () => {
   setApplicationMenu();
 
   mainWindow = createWindow('main', {
-    width: 1000,
-    height: 600,
+    width: 800,
+    height: 600
   });
 
   mainWindow.loadURL(url.format({
@@ -89,4 +89,33 @@ app.on('ready', () => {
 
 app.on('window-all-closed', () => {
   app.quit();
+});
+
+ipcMain.on('open-help-window', () =>{
+  if (helpWindow) {
+    return;
+  }
+
+  helpWindow = createWindow('help',{
+    width: 800,
+    height: 600,
+    parent: mainWindow
+  })
+
+
+  helpWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'help.html'),
+    protocol: 'file:'
+  }))
+
+  helpWindow.on('closed', () => {
+    helpWindow = null;
+  })
+
+});
+
+ipcMain.on('close-help-window', () => {
+  if (helpWindow) {
+    helpWindow.close();
+  }
 });
