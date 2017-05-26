@@ -6,13 +6,19 @@ const hospitalName = [2, 6];
 const provinceName = [3, 6];
 
 const indexCol = 1;
-const nameCol = 2;
-const districtCol = 3;
-const provinceCol = 4;
-const phoneCol = 5;
-const dayCol = 7;
-const monthCol = 8;
-const yearCol = 9;
+const lastNameCol = 2;
+const firstNameCol = 3;
+const emailCol = 4;
+const districtCol = 5;
+const provinceCol = 6;
+const phoneCol = 7;
+const babyName = 8;
+const babyGender = 9;
+const dayCol = 10;
+const monthCol = 11;
+const yearCol = 12;
+const s1Col = 13;
+const s2Col = 14;
 
 const commentCell = 'L4';
 const commentMergedCell = 'L5';
@@ -88,12 +94,13 @@ export const validateSourceData = (excelFiles, extractedFolder) => {
 
 function checkMissingData(worksheet, row, rowNumber) {
   // Kiểm tra thiếu thông tin
-  if (row.getCell(nameCol).value === null     &&
-      row.getCell(districtCol).value === null &&
-      row.getCell(provinceCol).value === null &&
-      row.getCell(phoneCol).value === null    &&
-      row.getCell(dayCol).value === null      &&
-      row.getCell(monthCol).value === null    &&
+  if (row.getCell(firstNameCol).value === null     &&
+      row.getCell(lastNameCol).value === null      &&
+      row.getCell(districtCol).value === null      &&
+      row.getCell(provinceCol).value === null      &&
+      row.getCell(phoneCol).value === null         &&
+      row.getCell(dayCol).value === null           &&
+      row.getCell(monthCol).value === null         &&
       row.getCell(yearCol).value === null
     ) {
     // Empty Row
@@ -103,37 +110,38 @@ function checkMissingData(worksheet, row, rowNumber) {
   let comment = '';
   let missingFields = [];
 
-  if (row.getCell(nameCol).value === null) {
-    missingFields.push('Họ Tên');
+  if (row.getCell(lastNameCol).value === null) {
+
+  }
+
+  if (row.getCell(firstNameCol).value === null) {
+
   }
 
   if (row.getCell(districtCol).value === null) {
-    missingFields.push('Quận/Huyện');
+
   }
 
   if (row.getCell(provinceCol).value === null) {
-    missingFields.push('Tỉnh/Thành');
+
   }
 
   if (row.getCell(phoneCol).value === null) {
-    missingFields.push('Điện Thoại');
+
   }
 
   if (row.getCell(dayCol).value === null ||
       row.getCell(monthCol).value === null ||
       row.getCell(yearCol).value === null
     ) {
-    missingFields.push('Ngày tháng');
   }
 
   if (missingFields.length > 0) {
-    comment = 'Missing fields: ' + missingFields.join(', ')
+
   }
 
   if (comment.length > 0) {
-    row.getCell(commentCol).value = comment;
-    // Không ẩn nữa mà copy qua template mới.
-    // row.hidden = true;
+
   }
 
   return true;
