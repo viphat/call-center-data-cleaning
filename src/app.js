@@ -66,27 +66,51 @@ function showFailedBox(content) {
 }
 
 document.getElementById('btnProcess').addEventListener('click', _=>{
-  // For Quick Development Purpose
-  // TODO: Clean it.
-  inputFile = ['/Users/viphat/Downloads/data-test.zip']
-  outputDirectory = ['/Users/viphat/Downloads/2017']
-  // End
+  inputFile = ['/Users/viphat/projects/dct/data-sample.zip'];
+  outputDirectory = ['/Users/viphat/projects/dct/output'];
+
   if (outputDirectory === undefined || inputFile === undefined) {
     dialog.showErrorBox('Lỗi!!!', 'Phải khai báo File nén (.zip) chứa dữ liệu chưa qua xử lý cũng như Thư mục chứa kết quả xử lý.');
     return null;
   }
   if (isProcessing === true) {
-    dialog.showErrorBox('!', 'Đang xử lý...');
+    dialog.showErrorBox('!!!', 'Đang xử lý...');
     return null;
   }
   isProcessing = true;
   document.getElementById('spinner').style.display = 'inherit';
-  mainProcess.processData(inputFile, outputDirectory).then( response =>{
+  mainProcess.processData(inputFile, outputDirectory).then( (response) => {
     disableSpinner();
     showSucceedBox(response);
   }, errRes => {
     disableSpinner();
     showFailedBox(errRes);
+  });
+});
+
+document.getElementById('btnCheck').addEventListener('click', _ => {
+  // For Quick Development Purpose
+  // TODO: Clean it.
+  inputFile = ['/Users/viphat/projects/dct/data-sample.zip'];
+  outputDirectory = ['/Users/viphat/projects/dct/output'];
+  // End
+
+  if (outputDirectory === undefined || inputFile === undefined) {
+    dialog.showErrorBox('Lỗi!!!', 'Phải khai báo File nén (.zip) chứa dữ liệu chưa qua xử lý cũng như Thư mục chứa kết quả xử lý.');
+    return null;
+  }
+  if (isProcessing === true) {
+    dialog.showErrorBox('!!!', 'Đang xử lý...');
+    return null;
+  }
+  isProcessing = true;
+  document.getElementById('spinner').style.display = 'inherit';
+  mainProcess.checkData(inputFile, outputDirectory).then((checkResult) => {
+    showSucceedBox(checkResult);
+    disableSpinner();
+  }).catch((errRes) => {
+    showFailedBox(errRes);
+    disableSpinner();
   });
 });
 

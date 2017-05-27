@@ -12,8 +12,9 @@ import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
+import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
 import { buildTemplate } from './main/build_excel_template';
-import { db } from './db/prepare_data.js';
+import { db } from './db/prepare_data';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -31,25 +32,63 @@ function processData(inputFile, outputDirectory) {
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/';
   return new Promise((resolve, reject) => {
-    let templateFilePath = '/Users/viphat/Downloads/2017/valid.xlsx';
-    buildTemplate(templateFilePath);
-    // extractFile(inputFile, extractFolder).then(response => {
-    //   return readExcelFiles(extractFolder);
-    // }, errRes => {
-    //   reject(errRes);
-    // }).then(excelFiles =>{
-    //   if (excelFiles.length === 0) {
-    //     reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
-    //   } else {
-    //     return validateSourceData(excelFiles, extractFolder);
-    //   }
-    // }, errRes => {
-    //   reject(errRes);
-    // });
+    // let templateFilePath = '/Users/viphat/Downloads/2017/valid.xlsx';
+    // buildTemplate(templateFilePath);
+    extractFile(inputFile, extractFolder).then(response => {
+      return readExcelFiles(extractFolder);
+    }, errRes => {
+      reject(errRes);
+    }).then(excelFiles =>{
+      if (excelFiles.length === 0) {
+        reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
+      } else {
+        return validateSourceData(excelFiles, extractFolder);
+      }
+    }, errRes => {
+      reject(errRes);
+    });
+  });
+}
+
+function checkData(inputFile, outputDirectory) {
+  inputFile = _.first(inputFile);
+  outputDirectory = _.first(outputDirectory);
+  let extractFolder = outputDirectory + '/';
+  return new Promise((resolve, reject) => {
+    extractFile(inputFile, extractFolder).then(response => {
+      // extractFile
+      return readExcelFiles(extractFolder);
+    }).catch((errResp) => {
+      reject(errResp);
+    }).then((excelFiles) =>{
+      // readExcelFiles
+      if (excelFiles.length === 0) {
+        reject('We have not found any excel file in your input source.');
+      } else {
+        return checkHospitalNames(excelFiles);
+      }
+    }).catch((errRes) => {
+      reject(errRes);
+    }).then((checkResult) => {
+      if (checkResult.fileTooBig.length > 0 || checkResult.hasErorInHospitalName.length > 0 ||
+        checkResult.notFoundHospitalName.length > 0
+      ) {
+        return writeReportToExcelFile(extractFolder, checkResult);
+      } else {
+        resolve({ success: true });
+      }
+    }).catch((errRes) => {
+      reject(errRes);
+    }).then((resultFilePath) => {
+      resolve('Data Input need to be revised before continue to processing. Please check in ' + resultFilePath);
+    }).catch((errRes) => {
+      reject(errRes);
+    });
   });
 }
 
 exports.processData = processData;
+exports.checkData = checkData;
 //
 
 const setApplicationMenu = () => {

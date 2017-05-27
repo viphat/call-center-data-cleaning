@@ -1,5 +1,5 @@
-import { setupDatabase } from '../db/prepare_data.js';
-import { mainWindow } from '../background.js';
+import { setupDatabase } from '../db/prepare_data';
+import { mainWindow } from '../background';
 
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;

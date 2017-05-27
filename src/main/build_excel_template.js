@@ -315,7 +315,7 @@ export const buildTemplate = (templateFilePath, isValid = true) => {
   });
 
   worksheet.addImage(logo, 'A1:B3');
-  //
+  // Write to File
   workbook.xlsx.writeFile(templateFilePath);
 }
 
