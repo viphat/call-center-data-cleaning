@@ -3,25 +3,17 @@
 // All stuff below is just to show you how it works. You can delete all of it.
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
-// import { greet } from './hello_world/hello_world';
 import env from './env';
 
 const app = remote.app;
-const appDir = jetpack.cwd(app.getAppPath());
 const mainProcess = remote.require('./background');
 const dialog = remote.dialog;
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
 // Holy crap! This is browser window with HTML and stuff, but I can read
 // here files form disk like it's node.js! Welcome to Electron world :)
-const manifest = appDir.read('package.json', 'json');
+// const manifest = appDir.read('package.json', 'json');
 let inputFile, outputDirectory, isProcessing;
-
-const osMap = {
-  win32: 'Windows',
-  darwin: 'macOS',
-  linux: 'Linux',
-};
 
 document.getElementById('outputDirectory').addEventListener('click', _=>{
   // document.getElementById('outputDirectory').click();
@@ -116,4 +108,10 @@ document.getElementById('btnCheck').addEventListener('click', _ => {
 
 ipcRenderer.on('openHelpWindow', () => {
   ipcRenderer.send('open-help-window');
+  ipcRenderer.send('close-import-matches-window');
+});
+
+ipcRenderer.on('openImportMatchesWindow', () => {
+  ipcRenderer.send('close-help-window');
+  ipcRenderer.send('open-import-matches-window');
 });

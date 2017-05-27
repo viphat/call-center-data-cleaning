@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Call Center - Data Cleaning Tools</title>
+  <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="vendor/bootstrap4/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="container" style='max-width: 800px; min-width: 400px;'>
+    <h3 class='text-danger'>Nhập chuỗi tương ứng cho Bệnh viện</h3>
+    <div class="row">
+      <div class="col-md-12">
+        <form class='form' novalidate="">
+          <div class='form-group'>
+            <label style='display: block;' class='text-success' for='inputFile'>Input File (.xlsx file only)<br/>The 1st sheet must have only two columns - hospital name + ID</label>
+            <button type='button' id='inputFile' class='btn-sm btn btn-info'>Select File</button>
+            <!-- <input name='inputFile' type='file' class='form-control-file' id='inputFile' accept='.zip' /> -->
+            <span id='inputFileLabel'></span>
+          </div>
+          <div class='form-group'>
+            <button type='button' class='btn btn-primary' id='btnProcess'>
+              <i class='fa fa-bicycle'></i>
+              <span style='margin-left: 5px;'>Import Data</span>
+            </button>
+          </div>
+          <div id='spinner' style='text-align: center; display: none;'>
+            <i class="text-danger fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="javascript" src="vendor/jquery/jquery-3.2.1.min.js"></script>
+  <script type="javascript" src="vendor/bootstrap4/js/bootstrap.min.js"></script>
+  <script src="import-matches.js"></script>
+</body>
+</html>

@@ -13,6 +13,7 @@ import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
+import { importMatchesFromFile } from './main/import_hospital_matches';
 import { buildTemplate } from './main/build_excel_template';
 import { db } from './db/prepare_data';
 
@@ -26,11 +27,23 @@ import env from './env';
 
 export let mainWindow;
 export let helpWindow;
+export let importMatchesWindow;
+
+function importMatches(inputFile) {
+  inputFile = _.first(inputFile);
+  return new Promise((resolve, reject) => {
+    importMatchesFromFile(inputFile).then(response => {
+      resolve(true);
+    }).catch( errRes => {
+      reject(errRes);
+    })
+  });
+}
 
 function processData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
-  let extractFolder = outputDirectory + '/';
+  let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
     // let templateFilePath = '/Users/viphat/Downloads/2017/valid.xlsx';
     // buildTemplate(templateFilePath);
@@ -53,7 +66,7 @@ function processData(inputFile, outputDirectory) {
 function checkData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
-  let extractFolder = outputDirectory + '/';
+  let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
     extractFile(inputFile, extractFolder).then(response => {
       // extractFile
@@ -73,7 +86,7 @@ function checkData(inputFile, outputDirectory) {
       if (checkResult.fileTooBig.length > 0 || checkResult.hasErorInHospitalName.length > 0 ||
         checkResult.notFoundHospitalName.length > 0
       ) {
-        return writeReportToExcelFile(extractFolder, checkResult);
+        return writeReportToExcelFile(outputDirectory + '/', checkResult);
       } else {
         resolve({ success: true });
       }
@@ -89,6 +102,7 @@ function checkData(inputFile, outputDirectory) {
 
 exports.processData = processData;
 exports.checkData = checkData;
+exports.importMatches = importMatches;
 //
 
 const setApplicationMenu = () => {
@@ -139,22 +153,51 @@ ipcMain.on('open-help-window', () =>{
     width: 800,
     height: 600,
     parent: mainWindow
-  })
+  });
 
 
   helpWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'help.html'),
     protocol: 'file:'
-  }))
+  }));
 
   helpWindow.on('closed', () => {
     helpWindow = null;
-  })
+  });
 
 });
 
 ipcMain.on('close-help-window', () => {
   if (helpWindow) {
     helpWindow.close();
+  }
+});
+
+ipcMain.on('open-import-matches-window', () =>{
+  if (importMatchesWindow) {
+    return;
+  }
+
+  importMatchesWindow = createWindow('import-matches',{
+    width: 800,
+    height: 600,
+    parent: mainWindow
+  });
+
+
+  importMatchesWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'import-matches.html'),
+    protocol: 'file:'
+  }));
+
+  importMatchesWindow.on('closed', () => {
+    importMatchesWindow = null;
+  });
+
+});
+
+ipcMain.on('close-import-matches-window', () => {
+  if (importMatchesWindow) {
+    importMatchesWindow.close();
   }
 });

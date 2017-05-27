@@ -14,10 +14,23 @@ export const mainMenuTemplate = {
       }
     },
     {
+      label: 'Import Matches',
+      click: () => {
+        mainWindow.webContents.send('openImportMatchesWindow');
+      }
+    },
+    {
       label: 'Help',
       click: () => {
         mainWindow.webContents.send('openHelpWindow');
       }
+    },
+    {
+      label: 'Quit',
+      accelerator: 'CmdOrCtrl+Q',
+      click: () => {
+        app.quit();
+      },
     }
   ]
 }
