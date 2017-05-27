@@ -13,7 +13,7 @@ import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
 import { buildTemplate } from './main/build_excel_template';
-import { db } from './db/sqlite3.js';
+import { db } from './db/prepare_data.js';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;

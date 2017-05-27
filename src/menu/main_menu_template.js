@@ -1,4 +1,4 @@
-import { setupDatabase } from '../db/sqlite3.js';
+import { setupDatabase } from '../db/prepare_data.js';
 import { mainWindow } from '../background.js';
 
 const electron = require('electron');
