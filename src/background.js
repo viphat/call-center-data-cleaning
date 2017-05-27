@@ -14,7 +14,6 @@ import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
 import { importMatchesFromFile } from './main/import_hospital_matches';
-import { buildTemplate } from './main/build_excel_template';
 import { db } from './db/prepare_data';
 
 const electron = require('electron');
@@ -45,8 +44,6 @@ function processData(inputFile, outputDirectory) {
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
-    // let templateFilePath = '/Users/viphat/Downloads/2017/valid.xlsx';
-    // buildTemplate(templateFilePath);
     extractFile(inputFile, extractFolder).then(response => {
       return readExcelFiles(extractFolder);
     }, errRes => {
@@ -55,7 +52,7 @@ function processData(inputFile, outputDirectory) {
       if (excelFiles.length === 0) {
         reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
       } else {
-        return validateSourceData(excelFiles, extractFolder);
+        return validateSourceData(excelFiles, outputDirectory);
       }
     }, errRes => {
       reject(errRes);
