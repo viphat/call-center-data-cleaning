@@ -30,11 +30,9 @@ export const createCustomer = (customer) => {
         customer.phone = customer.phone + ' - *dup*';
         customer.isPhoneDuplicated = true;
       }
-      db.run('INSERT INTO customers(first_name, last_name, email, district,\
-        province, phone, baby_name, baby_gender,\
-        day, month, year, s1, s2, sampling, hospital_id, batch)\
-        VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);\
-      ', { $firstName: customer.firstName,
+      db.run('INSERT INTO customers(first_name, last_name, email, district, province, phone, baby_name, baby_gender, day, month, year, s1, s2, sampling, hospital_id, batch) VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);',
+      {
+        $firstName: customer.firstName,
         $lastName: customer.lastName,
         $email: customer.email,
         $district: customer.district,
@@ -50,8 +48,11 @@ export const createCustomer = (customer) => {
         $sampling: customer.sampling,
         $hospital_id: customer.hospital_id,
         $batch: customer.batch
-      }, (err, res) => {
-        resolve(customer);
+      }, (errRes) => {
+        db.get('SELECT last_insert_rowid() as id', (err, row) => {
+          customer.id = row.id;
+          resolve(customer);
+        })
       });
     });
   });
