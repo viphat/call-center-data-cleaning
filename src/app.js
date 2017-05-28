@@ -101,7 +101,7 @@ document.getElementById('btnProcess').addEventListener('click', _ => {
   isProcessing = true;
   resetAlertAndShowSpinner();
 
-  mainProcess.processData(inputFile, outputDirectory).then( (response) => {
+  mainProcess.processData(inputFile, outputDirectory, batch).then( (response) => {
     disableSpinner();
     showSucceedBox(response);
   }, errRes => {

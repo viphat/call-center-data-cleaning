@@ -43,7 +43,7 @@ function importMatches(inputFile) {
 //   return clearBatchData(batch);
 // }
 
-function processData(inputFile, outputDirectory) {
+function processData(inputFile, outputDirectory, batch) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/input/';
@@ -56,7 +56,7 @@ function processData(inputFile, outputDirectory) {
       if (excelFiles.length === 0) {
         reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
       } else {
-        return validateSourceData(excelFiles, outputDirectory);
+        return validateSourceData(excelFiles, batch, outputDirectory);
       }
     }, errRes => {
       reject(errRes);

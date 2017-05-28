@@ -6,7 +6,7 @@ const Excel = require('exceljs');
 import { db } from '../db/prepare_data';
 
 import { buildTemplate } from '../main/build_excel_template';
-
+import { createCustomer } from '../db/create_customer';
 const dataBeginRow = 6;
 const hospitalName = [2, 6];
 const provinceName = [3, 6];
@@ -29,14 +29,14 @@ const s2Col = 14;
 const hospitalNameCell = 'I2';
 const redundantString = 'Tên BV/PK:';
 
-export const validateSourceData = (excelFiles, outputDirectory) => {
+export const validateSourceData = (excelFiles, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
     let fileIndex = 0;
-    resolve(readEachFile(excelFiles, outputDirectory, fileIndex));
+    resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex));
   });
 }
 
-function readEachFile(excelFiles, outputDirectory, fileIndex) {
+function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
   return new Promise((resolve, reject) => {
     let excelFile = excelFiles[fileIndex];
     if (excelFile === undefined || excelFile === null) {
@@ -63,52 +63,72 @@ function readEachFile(excelFiles, outputDirectory, fileIndex) {
         outputPath = outputDirectory + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
         return buildTemplate(outputPath, province_name);
       }).then( (outputWorkbook) => {
-        return readEachRow(outputWorkbook, worksheet, hospital, province_name, rowNumber);
+        return readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber);
       }).then( (outputWorkbook) => {
         outputWorkbook.xlsx.writeFile(outputPath).then(() =>{
-          resolve(readEachFile(excelFiles, outputDirectory, fileIndex + 1));
+          resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex + 1));
         })
       });
     });
   });
 }
 
-function readEachRow(outputWorkbook, worksheet, hospital, province_name, rowNumber) {
+function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber) {
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
     console.log('Row: ' + rowNumber);
     if (isEmptyRow(row)) {
       return resolve(outputWorkbook);
     }
-    let missingData = isMissingData(row);
-    let illogicalData = isIllogicalData(row);
-    let duplicateData = false;
-    let rowData = [
-      row.getCell(indexCol).value,
-      row.getCell(lastNameCol).value,
-      row.getCell(firstNameCol).value,
-      row.getCell(emailCol).value,
-      row.getCell(districtCol).value,
-      row.getCell(provinceCol).value,
-      row.getCell(phoneCol).value,
-      row.getCell(babyNameCol).value,
-      row.getCell(babyGenderCol).value,
-      row.getCell(dayCol).value,
-      row.getCell(monthCol).value,
-      row.getCell(yearCol).value,
-      row.getCell(s1Col).value,
-      row.getCell(s2Col).value,
-      hospital.hospital_name,
-      hospital.area_channel
-    ];
-    let outputSheetName = province_name + ' - ' + 'Valid';
-    if (missingData || illogicalData) {
-      outputSheetName = province_name + ' - ' + 'Invalid';
-    } else if (duplicateData) {
-      outputSheetName = province_name + ' - ' + 'Duplication';
+    let customer = {
+      lastName: row.getCell(lastNameCol).value,
+      firstName: row.getCell(firstNameCol).value,
+      email: row.getCell(emailCol).value,
+      district: row.getCell(districtCol).value,
+      province: row.getCell(provinceCol).value,
+      phone: row.getCell(phoneCol).value,
+      babyName: row.getCell(babyNameCol).value,
+      babyGender: row.getCell(babyGenderCol).value,
+      day: row.getCell(dayCol).value,
+      month: row.getCell(monthCol).value,
+      year: row.getCell(yearCol).value,
+      s1: row.getCell(s1Col).value,
+      s2: row.getCell(s2Col).value,
+      hospital_id: hospital.hospital_id,
+      batch: batch
     }
-    writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-      resolve(readEachRow(workbook, worksheet, hospital, province_name, rowNumber+1));
+    // Insert Data to Database
+    createCustomer(customer).then((response) => {
+      let missingData = isMissingData(row);
+      let illogicalData = isIllogicalData(row);
+      let duplicateData = false;
+      let rowData = [
+        row.getCell(indexCol).value,
+        customer.lastName,
+        customer.firstName,
+        customer.email,
+        customer.district,
+        customer.province,
+        customer.phone,
+        customer.babyName,
+        customer.babyGender,
+        customer.day,
+        customer.month,
+        customer.year,
+        customer.s1,
+        customer.s2,
+        hospital.hospital_name,
+        hospital.area_channel
+      ];
+      let outputSheetName = province_name + ' - ' + 'Valid';
+      if (missingData || illogicalData) {
+        outputSheetName = province_name + ' - ' + 'Invalid';
+      } else if (duplicateData) {
+        outputSheetName = province_name + ' - ' + 'Duplication';
+      }
+      writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
+        resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+      });
     });
   });
 }
