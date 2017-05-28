@@ -56,6 +56,8 @@ function processData(inputFile, outputDirectory) {
       }
     }, errRes => {
       reject(errRes);
+    }).then((result) => {
+      resolve('Xử lý thành công! Vui lòng kiểm tra kết quả ở thư mục ' + outputDirectory);
     });
   });
 }

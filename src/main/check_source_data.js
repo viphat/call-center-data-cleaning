@@ -30,22 +30,31 @@ const hospitalNameCell = 'I2';
 const redundantString = 'Tên BV/PK:';
 
 export const validateSourceData = (excelFiles, outputDirectory) => {
-
   return new Promise((resolve, reject) => {
-    let excelFile = _.first(excelFiles);
-    let workbook = new Excel.Workbook();
+    let fileIndex = 0;
+    resolve(readEachFile(excelFiles, outputDirectory, fileIndex));
+  });
+}
 
+function readEachFile(excelFiles, outputDirectory, fileIndex) {
+  return new Promise((resolve, reject) => {
+    let excelFile = excelFiles[fileIndex];
+    if (excelFile === undefined || excelFile === null) {
+      return resolve(null);
+    }
+    let workbook = new Excel.Workbook();
+    console.log('Read: ' + excelFile);
     workbook.xlsx.readFile(excelFile).then(() => {
       let worksheet = workbook.getWorksheet(1);
       // Read Tên Bệnh Viện
       let hospitalName = _.replace(worksheet.getCell(hospitalNameCell).value, redundantString, '');
       hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
-      getHospital(hospitalName).then( (hospital) => {
+      getHospital(hospitalName).then((hospital) => {
         let province_name = hospital.province_name;
         let rowNumber = dataBeginRow;
-        readEachRow(outputDirectory, worksheet, hospital, province_name, rowNumber)
-      }).catch((errRes) => {
-        reject(errRes);
+        return readEachRow(outputDirectory, worksheet, hospital, province_name, rowNumber);
+      }).then( (res) => {
+        resolve(readEachFile(excelFiles, outputDirectory, fileIndex + 1));
       });
     });
   });
@@ -54,8 +63,9 @@ export const validateSourceData = (excelFiles, outputDirectory) => {
 function readEachRow(outputDirectory, worksheet, hospital, province_name, rowNumber) {
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
+    console.log('Row: ' + rowNumber);
     if (isEmptyRow(row)) {
-      return resolve(undefined);
+      return resolve(null);
     }
     let missingData = isMissingData(worksheet, row, rowNumber);
     let rowData = [
@@ -164,7 +174,8 @@ function writeToFile(outputDirectory, province_name, listType, rowData) {
         row.getCell(16).font = row.getCell(1).font;
         row.getCell(16).border = row.getCell(1).border;
         row.getCell(16).alignment = row.getCell(1).alignment;
-
+        // TODO: Cải Tiến chỗ này - Lưu 1 lần khi finish một file thôi >_<.
+        // Hiện tốc độ đọc/ghi đang khá chậm
         resolve(workbook.xlsx.writeFile(outputPath));
       });
     });
@@ -173,9 +184,9 @@ function writeToFile(outputDirectory, province_name, listType, rowData) {
 
 function getHospital(hospitalName) {
   return new Promise((resolve, reject) => {
-    let query = 'SELECT hospitals.hospital_id, hospitals.name AS hospital_name, provinces.name AS province_name, areas.area_id AS area_id, areas.name As area_name, areas.channel as area_channel FROM hospitals JOIN provinces ON hospitals.province_id = provinces.province_id JOIN areas ON provinces.area_id = areas.area_id WHERE hospitals.name LIKE ?;';
+    let query = 'SELECT hospitals.hospital_id, hospitals.name AS hospital_name, provinces.name AS province_name, areas.area_id AS area_id, areas.name As area_name, areas.channel as area_channel FROM hospitals JOIN matches ON hospitals.hospital_id = matches.hospital_id JOIN provinces ON hospitals.province_id = provinces.province_id JOIN areas ON provinces.area_id = areas.area_id WHERE hospitals.name LIKE ? OR matches.name LIKE ?;';
     // let query = 'SELECT * from hospitals WHERE hospitals.name LIKE ?'
-    db.get(query, "%" + hospitalName + "%", (err, row) => {
+    db.get(query, "%" + hospitalName + "%", "%" + hospitalName + "%", (err, row) => {
       if (err) {
         reject(err);
       } else {
