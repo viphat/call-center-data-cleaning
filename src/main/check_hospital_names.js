@@ -24,8 +24,9 @@ export const writeReportToExcelFile = (extractFolder, checkResult) => {
     }).catch((errRes) => {
       reject(errRes);
     }).then((response) => {
-      workbook.xlsx.writeFile(resultFilePath);
-      resolve(resultFilePath);
+      workbook.xlsx.writeFile(resultFilePath).then(()=>{
+        resolve(resultFilePath);
+      });
     }).catch((errRes) => {
       reject(errRes);
     });
@@ -122,6 +123,7 @@ function readFiles(excelFiles) {
 function readNextExcelFile(excelFiles, fileIndex) {
   return new Promise((resolve, reject) => {
     let excelFile = excelFiles[fileIndex];
+    console.log(excelFile);
     let stats = fs.statSync(excelFile);
     if (stats.size / 1000000.0 > 1.0) {
       fileTooBig.push(excelFile);
@@ -131,16 +133,21 @@ function readNextExcelFile(excelFiles, fileIndex) {
         let worksheet = workbook.getWorksheet(1);
         let hospitalName = _.replace(worksheet.getCell(hospitalCell).value, redundantString, '');
         hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
-        if (hospitalName.length < 3) {
-          hasErorInHospitalName.push(excelFile);
-          return resolve(readNextExcelFile(excelFiles, fileIndex+1));
-        } else {
-          checkWithMatches(hospitalName);
-        }
-        if (fileIndex == excelFiles.length - 1) {
-          return resolve(null);
-        }
-        resolve(readNextExcelFile(excelFiles, fileIndex + 1));
+        checkHospitalNameError(hospitalName).then((res) => {
+          if (res == true) {
+            if (fileIndex == excelFiles.length) {
+              return resolve(null);
+            }
+            return resolve(readNextExcelFile(excelFiles, fileIndex+1));
+          } else {
+            checkWithMatches(hospitalName).then( (response) => {
+              if (fileIndex == excelFiles.length - 1) {
+                return resolve(null);
+              }
+              return resolve(readNextExcelFile(excelFiles, fileIndex + 1));
+            });
+          }
+        });
       }).catch((errRes) => {
         reject(errRes);
       });
@@ -148,13 +155,28 @@ function readNextExcelFile(excelFiles, fileIndex) {
   });
 }
 
+function checkHospitalNameError(hospitalName) {
+  return new Promise((resolve, reject) => {
+    if (hospitalName.length < 3) {
+      hasErorInHospitalName.push(excelFile);
+      resolve(true);
+    } else {
+      resolve(false);
+    }
+  })
+}
+
 function checkWithMatches(hospitalName) {
-  db.get("SELECT hospital_id, name from matches where name LIKE ?", "%" + hospitalName + "%", (err, res) => {
-    if (err) {
-      return console.log(err);
-    }
-    if (res === undefined || res === null) {
-      notFoundHospitalName.push(hospitalName);
-    }
+  return new Promise((resolve, reject) => {
+    db.get("SELECT hospital_id, name from matches where name LIKE ?", "%" + hospitalName + "%", (err, res) => {
+      if (err) {
+        console.log(err);
+        return reject(false);
+      }
+      if (res === undefined || res === null) {
+        notFoundHospitalName.push(hospitalName);
+      }
+      resolve(true);
+    });
   });
 }

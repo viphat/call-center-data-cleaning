@@ -98,6 +98,7 @@ document.getElementById('btnCheck').addEventListener('click', _ => {
   isProcessing = true;
   document.getElementById('spinner').style.display = 'inherit';
   mainProcess.checkData(inputFile, outputDirectory).then((checkResult) => {
+    console.log(checkResult);
     showSucceedBox(checkResult);
     disableSpinner();
   }).catch((errRes) => {
