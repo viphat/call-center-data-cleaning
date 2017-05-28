@@ -4,7 +4,7 @@ export const createCustomer = (customer) => {
   return new Promise((resolve, reject) => {
     customer.phone = '' + customer.phone.replace(/[\.\-\_\s\+\(\)]/g,'');
     customer.sampling = '';
-
+    customer.isPhoneDuplicated = false;
     if (customer.s1 !== undefined && customer.s1 !== null && customer.s1 !== '') {
       customer.sampling = 'S1';
     }
@@ -28,6 +28,7 @@ export const createCustomer = (customer) => {
     isPhoneDuplicate(customer.phone).then( (res) => {
       if (res == true) {
         customer.phone = customer.phone + ' - *dup*';
+        customer.isPhoneDuplicated = true;
       }
       db.run('INSERT INTO customers(first_name, last_name, email, district,\
         province, phone, baby_name, baby_gender,\
@@ -50,7 +51,7 @@ export const createCustomer = (customer) => {
         $hospital_id: customer.hospital_id,
         $batch: customer.batch
       }, (err, res) => {
-        resolve(true);
+        resolve(customer);
       });
     });
   });

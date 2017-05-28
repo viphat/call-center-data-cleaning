@@ -6,7 +6,7 @@ const Excel = require('exceljs');
 import { db } from '../db/prepare_data';
 
 import { buildTemplate } from '../main/build_excel_template';
-import { createCustomer } from '../db/create_customer';
+import { createCustomer, isPhoneDuplicate } from '../db/create_customer';
 const dataBeginRow = 6;
 const hospitalName = [2, 6];
 const provinceName = [3, 6];
@@ -101,7 +101,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
     createCustomer(customer).then((response) => {
       let missingData = isMissingData(row);
       let illogicalData = isIllogicalData(row);
-      let duplicateData = false;
+      let duplicateData = response.isPhoneDuplicated;
       let rowData = [
         row.getCell(indexCol).value,
         customer.lastName,
@@ -109,7 +109,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         customer.email,
         customer.district,
         customer.province,
-        customer.phone,
+        row.getCell(phoneCol).value,
         customer.babyName,
         customer.babyGender,
         customer.day,
@@ -122,8 +122,9 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       ];
       let outputSheetName = province_name + ' - ' + 'Valid';
       if (missingData || illogicalData) {
+        console.log(response);
         outputSheetName = province_name + ' - ' + 'Invalid';
-      } else if (duplicateData) {
+      } else if (duplicateData === true) {
         outputSheetName = province_name + ' - ' + 'Duplication';
       }
       writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
@@ -309,7 +310,6 @@ function isIllogicalData(row) {
   let province = row.getCell(provinceCol).value;
   let babyName = row.getCell(babyNameCol).value;
   let babyGender = row.getCell(babyGenderCol).value;
-
   let day = row.getCell(dayCol).value;
   let month = row.getCell(monthCol).value;
   let year = row.getCell(yearCol).value;
@@ -426,23 +426,3 @@ function validateEmail(email) {
   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }
-
-// Kết quả đã lọc bớt các record thiếu thông tin.
-// Thống kê lỗi cho từng đợt import (Thiếu thông tin, thông tin không logic)
-// Tỉ lệ Duplicate của số điện thoại (So với toàn bộ Database)
-//
-// Thông tin bắt buộc phải có:
-// - Tên khách hàng, Quận, Huyện, ngày dự sinh (hoặc ngày sinh), số điện thoại
-//
-// Một số logic cần kiểm tra:
-
-// - Số điện thoại phải có 10~11 số, kể cả số điện thoại bàn cũng có 10~11 số, bao gồm mã vùng
-// - Nếu số điện thoại là kiểu số thì chuyển về kiểu chuỗi.
-// - Nếu số điện thoại không bắt đầu bằng số 0 thì chèn thêm số 0 vào trước.
-// - Logic của ngày sinh, năm sinh?
-
-// - ~~Check luôn Quận Huyện với Tỉnh Thành (Nếu có Database)~~
-// -> Khó check lắm, vì nhiều khi nhập sai chính tả đồ, không dấu đồ, viết tắt đồ
-
-//
-
