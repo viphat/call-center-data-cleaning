@@ -299,8 +299,13 @@ function isIllogicalData(row) {
   if (row.getCell(s1Col).value === 'S1') {
     sampling = 'S1';
   }
+
   if (row.getCell(s2Col).value === 'S2') {
     sampling = 'S2';
+  }
+
+  if (row.getCell(s1Col).value === 'S1' && row.getCell(s2Col).value === 'S2') {
+    return true;
   }
 
   if (phone !== undefined && phone !== null) {

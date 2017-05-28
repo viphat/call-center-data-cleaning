@@ -9,9 +9,14 @@ export const setupDatabase = () => {
     insertTableProvinces();
     insertTableHospitals();
     insertTableMatches();
+    createTableCustomers();
   });
   db.close();
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
+}
+
+function createTableCustomers() {
+  db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, email TEXT, district TEXT, province TEXT, phone TEXT, baby_name TEXT, baby_gender TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT, batch TEXT);')
 }
 
 function insertTableAreas() {

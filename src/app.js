@@ -10,15 +10,10 @@ const mainProcess = remote.require('./background');
 const dialog = remote.dialog;
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
-// Holy crap! This is browser window with HTML and stuff, but I can read
-// here files form disk like it's node.js! Welcome to Electron world :)
-// const manifest = appDir.read('package.json', 'json');
-let inputFile, outputDirectory, isProcessing;
+
+let inputFile, outputDirectory, isProcessing, batch;
 
 document.getElementById('outputDirectory').addEventListener('click', _=>{
-  // document.getElementById('outputDirectory').click();
-  // mainProcess.selectDirectory();
-  // console.log(mainProcess.outputPath);
   outputDirectory = dialog.showOpenDialog({
     properties: ['openDirectory']
   });
@@ -27,9 +22,6 @@ document.getElementById('outputDirectory').addEventListener('click', _=>{
 });
 
 document.getElementById('inputFile').addEventListener('click', _=>{
-  // document.getElementById('outputDirectory').click();
-  // mainProcess.selectDirectory();
-  // console.log(mainProcess.outputPath);
   inputFile = dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [
@@ -57,20 +49,58 @@ function showFailedBox(content) {
   document.getElementById('failedBox').innerHTML = content;
 }
 
-document.getElementById('btnProcess').addEventListener('click', _=>{
+function resetAlertAndShowSpinner() {
+  document.getElementById('failedBox').style.display = 'none';
+  document.getElementById('succeedBox').style.display = 'none';
+  document.getElementById('spinner').style.display = 'inherit';
+}
+
+document.getElementById('btnClearBatch').addEventListener('click', _ => {
+  batch = document.getElementById('txtBatch').value;
+  batch = 'W1';
+
+  if (batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
+
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
+
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  mainProcess.clearBatchData(batch).then( (response) => {
+    disableSpinner();
+    showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+
+});
+
+document.getElementById('btnProcess').addEventListener('click', _ => {
   inputFile = ['/Users/viphat/projects/dct/data-sample.zip'];
   outputDirectory = ['/Users/viphat/projects/dct/output'];
+  batch = document.getElementById('txtBatch').value;
+  batch = 'W1';
 
-  if (outputDirectory === undefined || inputFile === undefined) {
-    dialog.showErrorBox('Lỗi!!!', 'Phải khai báo File nén (.zip) chứa dữ liệu chưa qua xử lý cũng như Thư mục chứa kết quả xử lý.');
+  if (outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;
   }
+
   if (isProcessing === true) {
-    dialog.showErrorBox('!!!', 'Đang xử lý...');
+    dialog.showErrorBox('Notification', 'Processing...');
     return null;
   }
+
   isProcessing = true;
-  document.getElementById('spinner').style.display = 'inherit';
+  resetAlertAndShowSpinner();
+
   mainProcess.processData(inputFile, outputDirectory).then( (response) => {
     disableSpinner();
     showSucceedBox(response);
@@ -88,17 +118,18 @@ document.getElementById('btnCheck').addEventListener('click', _ => {
   // End
 
   if (outputDirectory === undefined || inputFile === undefined) {
-    dialog.showErrorBox('Lỗi!!!', 'Phải khai báo File nén (.zip) chứa dữ liệu chưa qua xử lý cũng như Thư mục chứa kết quả xử lý.');
+    dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;
   }
   if (isProcessing === true) {
-    dialog.showErrorBox('!!!', 'Đang xử lý...');
+    dialog.showErrorBox('Notification', 'Processing...');
     return null;
   }
+
   isProcessing = true;
-  document.getElementById('spinner').style.display = 'inherit';
+  resetAlertAndShowSpinner();
+
   mainProcess.checkData(inputFile, outputDirectory).then((checkResult) => {
-    console.log(checkResult);
     showSucceedBox(checkResult);
     disableSpinner();
   }).catch((errRes) => {

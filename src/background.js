@@ -5,16 +5,16 @@
 
 import path from 'path';
 import url from 'url';
+import createWindow from './helpers/window';
 import { app, Menu } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
 import { mainMenuTemplate } from './menu/main_menu_template';
-import createWindow from './helpers/window';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
 import { importMatchesFromFile } from './main/import_hospital_matches';
-import { db } from './db/prepare_data';
+import { clearBatchData } from './main/clear_customers_data';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -38,6 +38,10 @@ function importMatches(inputFile) {
     })
   });
 }
+
+// function clearBatch(batch) {
+//   return clearBatchData(batch);
+// }
 
 function processData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
@@ -102,6 +106,8 @@ function checkData(inputFile, outputDirectory) {
 exports.processData = processData;
 exports.checkData = checkData;
 exports.importMatches = importMatches;
+exports.clearBatchData = clearBatchData;
+// exports.clearBatch = clearBatch;
 //
 
 const setApplicationMenu = () => {
