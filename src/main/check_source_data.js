@@ -18,8 +18,8 @@ const emailCol = 4;
 const districtCol = 5;
 const provinceCol = 6;
 const phoneCol = 7;
-const babyName = 8;
-const babyGender = 9;
+const babyNameCol = 8;
+const babyGenderCol = 9;
 const dayCol = 10;
 const monthCol = 11;
 const yearCol = 12;
@@ -80,7 +80,9 @@ function readEachRow(outputWorkbook, worksheet, hospital, province_name, rowNumb
     if (isEmptyRow(row)) {
       return resolve(outputWorkbook);
     }
-    let missingData = isMissingData(worksheet, row, rowNumber);
+    let missingData = isMissingData(row);
+    let illogicalData = isIllogicalData(row);
+    let duplicateData = false;
     let rowData = [
       row.getCell(indexCol).value,
       row.getCell(lastNameCol).value,
@@ -89,8 +91,8 @@ function readEachRow(outputWorkbook, worksheet, hospital, province_name, rowNumb
       row.getCell(districtCol).value,
       row.getCell(provinceCol).value,
       row.getCell(phoneCol).value,
-      row.getCell(babyName).value,
-      row.getCell(babyGender).value,
+      row.getCell(babyNameCol).value,
+      row.getCell(babyGenderCol).value,
       row.getCell(dayCol).value,
       row.getCell(monthCol).value,
       row.getCell(yearCol).value,
@@ -100,8 +102,10 @@ function readEachRow(outputWorkbook, worksheet, hospital, province_name, rowNumb
       hospital.area_channel
     ];
     let outputSheetName = province_name + ' - ' + 'Valid';
-    if (missingData) {
+    if (missingData || illogicalData) {
       outputSheetName = province_name + ' - ' + 'Invalid';
+    } else if (duplicateData) {
+      outputSheetName = province_name + ' - ' + 'Duplication';
     }
     writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
       resolve(readEachRow(workbook, worksheet, hospital, province_name, rowNumber+1));
@@ -195,9 +199,6 @@ function getHospital(hospitalName) {
       if (err) {
         reject(err);
       } else {
-        console.log(query);
-        console.log(hospitalName);
-        console.log(row);
         if (row === undefined || row === null) {
           return reject(row);
         }
@@ -223,7 +224,7 @@ function isEmptyRow(row) {
   return false
 }
 
-function isMissingData(worksheet, row, rowNumber) {
+function isMissingData(row) {
   // Kiểm tra thiếu thông tin
   let missingFields = [];
 
@@ -252,15 +253,15 @@ function isMissingData(worksheet, row, rowNumber) {
     missingFields.push('Điện Thoại');
   }
 
-  if (row.getCell(s1Col).value === null && row.getCell(s2Col).value === null) {
+  if (row.getCell(s1Col).value !== 'S1' && row.getCell(s2Col).value !== 'S2') {
     missingFields.push('Đối tượng đặt mẫu');
   }
 
-  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyName).value === null) {
+  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyNameCol).value === null) {
     missingFields.push('Tên bé');
   }
 
-  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyGender).value === null) {
+  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyGenderCol).value === null) {
     missingFields.push('Giới tính của bé');
   }
 
@@ -276,6 +277,129 @@ function isMissingData(worksheet, row, rowNumber) {
   }
 
   return false;
+}
+
+
+function isIllogicalData(row) {
+  let phone = row.getCell(phoneCol).value;
+  let lastName = row.getCell(lastNameCol).value;
+  let firstName = row.getCell(firstNameCol).value;
+  let email = row.getCell(emailCol).value;
+  let district = row.getCell(districtCol).value;
+  let province = row.getCell(provinceCol).value;
+  let babyName = row.getCell(babyNameCol).value;
+  let babyGender = row.getCell(babyGenderCol).value;
+
+  let day = row.getCell(dayCol).value;
+  let month = row.getCell(monthCol).value;
+  let year = row.getCell(yearCol).value;
+
+  let sampling = '';
+
+  if (row.getCell(s1Col).value === 'S1') {
+    sampling = 'S1';
+  }
+  if (row.getCell(s2Col).value === 'S2') {
+    sampling = 'S2';
+  }
+
+  if (phone !== undefined && phone !== null) {
+    phone = '' + phone.replace(/[\.\-\_\s\+\(\)]/g,'');
+    if (isNaN(parseInt(phone))) {
+      return true;
+    } else {
+      if (phone.length < 8 || phone.length > 12) {
+        return true;
+      }
+    }
+  }
+
+  if (lastName !== undefined && lastName !== null && firstName) {
+    let fullName = '' + firstName + lastName;
+    if (!isNaN(parseInt(fullName))) {
+      // If is a Number
+      return true;
+    }
+  }
+
+  if (email !== undefined && email !== null) {
+    email = '' + email;
+    email = email.trim();
+    if (validateEmail(email) == false) {
+      // Vẫn cho phép Email bị sai? (Nhưng sẽ thống kê lại)
+      // return true;
+    }
+  }
+
+  if (district !== undefined && district !== null) {
+    district = '' + district;
+    district = district.trim().replace(/\s+/g, ' ');
+    let iDistrict = parseInt(district);
+    if (!isNaN(iDistrict)) {
+      if (iDistrict < 1 && iDistrict > 12) {
+        return true;
+      }
+    }
+  }
+
+  if (province !== undefined && province !== null) {
+    province = '' + province;
+    province = province.trim().replace(/\s+/g, ' ');
+    if (!isNaN(province)) {
+      return true;
+    }
+  }
+
+  if (sampling === 'S1') {
+    if (babyName !== null && babyName !== undefined && babyName !== '') {
+      return true;
+    }
+    if (babyGender !== null && babyGender !== undefined && babyGender !== '') {
+      return true;
+    }
+  }
+
+  if (sampling === 'S2') {
+    if (babyName === null || babyName === undefined || babyName === '') {
+      return true;
+    }
+
+    if (babyGender === null || babyGender === undefined || babyGender === '') {
+      return true;
+    }
+
+    if (babyGender !== 'Trai' && babyGender !== 'Gái' && babyGender !== 'Nam' && babyGender !== 'Nữ') {
+      return true;
+    }
+  }
+
+  if (day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined) {
+    day = '' + day;
+    month = '' + month;
+    year = '' + year;
+    let date = new Date(month + '/' + day + '/' + year);
+
+    if (date === 'Invalid Date') {
+      return true;
+    }
+
+    if (parseInt(month) == 2 && parseInt(day) > 29) {
+      return true;
+    }
+
+    if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
+      return true;
+    }
+
+    if (date.getFullYear() < 2016 || date.getFullYear() > 2018) {
+      return true;
+    }
+  }
+}
+
+function validateEmail(email) {
+  let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 }
 
 // Kết quả đã lọc bớt các record thiếu thông tin.
