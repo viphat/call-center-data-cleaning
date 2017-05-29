@@ -99,9 +99,14 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
     }
     // Insert Data to Database
     createCustomer(customer).then((response) => {
+
+      if (response.alreadyImported === true) {
+        return resolve(readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber+1));
+      }
+      customer = response;
       let missingData = isMissingData(customer, row);
       let illogicalData = isIllogicalData(customer, row);
-      let duplicateData = response.isPhoneDuplicated;
+      let duplicateData = customer.isPhoneDuplicated;
       let rowData = [
         row.getCell(indexCol).value,
         customer.lastName,

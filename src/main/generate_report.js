@@ -4,7 +4,7 @@ const Excel = require('exceljs');
 
 export const generateReport = (batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
-    generateReportTemplate.then((reportFilePath) => {
+    generateReportTemplate(batch, outputDirectory).then((reportFilePath) => {
       resolve(reportFilePath);
     });
   });
@@ -57,7 +57,6 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     worksheet.getCell('A2').value = 'Step 1: Database Clean';
 
     // A4
-
     worksheet.getCell('A4').border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
@@ -130,7 +129,6 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     buildReportRow4(worksheet, 'R', 'Miền Trung');
 
     // Data
-
     let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
     let rowArr = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 

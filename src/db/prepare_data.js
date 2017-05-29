@@ -5,10 +5,10 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    insertTableAreas();
-    insertTableProvinces();
-    insertTableHospitals();
-    insertTableMatches();
+    // insertTableAreas();
+    // insertTableProvinces();
+    // insertTableHospitals();
+    // insertTableMatches();
     createTableCustomers();
   });
   db.close();

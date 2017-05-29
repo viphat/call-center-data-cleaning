@@ -57,8 +57,6 @@ function resetAlertAndShowSpinner() {
 
 document.getElementById('btnReport').addEventListener('click', _ => {
   batch = document.getElementById('txtBatch').value;
-  batch = 'W1';
-  outputDirectory = ['/Users/viphat/projects/dct/output'];
 
   if (batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');

@@ -81,10 +81,20 @@ export const createCustomer = (customer) => {
       }
     }
 
-    isPhoneDuplicate(customer).then( (res) => {
-      if (res === true) {
-        customer.phone = customer.phone + ' - *dup*';
+    // Check Alreay Insert Before?
+    db.get('SELECT customer_id from customers WHERE customers.hospital_id = ? AND \
+      customers.first_name = ? AND customers.last_name = ? AND customers.phone = ?',
+      customer.hospital_id, customer.firstName, customer.lastName,
+      customer.phone, (err, result) => {
+      if (err) {
+        return reject(err);
       }
+
+      if (result !== null && result !== undefined) {
+        // Duplicated - Already Imported before
+        return resolve({ alreadyImported: true });
+      }
+
       db.run('INSERT INTO customers(first_name, last_name, email, district, province, phone, baby_name, baby_gender, day, month, year, s1, s2, sampling, hospital_id, batch) VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);',
       {
         $firstName: customer.firstName,
@@ -106,7 +116,9 @@ export const createCustomer = (customer) => {
       }, (errRes) => {
         db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
           customer.customer_id = row.customer_id;
-          resolve(customer);
+          isPhoneDuplicate(customer).then((customerAfterCheckDuplication) => {
+            resolve(customerAfterCheckDuplication);
+          })
         })
       });
     });
@@ -117,28 +129,32 @@ function isPhoneDuplicate(customer) {
   return new Promise((resolve, reject) => {
 
     if (customer.phone === undefined || customer.phone === null) {
-      return resolve(false);
+      return resolve(customer);
     }
 
     if (customer.phone.length < 8 || customer.phone.length > 12 || isNaN(parseInt(customer.phone))) {
       // Không check với trường hợp phone không hợp lệ
-      return resolve(false);
+      return resolve(customer);
     }
 
-    db.get('SELECT customer_id FROM customers WHERE customers.phone = ?', customer.phone, (err, res) => {
+    console.log(customer.customer_id);
+
+    db.get('SELECT customer_id FROM customers WHERE customers.phone = ? AND customers.customer_id != ?',
+      customer.phone, customer.customer_id, (err, res) => {
       if (err) {
         return reject(err);
       }
 
       if (res === undefined || res === null) {
-        resolve(false);
+        resolve(customer);
       } else {
         customer.isPhoneDuplicated = true;
         customer.duplicatedPhone = 1;
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {
-          resolve(true);
+          resolve(customer);
         } else {
-          db.get('SELECT customer_id FROM customers WHERE customers.phone = ? AND customers.sampling = ?', customer.phone, customer.sampling, (err, subRes) => {
+          db.get('SELECT customer_id FROM customers WHERE customers.customer_id = ? AND customers.phone = ? AND customers.sampling = ?',
+            customer.customer_id, customer.phone, customer.sampling, (err, subRes) => {
             if (subRes !== undefined && subRes !== null) {
               if (customer.sampling === 'S1') {
                 customer.duplicatedPhoneS1 = 1;
@@ -147,7 +163,7 @@ function isPhoneDuplicate(customer) {
                 customer.duplicatedPhoneS2 = 1;
               }
             }
-            resolve(true);
+            resolve(customer);
           });
         }
       }
