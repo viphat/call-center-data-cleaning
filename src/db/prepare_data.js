@@ -16,11 +16,16 @@ export const setupDatabase = () => {
 }
 
 function createTableCustomers() {
-  // db.run('DROP TABLE IF EXISTS customers;');
+  db.run('DROP TABLE IF EXISTS customers;');
   db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT,\
   email TEXT, district TEXT, province TEXT, phone TEXT, baby_name TEXT,\
   baby_gender TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
   sampling TEXT, hospital_id INTEGER, batch TEXT,\
+  missingMomName INTEGER DEFAULT 0, missingDistrict INTEGER DEFAULT 0, missingProvince INTEGER DEFAULT 0,\
+  missingPhone INTEGER DEFAULT 0, missingEmail INTEGER DEFAULT 0, missingBabyName INTEGER DEFAULT 0, missingBabyGender INTEGER DEFAULT 0,\
+  missingSampling INTEGER DEFAULT 0, missingDate INTEGER DEFAULT 0,\
+  IllogicalPhone INTEGER DEFAULT 0, DuplicatedPhone INTEGER DEFAULT 0,\
+  DuplicatedPhoneS1 DEFAULT 0, DuplicatedPhoneS2 INTEGER DEFAULT 0,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')
 }
 

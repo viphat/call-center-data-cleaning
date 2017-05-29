@@ -55,6 +55,33 @@ function resetAlertAndShowSpinner() {
   document.getElementById('spinner').style.display = 'inherit';
 }
 
+document.getElementById('btnReport').addEventListener('click', _ => {
+  batch = document.getElementById('txtBatch').value;
+  batch = 'W1';
+
+  if (batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
+
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
+
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  mainProcess.generateReport(batch).then( (response) => {
+    disableSpinner();
+    showSucceedBox('Report generated. Please check the output directory.');
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+
+});
+
 document.getElementById('btnClearBatch').addEventListener('click', _ => {
   batch = document.getElementById('txtBatch').value;
   batch = 'W1';

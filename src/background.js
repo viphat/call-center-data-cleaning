@@ -15,6 +15,7 @@ import { validateSourceData } from './main/check_source_data';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
+import { generateReport } from './main/generate_report';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -107,6 +108,7 @@ exports.processData = processData;
 exports.checkData = checkData;
 exports.importMatches = importMatches;
 exports.clearBatchData = clearBatchData;
+exports.generateReport = generateReport;
 // exports.clearBatch = clearBatch;
 //
 
