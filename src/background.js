@@ -92,7 +92,7 @@ function checkData(inputFile, outputDirectory) {
       ) {
         return writeReportToExcelFile(outputDirectory + '/', checkResult);
       } else {
-        resolve({ success: true });
+        resolve('Checked. Please check the result in output directory.');
       }
     }).catch((errRes) => {
       reject(errRes);

@@ -6,7 +6,7 @@ const Excel = require('exceljs');
 import { db } from '../db/prepare_data';
 
 import { buildTemplate } from '../main/build_excel_template';
-import { createCustomer, isPhoneDuplicate } from '../db/create_customer';
+import { createCustomer, updateCustomer } from '../db/create_customer';
 const dataBeginRow = 6;
 const hospitalName = [2, 6];
 const provinceName = [3, 6];
@@ -99,8 +99,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
     }
     // Insert Data to Database
     createCustomer(customer).then((response) => {
-      let missingData = isMissingData(row);
-      let illogicalData = isIllogicalData(row);
+      let missingData = isMissingData(customer, row);
+      let illogicalData = isIllogicalData(customer, row);
       let duplicateData = response.isPhoneDuplicated;
       let rowData = [
         row.getCell(indexCol).value,
@@ -122,10 +122,14 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       ];
       let outputSheetName = province_name + ' - ' + 'Valid';
       if (missingData || illogicalData) {
-        console.log(response);
         outputSheetName = province_name + ' - ' + 'Invalid';
       } else if (duplicateData === true) {
         outputSheetName = province_name + ' - ' + 'Duplication';
+      }
+      if (duplicateData == true || missingData == true || illogicalData == true) {
+        // Update Database
+        customer.hasError = 1;
+        updateCustomer(customer);
       }
       writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
         resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
@@ -245,44 +249,62 @@ function isEmptyRow(row) {
   return false
 }
 
-function isMissingData(row) {
+function isMissingData(customer, row) {
   // Kiểm tra thiếu thông tin
   let missingFields = [];
 
   if (row.getCell(lastNameCol).value === null) {
     missingFields.push('Họ');
+    customer.missingLastName = 1;
   }
 
   if (row.getCell(firstNameCol).value === null) {
     missingFields.push('Tên');
+    customer.missingFirstName = 1;
+  }
+
+  if (row.getCell(firstNameCol).value === null || row.getCell(lastNameCol).value === null) {
+    customer.missingMomName = 1;
   }
 
   if (row.getCell(emailCol).value === null) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
+    customer.missingEmail = 1;
   }
 
   if (row.getCell(districtCol).value === null) {
     missingFields.push('Quận/Huyện');
+    customer.missingDistrict = 1;
+    customer.missingAddress = 1;
   }
 
   if (row.getCell(provinceCol).value === null) {
     missingFields.push('Tỉnh/Thành');
+    customer.missingProvince = 1;
+    customer.missingAddress = customer.missingAddress || 1;
   }
 
   if (row.getCell(phoneCol).value === null) {
     missingFields.push('Điện Thoại');
+    customer.missingPhone = 1;
   }
 
   if (row.getCell(s1Col).value !== 'S1' && row.getCell(s2Col).value !== 'S2') {
     missingFields.push('Đối tượng đặt mẫu');
+    customer.missingSampling = 1;
+    customer.missingMomStatus = 1;
   }
 
   if (row.getCell(s2Col).value == 'S2' && row.getCell(babyNameCol).value === null) {
+    customer.missingBabyName = 1;
+    customer.missingBabyInformation = 1;
     missingFields.push('Tên bé');
   }
 
   if (row.getCell(s2Col).value == 'S2' && row.getCell(babyGenderCol).value === null) {
+    customer.missingBabyGender = 1;
+    customer.missingBabyInformation = 1;
     missingFields.push('Giới tính của bé');
   }
 
@@ -290,6 +312,8 @@ function isMissingData(row) {
       row.getCell(monthCol).value === null ||
       row.getCell(yearCol).value === null
     ) {
+    customer.missingDate = 1;
+    customer.missingMomStatus = customer.missingMomStatus || 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
   }
 
@@ -301,7 +325,7 @@ function isMissingData(row) {
 }
 
 
-function isIllogicalData(row) {
+function isIllogicalData(customer, row) {
   let phone = row.getCell(phoneCol).value;
   let lastName = row.getCell(lastNameCol).value;
   let firstName = row.getCell(firstNameCol).value;
@@ -315,6 +339,7 @@ function isIllogicalData(row) {
   let year = row.getCell(yearCol).value;
 
   let sampling = '';
+  let flag = false;
 
   if (row.getCell(s1Col).value === 'S1') {
     sampling = 'S1';
@@ -325,16 +350,19 @@ function isIllogicalData(row) {
   }
 
   if (row.getCell(s1Col).value === 'S1' && row.getCell(s2Col).value === 'S2') {
-    return true;
+    customer.illogicalSampling = 1;
+    flag = true;
   }
 
   if (phone !== undefined && phone !== null) {
     phone = '' + phone.replace(/[\.\-\_\s\+\(\)]/g,'');
     if (isNaN(parseInt(phone))) {
-      return true;
+      customer.illogicalPhone = 1;
+      flag = true;
     } else {
       if (phone.length < 8 || phone.length > 12) {
-        return true;
+        customer.illogicalPhone = 1;
+        flag = true;
       }
     }
   }
@@ -343,16 +371,18 @@ function isIllogicalData(row) {
     let fullName = '' + firstName + lastName;
     if (!isNaN(parseInt(fullName))) {
       // If is a Number
-      return true;
+      customer.illogicalName = 1;
+      flag = true;
     }
   }
 
-  if (email !== undefined && email !== null) {
+  if (email !== undefined && email !== null && email !== '') {
     email = '' + email;
     email = email.trim();
     if (validateEmail(email) == false) {
       // Vẫn cho phép Email bị sai? (Nhưng sẽ thống kê lại)
       // return true;
+      customer.illogicalEmail = 1;
     }
   }
 
@@ -362,7 +392,8 @@ function isIllogicalData(row) {
     let iDistrict = parseInt(district);
     if (!isNaN(iDistrict)) {
       if (iDistrict < 1 && iDistrict > 12) {
-        return true;
+        customer.illogicalAddress = 1;
+        flag = true;
       }
     }
   }
@@ -371,30 +402,36 @@ function isIllogicalData(row) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
     if (!isNaN(province)) {
-      return true;
+      customer.illogicalAddress = 1;
+      flag = true;
     }
   }
 
   if (sampling === 'S1') {
     if (babyName !== null && babyName !== undefined && babyName !== '') {
-      return true;
+      customer.illogicalSampling = 1;
+      flag = true;
     }
     if (babyGender !== null && babyGender !== undefined && babyGender !== '') {
-      return true;
+      customer.illogicalSampling = 1;
+      flag = true;
     }
   }
 
   if (sampling === 'S2') {
     if (babyName === null || babyName === undefined || babyName === '') {
-      return true;
+      customer.illogicalSampling = 1;
+      flag = true;
     }
 
     if (babyGender === null || babyGender === undefined || babyGender === '') {
-      return true;
+      customer.illogicalSampling = 1;
+      flag = true;
     }
 
     if (babyGender !== 'Trai' && babyGender !== 'Gái' && babyGender !== 'Nam' && babyGender !== 'Nữ') {
-      return true;
+      customer.illogicalSampling = 1;
+      flag = true;
     }
   }
 
@@ -405,21 +442,26 @@ function isIllogicalData(row) {
     let date = new Date(month + '/' + day + '/' + year);
 
     if (date === 'Invalid Date') {
-      return true;
+      customer.illogicalDate = 1;
+      flag = true;
     }
 
     if (parseInt(month) == 2 && parseInt(day) > 29) {
-      return true;
+      customer.illogicalDate = 1;
+      flag = true;
     }
 
     if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
-      return true;
+      customer.illogicalDate = 1;
+      flag = true;
     }
 
     if (date.getFullYear() < 2016 || date.getFullYear() > 2018) {
-      return true;
+      customer.illogicalDate = 1;
+      flag = true;
     }
   }
+  return flag;
 }
 
 function validateEmail(email) {
