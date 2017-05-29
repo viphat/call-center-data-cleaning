@@ -5,10 +5,193 @@ const Excel = require('exceljs');
 export const generateReport = (batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
     generateReportTemplate(batch, outputDirectory).then((reportFilePath) => {
-      resolve(reportFilePath);
+
+      fillData(batch, 'All').then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'B');
+      }).then(() => {
+        return fillData(batch, 'ByBatch');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'C');
+      }).then(() => {
+        return fillData(batch, 'Key Urban');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'D');
+      }).then(() => {
+        return fillData(batch, { areaId: 1 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'E');
+      }).then(() => {
+        return fillData(batch, { areaId: 2 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'F');
+      }).then(() => {
+        return fillData(batch, { areaId: 3 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'G');
+      }).then(() => {
+        return fillData(batch, { areaId: 4 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'H');
+      }).then(() => {
+        return fillData(batch, { areaId: 5 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'I');
+      }).then(() => {
+        return fillData(batch, { areaId: 6 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'J');
+      }).then(() => {
+        return fillData(batch, 'Urban');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'K');
+      }).then(() => {
+        return fillData(batch, { areaId: 7 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'L');
+      }).then(() => {
+        return fillData(batch, { areaId: 8 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'M');
+      }).then(() => {
+        return fillData(batch, { areaId: 10 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'N');
+      }).then(() => {
+        return fillData(batch, { areaId: 9 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'O');
+      }).then(() => {
+        return fillData(batch, 'Rural');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'P');
+      }).then(() => {
+        return fillData(batch, { areaId: 11 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'Q');
+      }).then(() => {
+        return fillData(batch, { areaId: 12 });
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'R');
+      }).then(() => {
+        resolve(reportFilePath);
+      });
+
     });
   });
 }
+
+function writeToTemplate(reportFilePath, rowData, cellIndex) {
+  return new Promise((resolve, reject) => {
+    let workbook = new Excel.Workbook();
+    workbook.xlsx.readFile(reportFilePath).then((response) => {
+
+      let worksheet = workbook.getWorksheet(1);
+      let row;
+
+      row = worksheet.getRow(5);
+      row.getCell(cellIndex).value = rowData.TotalBase;
+
+      row = worksheet.getRow(6);
+      row.getCell(cellIndex).value = rowData.MissingData;
+
+      row = worksheet.getRow(7);
+      row.getCell(cellIndex).value = rowData.MissingMomName;
+
+      row = worksheet.getRow(8);
+      row.getCell(cellIndex).value = rowData.MissingAddress;
+
+      row = worksheet.getRow(9);
+      row.getCell(cellIndex).value = rowData.MissingPhone;
+
+      row = worksheet.getRow(10);
+      row.getCell(cellIndex).value = rowData.MissngEmail;
+
+      row = worksheet.getRow(11);
+      row.getCell(cellIndex).value = rowData.MissingBabyInformation;
+
+      row = worksheet.getRow(12);
+      row.getCell(cellIndex).value = rowData.MissingMomStatus;
+
+      row = worksheet.getRow(13);
+      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+
+      row = worksheet.getRow(14);
+      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+
+      row = worksheet.getRow(15);
+      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
+
+      row = worksheet.getRow(16);
+      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS2;
+
+      row = worksheet.getRow(17);
+      row.getCell(cellIndex).value = rowData.IllogicalData;
+
+      row = worksheet.getRow(18);
+      row.getCell(cellIndex).value = rowData.IllogicalPhone;
+
+      row = worksheet.getRow(19);
+      row.getCell(cellIndex).value = rowData.TotalBase - rowData.HasError;
+
+      row = worksheet.getRow(20);
+      row.getCell(cellIndex).value = rowData.MissngEmail;
+
+      resolve(workbook.xlsx.writeFile(reportFilePath));
+    });
+  });
+}
+
+function fillData(batch, filterType) {
+  return new Promise((resolve, reject) => {
+    let baseQuery = 'SELECT COUNT(*) AS TotalBase, coalesce(SUM(hasError),0) AS HasError,\
+    coalesce(SUM(missingData),0) AS MissingData,\
+    coalesce(SUM(missingMomName),0) AS MissingMomName, coalesce(SUM(missingAddress),0) AS MissingAddress,\
+    coalesce(SUM(missingPhone),0) AS MissingPhone, coalesce(SUM(missingEmail),0) AS MissngEmail,\
+    coalesce(SUM(missingBabyInformation),0) As MissingBabyInformation, coalesce(SUM(missingMomStatus),0) AS MissingMomStatus,\
+    coalesce(SUM(illogicalData),0) As IllogicalData, coalesce(SUM(illogicalPhone),0) AS IllogicalPhone,\
+    coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
+    coalesce(SUM(duplicatedPhoneS2),0) AS DuplicatedPhoneS2 FROM customers'
+
+    let whereCondition = '';
+    let joinTable = '';
+    let params = {};
+
+    if (filterType === 'ByBatch') {
+      whereCondition = 'WHERE customers.batch = $batch';
+      params = {
+        $batch: batch
+      }
+    } else if (filterType === 'Key Urban' || filterType === 'Urban' || filterType === 'Rural') {
+      joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
+        JOIN provinces ON hospitals.province_id = provinces.province_id \
+        JOIN areas ON provinces.area_id = areas.area_id';
+      whereCondition = 'WHERE customers.batch = $batch AND areas.channel = $channel';
+      params = {
+        $batch: batch,
+        $channel: filterType
+      }
+    } else if (filterType.areaId !== undefined && filterType.areaId !== null) {
+      joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
+        JOIN provinces ON hospitals.province_id = provinces.province_id';
+      whereCondition = 'WHERE customers.batch = $batch AND provinces.area_id = $areaId'
+      params = {
+        $batch: batch,
+        $areaId: filterType.areaId
+      }
+    }
+
+    let query = baseQuery + ' ' + joinTable + ' ' + whereCondition + ';';
+
+    db.get(query, params, (err, row) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(row);
+    });
+
+  });
+}
+
 
 export const generateReportTemplate = (batch, outputDirectory) => {
   return new Promise((resolve, reject) => {

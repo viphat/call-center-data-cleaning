@@ -101,8 +101,9 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
     createCustomer(customer).then((response) => {
 
       if (response.alreadyImported === true) {
-        return resolve(readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber+1));
+        return resolve(readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber + 1));
       }
+
       customer = response;
       let missingData = isMissingData(customer, row);
       let illogicalData = isIllogicalData(customer, row);

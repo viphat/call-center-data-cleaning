@@ -29,7 +29,8 @@ function createTableCustomers() {
   missingBabyName INTEGER DEFAULT 0, missingBabyGender INTEGER DEFAULT 0,\
   missingBabyInformation INTEGER DEFAULT 0,\
   missingSampling INTEGER DEFAULT 0, missingDate INTEGER DEFAULT 0,\
-  missingMomStatus INTEGER DEFAULT 0, illogicalData INTEGER DEFAULT 0,\
+  missingMomStatus INTEGER DEFAULT 0,\
+  illogicalData INTEGER DEFAULT 0,\
   illogicalPhone INTEGER DEFAULT 0, illogicalName INTEGER DEFAULT 0,\
   illogicalSampling INTEGER DEFAULT 0, illogicalEmail INTEGER DEFAULT 0,\
   illogicalAddress INTEGER DEFAULT 0, illogicalDate INTEGER DEFAULT 0,\
