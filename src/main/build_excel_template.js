@@ -282,3 +282,5 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.addImage(logo, 'A1:B3');
 }
 
+
+

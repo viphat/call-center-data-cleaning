@@ -58,9 +58,15 @@ function resetAlertAndShowSpinner() {
 document.getElementById('btnReport').addEventListener('click', _ => {
   batch = document.getElementById('txtBatch').value;
   batch = 'W1';
+  outputDirectory = ['/Users/viphat/projects/dct/output'];
 
   if (batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
+
+  if (outputDirectory === undefined || outputDirectory === null) {
+    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
     return null;
   }
 
@@ -72,9 +78,9 @@ document.getElementById('btnReport').addEventListener('click', _ => {
   isProcessing = true;
   resetAlertAndShowSpinner();
 
-  mainProcess.generateReport(batch).then( (response) => {
+  mainProcess.generateReport(batch, outputDirectory).then( (reportFilePath) => {
     disableSpinner();
-    showSucceedBox('Report generated. Please check the output directory.');
+    showSucceedBox('Report generated. Please check file ' + reportFilePath);
   }, (errRes) => {
     disableSpinner();
     showFailedBox(errRes);
@@ -148,6 +154,7 @@ document.getElementById('btnCheck').addEventListener('click', _ => {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;
   }
+
   if (isProcessing === true) {
     dialog.showErrorBox('Notification', 'Processing...');
     return null;

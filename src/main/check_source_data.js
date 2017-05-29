@@ -129,6 +129,12 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       if (duplicateData == true || missingData == true || illogicalData == true) {
         // Update Database
         customer.hasError = 1;
+        if (missingData) {
+          customer.missingData = 1;
+        }
+        if (illogicalData) {
+          customer.illogicalData = 1;
+        }
         updateCustomer(customer);
       }
       writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {

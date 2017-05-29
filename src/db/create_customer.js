@@ -6,14 +6,15 @@ export const updateCustomer = (customer) => {
       return reject('failed');
     }
     db.run('UPDATE customers SET\
-      hasError = $hasError, missingFirstName = $missingFirstName,\
-      missingLastName = $missingLastName, missingMomName = $missingMomName,\
+      hasError = $hasError, missingData = $missingData,\
+      missingFirstName = $missingFirstName, missingLastName = $missingLastName, missingMomName = $missingMomName,\
       missingDistrict = $missingDistrict, missingProvince = $missingProvince,\
       missingAddress = $missingAddress, missingPhone = $missingPhone,\
       missingEmail = $missingEmail, missingBabyInformation = $missingBabyInformation,\
       missingBabyName = $missingBabyName, missingBabyGender = $missingBabyGender,\
       missingSampling = $missingSampling, missingDate = $missingDate,\
-      missingMomStatus = $missingMomStatus, illogicalPhone = $illogicalPhone,\
+      missingMomStatus = $missingMomStatus,\
+      illogicalData = $illogicalData, illogicalPhone = $illogicalPhone,\
       illogicalName = $illogicalName, illogicalSampling = $illogicalSampling,\
       illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, duplicatedPhone = $duplicatedPhone,\
@@ -21,6 +22,7 @@ export const updateCustomer = (customer) => {
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
       $hasError: customer.hasError || 0,
+      $missingData: customer.missingData || 0,
       $missingFirstName: customer.missingFirstName || 0,
       $missingLastName: customer.missingLastName || 0,
       $missingMomName: customer.missingMomName || 0,
@@ -35,6 +37,7 @@ export const updateCustomer = (customer) => {
       $missingSampling: customer.missingSampling || 0,
       $missingDate: customer.missingDate || 0,
       $missingMomStatus: customer.missingMomStatus || 0,
+      $illogicalData: customer.illogicalData || 0,
       $illogicalPhone: customer.illogicalPhone || 0,
       $illogicalName: customer.illogicalName || 0,
       $illogicalSampling: customer.illogicalSampling || 0,
