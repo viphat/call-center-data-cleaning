@@ -14,73 +14,78 @@ let fileIndex = 0;
 export const writeReportToExcelFile = (extractFolder, checkResult) => {
   let resultFilePath = extractFolder + 'invalidCheckingResult.xlsx';
   return new Promise((resolve, reject) => {
-    let workbook = new Excel.Workbook();
-    writeUnfoundList(checkResult, workbook).then((response) => {
-      return writeHospitalList(checkResult, workbook);
+    writeUnfoundList(resultFilePath, checkResult).then((response) => {
+      return writeHospitalList(resultFilePath, checkResult);
     }).catch((errRes) => {
       reject(errRes);
-    }).then((response) => {
-      return writeOtherErrors(checkResult, workbook);
+    }).then(() => {
+      return writeOtherErrors(resultFilePath, checkResult);
     }).catch((errRes) => {
       reject(errRes);
-    }).then((response) => {
-      workbook.xlsx.writeFile(resultFilePath).then(()=>{
-        resolve(resultFilePath);
-      });
-    }).catch((errRes) => {
-      reject(errRes);
+    }).then(() => {
+      resolve(resultFilePath);
     });
   });
 }
 
-function writeOtherErrors(checkResult, workbook) {
+function writeOtherErrors(resultFilePath, checkResult) {
   return new Promise((resolve, reject) => {
-    if (checkResult.hasErorInHospitalName.length == 0 || checkResult.fileTooBig.length == 0) {
+    if (checkResult.hasErorInHospitalName.length == 0 && checkResult.fileTooBig.length == 0) {
       return resolve(false);
     }
-    let worksheet = workbook.addWorksheet('Other Errors', {});
-    if (checkResult.hasErorInHospitalName.length > 0) {
-      worksheet.addRow(['File Size is too big']);
-      _.each(checkResult.fileTooBig, (item) => {
-        worksheet.addRow([item]);
-      });
-    }
-    if (checkResult.hasErorInHospitalName.length > 0) {
-      worksheet.addRow(['Has Error In Hospital Name']);
-      _.each(checkResult.hasErorInHospitalName, (item) => {
-        worksheet.addRow([item]);
-      });
-    }
-    resolve(true);
+    let workbook = new Excel.Workbook();
+
+    workbook.xlsx.readFile(resultFilePath).then(() => {
+      let worksheet = workbook.addWorksheet('Other Errors', {});
+      if (checkResult.fileTooBig.length > 0) {
+        worksheet.addRow(['File Size is too big']);
+        _.each(checkResult.fileTooBig, (item) => {
+          worksheet.addRow([item]);
+        });
+      }
+      if (checkResult.hasErorInHospitalName.length > 0) {
+        worksheet.addRow(['Has Error In Hospital Name']);
+        _.each(checkResult.hasErorInHospitalName, (item) => {
+          worksheet.addRow([item]);
+        });
+      }
+      resolve(workbook.xlsx.writeFile(resultFilePath));
+    });
   });
 }
 
-function writeUnfoundList(checkResult, workbook) {
+function writeUnfoundList(resultFilePath, checkResult) {
   return new Promise((resolve, reject) => {
-    if (checkResult.notFoundHospitalName.length == 0) {
-      return resolve(false);
-    }
+    let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Unfound List', {});
     worksheet.getColumn('A').width = 20.0;
     worksheet.getColumn('B').width = 9.0;
     worksheet.addRow(['Hospital Name', 'Equivalent ID']);
+    if (checkResult.notFoundHospitalName.length == 0) {
+      return resolve(workbook.xlsx.writeFile(resultFilePath));
+    }
     _.each(checkResult.notFoundHospitalName, (item) => {
       worksheet.addRow([item]);
     });
-    resolve(true);
+    resolve(workbook.xlsx.writeFile(resultFilePath));
   });
 }
 
-function writeHospitalList(checkResult, workbook) {
+function writeHospitalList(resultFilePath, checkResult) {
   return new Promise((resolve, reject) => {
     if (checkResult.notFoundHospitalName.length == 0) {
       return resolve(false);
     }
-    let worksheet = workbook.addWorksheet('Hospital List', {});
-    worksheet.getColumn('A').width = 20.0;
-    worksheet.getColumn('B').width = 9.0;
-    worksheet.addRow(['Hospital Name', 'ID']);
-    resolve(fetchDbAsync(worksheet));
+    let workbook = new Excel.Workbook();
+    workbook.xlsx.readFile(resultFilePath).then(() =>{
+      let worksheet = workbook.addWorksheet('Hospital List', {});
+      worksheet.getColumn('A').width = 20.0;
+      worksheet.getColumn('B').width = 9.0;
+      worksheet.addRow(['Hospital Name', 'ID']);
+      fetchDbAsync(worksheet).then((response) =>{
+        resolve(workbook.xlsx.writeFile(resultFilePath));
+      });
+    });
   });
 }
 
