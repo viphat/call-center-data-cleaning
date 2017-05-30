@@ -124,7 +124,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         customer.s1,
         customer.s2,
         hospital.hospital_name,
-        hospital.area_channel
+        hospital.area_channel,
+        hospital.area_name
       ];
       let outputSheetName = province_name + ' - ' + 'Valid';
       if (missingData || illogicalData) {
@@ -222,8 +223,11 @@ function writeToFile(outputWorkbook, outputSheetName, province_name, rowData) {
     row.getCell(16).font = row.getCell(1).font;
     row.getCell(16).border = row.getCell(1).border;
     row.getCell(16).alignment = row.getCell(1).alignment;
-    // TODO: Cải Tiến chỗ này - Lưu 1 lần khi finish một file thôi >_<.
-    // Hiện tốc độ đọc/ghi đang khá chậm
+
+    row.getCell(17).font = row.getCell(1).font;
+    row.getCell(17).border = row.getCell(1).border;
+    row.getCell(17).alignment = row.getCell(1).alignment;
+
     resolve(workbook);
   });
 }

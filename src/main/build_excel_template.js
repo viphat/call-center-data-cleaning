@@ -62,6 +62,7 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getColumn('N').width = 13.8;
   worksheet.getColumn('O').width = 23.8;
   worksheet.getColumn('P').width = 23.8;
+  worksheet.getColumn('Q').width = 23.8;
 
   worksheet.getRow('5').height = 30;
 
@@ -270,6 +271,13 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getCell('P5').alignment = worksheet.getCell('A5').alignment;
   worksheet.getCell('P5').border = worksheet.getCell('A5').border;
   worksheet.getCell('P5').value = 'Channel\n(Key urban/Urban/Rural)';
+
+  worksheet.mergeCells('Q5:Q6');
+  worksheet.getCell('Q5').font = worksheet.getCell('A5').font;
+  worksheet.getCell('Q5').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('Q5').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('Q5').border = worksheet.getCell('A5').border;
+  worksheet.getCell('Q5').value = 'Khu vực';
 
   // End Table Headers
 
