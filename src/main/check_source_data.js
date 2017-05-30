@@ -143,6 +143,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           customer.illogicalData = 1;
         }
         updateCustomer(customer);
+      } else if ( customer.missingEmail == 1) {
+        updateCustomer(customer);
       }
       writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
         resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));

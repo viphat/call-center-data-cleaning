@@ -137,8 +137,6 @@ function isPhoneDuplicate(customer) {
       return resolve(customer);
     }
 
-    console.log(customer.customer_id);
-
     db.get('SELECT customer_id FROM customers WHERE customers.phone = ? AND customers.customer_id != ?',
       customer.phone, customer.customer_id, (err, res) => {
       if (err) {
