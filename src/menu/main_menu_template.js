@@ -5,7 +5,7 @@ const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
 
 export const mainMenuTemplate = {
-  label: 'main',
+  label: 'Main Menu',
   submenu: [
     {
       label: 'Setup Database',

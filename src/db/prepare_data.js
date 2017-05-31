@@ -5,13 +5,12 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    // insertTableAreas();
-    // insertTableProvinces();
-    // insertTableHospitals();
-    // insertTableMatches();
+    insertTableAreas();
+    insertTableProvinces();
+    insertTableHospitals();
+    insertTableMatches();
     createTableCustomers();
   });
-  db.close();
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
 }
 
