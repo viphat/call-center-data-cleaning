@@ -2,6 +2,8 @@ import { db } from '../db/prepare_data.js';
 const _  = require('lodash');
 const Excel = require('exceljs');
 
+const logoPath = './app/vendor/logo.png';
+
 export const generateReport = (batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
     generateReportTemplate(batch, outputDirectory).then((reportFilePath) => {
@@ -73,6 +75,14 @@ export const generateReport = (batch, outputDirectory) => {
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'R');
       }).then(() => {
+        return fillData(batch, 'S1');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'S');
+      }).then(() => {
+        return fillData(batch, 'S2');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'T');
+      }).then(() => {
         resolve(reportFilePath);
       });
 
@@ -88,52 +98,55 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       let worksheet = workbook.getWorksheet(1);
       let row;
 
-      row = worksheet.getRow(5);
+      row = worksheet.getRow(6);
       row.getCell(cellIndex).value = rowData.TotalBase;
 
-      row = worksheet.getRow(6);
+      row = worksheet.getRow(7);
       row.getCell(cellIndex).value = rowData.MissingData;
 
-      row = worksheet.getRow(7);
+      row = worksheet.getRow(8);
       row.getCell(cellIndex).value = rowData.MissingMomName;
 
-      row = worksheet.getRow(8);
+      row = worksheet.getRow(9);
       row.getCell(cellIndex).value = rowData.MissingAddress;
 
-      row = worksheet.getRow(9);
+      row = worksheet.getRow(10);
       row.getCell(cellIndex).value = rowData.MissingPhone;
 
-      row = worksheet.getRow(10);
+      row = worksheet.getRow(11);
       row.getCell(cellIndex).value = rowData.MissngEmail;
 
-      row = worksheet.getRow(11);
-      row.getCell(cellIndex).value = rowData.MissingBabyInformation;
-
       row = worksheet.getRow(12);
-      row.getCell(cellIndex).value = rowData.MissingMomStatus;
+      row.getCell(cellIndex).value = rowData.MissingBabyName;
 
       row = worksheet.getRow(13);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+      row.getCell(cellIndex).value = rowData.MissingBabyGender;
 
       row = worksheet.getRow(14);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+      row.getCell(cellIndex).value = rowData.MissingDate;
 
       row = worksheet.getRow(15);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
       row = worksheet.getRow(16);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS2;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
       row = worksheet.getRow(17);
-      row.getCell(cellIndex).value = rowData.IllogicalData;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
 
       row = worksheet.getRow(18);
-      row.getCell(cellIndex).value = rowData.IllogicalPhone;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS2;
 
       row = worksheet.getRow(19);
-      row.getCell(cellIndex).value = rowData.TotalBase - rowData.HasError;
+      row.getCell(cellIndex).value = rowData.IllogicalData;
 
       row = worksheet.getRow(20);
+      row.getCell(cellIndex).value = rowData.IllogicalPhone;
+
+      row = worksheet.getRow(21);
+      row.getCell(cellIndex).value = rowData.TotalBase - rowData.HasError;
+
+      row = worksheet.getRow(22);
       row.getCell(cellIndex).value = rowData.MissngEmail;
 
       resolve(workbook.xlsx.writeFile(reportFilePath));
@@ -146,8 +159,13 @@ function fillData(batch, filterType) {
     let baseQuery = 'SELECT COUNT(*) AS TotalBase, coalesce(SUM(hasError),0) AS HasError,\
     coalesce(SUM(missingData),0) AS MissingData,\
     coalesce(SUM(missingMomName),0) AS MissingMomName, coalesce(SUM(missingAddress),0) AS MissingAddress,\
-    coalesce(SUM(missingPhone),0) AS MissingPhone, coalesce(SUM(missingEmail),0) AS MissngEmail,\
-    coalesce(SUM(missingBabyInformation),0) As MissingBabyInformation, coalesce(SUM(missingMomStatus),0) AS MissingMomStatus,\
+    coalesce(SUM(missingPhone),0) AS MissingPhone, \
+    coalesce(SUM(missingEmail),0) AS MissngEmail, \
+    coalesce(SUM(missingBabyInformation),0) As MissingBabyInformation, \
+    coalesce(SUM(missingBabyName),0) As MissingBabyName, \
+    coalesce(SUM(missingBabyGender),0) As MissingBabyGender, \
+    coalesce(SUM(missingDate),0) As MissingDate, \
+    coalesce(SUM(missingMomStatus),0) AS MissingMomStatus, \
     coalesce(SUM(illogicalData),0) As IllogicalData, coalesce(SUM(illogicalPhone),0) AS IllogicalPhone,\
     coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
     coalesce(SUM(duplicatedPhoneS2),0) AS DuplicatedPhoneS2 FROM customers'
@@ -170,6 +188,11 @@ function fillData(batch, filterType) {
         $batch: batch,
         $channel: filterType
       }
+    } else if (filterType === 'S1' || filterType === 'S2'){
+      whereCondition = 'WHERE customers.sampling = $sampling';
+      params = {
+        $sampling: filterType
+      }
     } else if (filterType.areaId !== undefined && filterType.areaId !== null) {
       joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
         JOIN provinces ON hospitals.province_id = provinces.province_id';
@@ -188,7 +211,6 @@ function fillData(batch, filterType) {
       }
       resolve(row);
     });
-
   });
 }
 
@@ -200,7 +222,22 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Abs', {});
 
-    worksheet.getColumn('A').width = 80;
+    worksheet.getColumn('A').width = 60;
+    worksheet.getRow(1).height = 50;
+    worksheet.getRow(4).height = 30;
+    worksheet.getRow(5).height = 40;
+
+    // Add Logo
+    let logo = workbook.addImage({
+      filename: logoPath,
+      extension: 'png'
+    });
+
+    worksheet.addImage(logo, {
+      tl: { col: 0, row: 0 },
+      br: { col: 1, row: 1 }
+    });
+
     worksheet.getColumn('B').width = 30;
     worksheet.getColumn('C').width = 30;
     worksheet.getColumn('D').width = 30;
@@ -218,102 +255,111 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     worksheet.getColumn('P').width = 30;
     worksheet.getColumn('Q').width = 30;
     worksheet.getColumn('R').width = 30;
+
+    worksheet.getColumn('S').width = 30;
+    worksheet.getColumn('T').width = 30;
     // A1
 
-    worksheet.getCell('A1').value = 'HUGGIES CALL CENTER 2017 PROJECT';
+    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2017 PROJECT';
 
-    worksheet.getCell('A1').font = {
+    worksheet.getCell('B1').font = {
       bold: true, size: 26, name: 'Calibri', family: 2,
       color: { argb: 'FFFF0000' }
     }
 
-    worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
-    // A2
+    worksheet.getCell('B1').alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.mergeCells('B1:E1')
 
-    worksheet.getCell('A2').font = {
+    // A2
+    worksheet.getCell('B2').font = {
       bold: true, size: 14, name: 'Calibri', family: 2,
+      underline: true,
       color: { argb: 'FFFF0000' }
     }
 
-    worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.getCell('B2').alignment = { horizontal: 'center', vertical: 'middle' };
 
-    worksheet.getCell('A2').value = 'Step 1: Database Clean';
+    worksheet.getCell('B2').value = 'Step 1: Database Clean';
 
     // A4
-    worksheet.getCell('A4').border = {
+    worksheet.getCell('A5').border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
       top: { style: 'thin' },
       bottom: { style: 'thin' }
     }
 
-    worksheet.getCell('A4').font = {
+    worksheet.getCell('A5').font = {
       bold: true, size: 14, name: 'Calibri', family: 2
     }
 
-    worksheet.getCell('A4').alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
 
-    worksheet.getCell('A4').fill = {
+    worksheet.getCell('A5').fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'FFFABF8F' },
       bgColor: { indexed: 64 }
     };
 
-    worksheet.getCell('A4').value = batch;
+    worksheet.getCell('A5').value = batch;
 
-    // A5, A19
-    buildReportFirstColumnType3(worksheet, 5, 'Raw data received from K-C');
-    buildReportFirstColumnType3(worksheet, 19, 'Valid database (value) - base all');
+    // A6, A21
+    buildReportFirstColumnType3(worksheet, 6, 'Raw data received from K-C');
+    buildReportFirstColumnType3(worksheet, 21, 'Valid database (value) - base all');
 
 
-    // A6, A13, A17, A20
-    buildReportFirstColumnType2(worksheet, 6, 'Data missing');
-    buildReportFirstColumnType2(worksheet, 13, 'Duplicated Data (Checking vs. total database since 1st week)');
-    buildReportFirstColumnType2(worksheet, 17, 'Illogical data');
-    buildReportFirstColumnType2(worksheet, 20, 'Email missing');
+    // A7, A15, A19, A22
+    buildReportFirstColumnType2(worksheet, 7, 'Data missing');
+    buildReportFirstColumnType2(worksheet, 15, 'Duplicated Data (Checking vs. total database since 1st week)');
+    buildReportFirstColumnType2(worksheet, 19, 'Illogical data');
+    buildReportFirstColumnType2(worksheet, 22, 'Email missing');
 
-    // A7 - A12, A14 - A16, A18
-    buildReportFirstColumnType1(worksheet, 7, "Mom's name");
-    buildReportFirstColumnType1(worksheet, 8, "Address (District, Province, City)");
-    buildReportFirstColumnType1(worksheet, 9, "Telephone number");
-    buildReportFirstColumnType1(worksheet, 10, "Email address");
-    buildReportFirstColumnType1(worksheet, 11, "Baby information (name, gender)");
-    buildReportFirstColumnType1(worksheet, 12, "Mom's status (Pregnant/ Delivered, Date of pregnancy/ Baby Delivery)");
-    buildReportFirstColumnType1(worksheet, 14, "% duplication between S1 and S2");
-    buildReportFirstColumnType1(worksheet, 15, "% duplication within S1");
-    buildReportFirstColumnType1(worksheet, 16, "% duplication within S2");
-    buildReportFirstColumnType1(worksheet, 18, "Illogical phone number");
+    // A8 - A14, A16 - A18, A20
+    buildReportFirstColumnType1(worksheet, 8, "Mom's name");
+    buildReportFirstColumnType1(worksheet, 9, "Address (District, Province, City)");
+    buildReportFirstColumnType1(worksheet, 10, "Telephone number");
+    buildReportFirstColumnType1(worksheet, 11, "Email address");
+    buildReportFirstColumnType1(worksheet, 12, "Baby information (name)");
+    buildReportFirstColumnType1(worksheet, 13, "Baby information (gender)");
+    buildReportFirstColumnType1(worksheet, 14, "Date of pregnancy/Baby Delivery");
+    buildReportFirstColumnType1(worksheet, 16, "% duplication between S1 and S2");
+    buildReportFirstColumnType1(worksheet, 17, "% duplication within S1");
+    buildReportFirstColumnType1(worksheet, 18, "% duplication within S2");
+    buildReportFirstColumnType1(worksheet, 20, "Illogical phone number");
 
     // Done 1st Col
 
-    // Row 3 - D3, K3, P3
-    buildReportRow3(worksheet, 'D', 'D3:J3', 'KEY URBAN');
-    buildReportRow3(worksheet, 'K', 'K3:O3', 'URBAN');
-    buildReportRow3(worksheet, 'P', 'P3:R3', 'Rural');
+    // Row 4 - D4, K4, P4, S4
+    buildReportRow4(worksheet, 'D', 'D4:J4', 'KEY URBAN');
+    buildReportRow4(worksheet, 'K', 'K4:O4', 'URBAN');
+    buildReportRow4(worksheet, 'P', 'P4:R4', 'RURAL');
+    buildReportRow4(worksheet, 'S', 'S4:T4', 'SAMPLING');
 
-    // Row 4, B4-R4
-    buildReportRow4(worksheet, 'B', 'Total Project');
-    buildReportRow4(worksheet, 'C', 'Total ' + batch);
-    buildReportRow4(worksheet, 'D', 'Total Key Urban');
-    buildReportRow4(worksheet, 'E', 'HCM');
-    buildReportRow4(worksheet, 'F', 'Hà Nội');
-    buildReportRow4(worksheet, 'G', 'Đà Nẵng');
-    buildReportRow4(worksheet, 'H', 'Cần  Thơ');
-    buildReportRow4(worksheet, 'I', 'Khánh Hòa');
-    buildReportRow4(worksheet, 'J', 'Hải Phòng');
-    buildReportRow4(worksheet, 'K', 'Total Urban');
-    buildReportRow4(worksheet, 'L', 'Miền Bắc');
-    buildReportRow4(worksheet, 'M', 'Miền Trung');
-    buildReportRow4(worksheet, 'N', 'Miền Tây');
-    buildReportRow4(worksheet, 'O', 'Miền Đông');
-    buildReportRow4(worksheet, 'P', 'Total Rural');
-    buildReportRow4(worksheet, 'Q', 'Miền Bắc');
-    buildReportRow4(worksheet, 'R', 'Miền Trung');
+    // // Row 5, B4-T4
+    buildReportRow5(worksheet, 'B', 'Total Project');
+    buildReportRow5(worksheet, 'C', 'Total ' + batch);
+    buildReportRow5(worksheet, 'D', 'Total Key Urban');
+    buildReportRow5(worksheet, 'E', 'HCM');
+    buildReportRow5(worksheet, 'F', 'Hà Nội');
+    buildReportRow5(worksheet, 'G', 'Đà Nẵng');
+    buildReportRow5(worksheet, 'H', 'Cần  Thơ');
+    buildReportRow5(worksheet, 'I', 'Khánh Hòa');
+    buildReportRow5(worksheet, 'J', 'Hải Phòng');
+    buildReportRow5(worksheet, 'K', 'Total Urban');
+    buildReportRow5(worksheet, 'L', 'Miền Bắc');
+    buildReportRow5(worksheet, 'M', 'Miền Trung');
+    buildReportRow5(worksheet, 'N', 'Miền Tây');
+    buildReportRow5(worksheet, 'O', 'Miền Đông');
+    buildReportRow5(worksheet, 'P', 'Total Rural');
+    buildReportRow5(worksheet, 'Q', 'Miền Bắc');
+    buildReportRow5(worksheet, 'R', 'Miền Trung');
+    buildReportRow5(worksheet, 'S', 'Pregnant Mom');
+    buildReportRow5(worksheet, 'T', 'New Mom');
 
     // Data
-    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
-    let rowArr = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+    let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
     for (let rowArrIndex = 0; rowArrIndex < rowArr.length; rowArrIndex += 1) {
       for (let colArrIndex = 0; colArrIndex < colArr.length; colArrIndex += 1 ) {
@@ -330,16 +376,36 @@ export const generateReportTemplate = (batch, outputDirectory) => {
   });
 };
 
-function buildReportRow4(worksheet, cellIndex, text) {
-  let row = worksheet.getRow(4);
+function buildReportRow5(worksheet, cellIndex, text) {
+  let row = worksheet.getRow(5);
   let fgColor = { theme: 0, tint: -0.1499984740745262 };
 
-  if (cellIndex == 'B' || cellIndex == 'C') {
-    fgColor = { argb: 'FFFABF8F' };
+  if (cellIndex == 'B') {
+    fgColor = { theme: 2, tint: -0.249977111117893 };
   }
 
-  if (cellIndex == 'D' || cellIndex == 'K' || cellIndex == 'P') {
-    fgColor = { theme: 9, tint: 0.5999938962981048 }
+  if (cellIndex == 'C') {
+    fgColor = { theme: 5, tint: 0.5999938962981048 };
+  }
+
+  if (cellIndex == 'D' || cellIndex == 'E' || cellIndex == 'F' || cellIndex == 'G' ||
+    cellIndex == 'H' || cellIndex == 'I' || cellIndex == 'J'
+  ) {
+    fgColor = { argb: 'FFFFFF00' };
+  }
+
+  if (cellIndex == 'K' || cellIndex == 'L' || cellIndex == 'M' || cellIndex == 'N' ||
+    cellIndex == 'O'
+  ) {
+    fgColor = { theme: 6, tint: 0.3999755851924192 };
+  }
+
+  if (cellIndex == 'P' || cellIndex == 'Q' || cellIndex == 'R') {
+    fgColor = { theme: 9, tint: 0.3999755851924192 };
+  }
+
+  if (cellIndex == 'S' || cellIndex == 'T') {
+    fgColor = { theme: 9, tint: 0.5999938962981048 };
   }
 
   row.getCell(cellIndex).border = {
@@ -365,8 +431,8 @@ function buildReportRow4(worksheet, cellIndex, text) {
   row.getCell(cellIndex).value = text;
 }
 
-function buildReportRow3(worksheet, cellIndex, mergeRange, text) {
-  let row = worksheet.getRow(3);
+function buildReportRow4(worksheet, cellIndex, mergeRange, text) {
+  let row = worksheet.getRow(4);
 
   row.getCell(cellIndex).border = {
     left: { style: 'thin' },
@@ -375,10 +441,27 @@ function buildReportRow3(worksheet, cellIndex, mergeRange, text) {
     bottom: { style: 'thin' }
   }
 
+  let fgColor = '';
+
+  switch (cellIndex) {
+    case 'D':
+      fgColor = { argb: 'FFFFFF00' };
+      break;
+    case 'K':
+      fgColor = { theme: 6, tint: 0.3999755851924192 };
+      break;
+    case 'P':
+      fgColor = { theme: 9, tint: 0.3999755851924192 };
+      break;
+    case 'S':
+      fgColor = { theme: 9, tint: 0.5999938962981048 };
+      break;
+  }
+
   row.getCell(cellIndex).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FFFFFF00' },
+    fgColor: fgColor,
     bgColor: { indexed: 64 }
   }
 
@@ -407,19 +490,28 @@ function buildReportFirstColumnType3(worksheet, rowIndex, text) {
     bottom: { style: 'thin' }
   }
 
-  row.getCell('A').font = {
-    bold: true, size: 14, name: 'Calibri', family: 2,
-    color: { argb: 'FFFF0000' }
+  if (rowIndex == 21) {
+    row.getCell('A').font = {
+      bold: true, size: 14, name: 'Calibri', family: 2,
+      color: { theme: 0 }
+    }
+  } else {
+    row.getCell('A').font = {
+      bold: true, size: 14, name: 'Calibri', family: 2,
+      color: { argb: 'FFFF0000' }
+    }
   }
 
   row.getCell('A').alignment = { vertical: 'middle' };
 
-  row.getCell('A').fill = {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: { theme: 9, tint: 0.5999938962981048 },
-    bgColor: { indexed: 64 }
-  };
+  if (rowIndex == 21) {
+    row.getCell('A').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFFF0000' },
+      bgColor: { indexed: 64 }
+    };
+  }
 
   row.getCell('A').value = text;
 }
@@ -435,18 +527,27 @@ function buildReportFirstColumnType2(worksheet, rowIndex, text) {
     bottom: { style: 'thin' }
   }
 
-  row.getCell('A').font = {
-    bold: true, size: 14, name: 'Calibri', family: 2,
+  if (rowIndex === 22) {
+    row.getCell('A').font = {
+      bold: true, size: 14, name: 'Calibri', family: 2
+    }
+  } else {
+    row.getCell('A').font = {
+      bold: true, size: 14, name: 'Calibri', family: 2,
+      color: { theme: 0 }
+    }
   }
 
   row.getCell('A').alignment = { vertical: 'middle' };
 
-  row.getCell('A').fill = {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: { theme: 9, tint: 0.5999938962981048 },
-    bgColor: { indexed: 64 }
-  };
+  if (rowIndex !== 22) {
+    row.getCell('A').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF00B0F0' },
+      bgColor: { indexed: 64 }
+    };
+  }
 
   row.getCell('A').value = text;
 }
@@ -462,7 +563,7 @@ function buildReportFirstColumnType1(worksheet, rowIndex, text) {
   }
 
   row.getCell('A').font = {
-    size: 14, name: 'Calibri', family: 2,
+    size: 14, name: 'Calibri', family: 2
   }
 
   row.getCell('A').alignment = { horizontal: 'right', vertical: 'middle' };
@@ -475,20 +576,34 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
   let bold = false;
   let color = { argb: 'FF000000' };
 
-  if (rowIndex == 5 || rowIndex == 6 || rowIndex == 13 ||
-    rowIndex == 17 || rowIndex == 19 || rowIndex == 20
-  ) {
+  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 15 || rowIndex == 19 || rowIndex == 21 || rowIndex == 22) {
     bold = true;
+  }
+
+  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 19) {
     row.getCell(cellIndex).fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { theme: 9, tint: 0.5999938962981048 },
+      fgColor: { argb: 'FF00B0F0' },
       bgColor: { indexed: 64 }
     };
   }
 
-  if (rowIndex == 5 || rowIndex == 19) {
+  if (rowIndex == 21) {
+    row.getCell(cellIndex).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFFF0000' },
+      bgColor: { indexed: 64 }
+    };
+  }
+
+  if (rowIndex == 6) {
     color = { argb: 'FFFF0000' };
+  }
+
+  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 19 || rowIndex == 21) {
+    color = { theme: 0 };
   }
 
   row.getCell(cellIndex).border = {
@@ -509,9 +624,11 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
 }
 
 // function readReportTemplate() {
-//   let originalTemplatePath = '/Users/viphat/projects/dct/report-template.xlsx'
+//   let originalTemplatePath = '/Users/viphat/projects/dct/Huggies Call Center_ Clean Topline _Format for 2017 (31.5.2017).xlsx'
 //   let workbook = new Excel.Workbook();
 //   workbook.xlsx.readFile(originalTemplatePath).then(()=>{
 //     let worksheet = workbook.getWorksheet('Abs');
+//     console.log(worksheet.getCell('B5').fill);
+//     console.log(worksheet.getCell('C5').fill);
 //   });
 // }
