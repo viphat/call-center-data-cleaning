@@ -488,7 +488,7 @@ function isIllogicalData(customer, row) {
 
     if (sampling == 'S1') {
       // Không được nhỏ hơn ngày hiện tại (- 15)
-      if (date < moment(today).subtract(15, 'days')) {
+      if (date < moment(today).subtract(31, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
       }
@@ -499,7 +499,7 @@ function isIllogicalData(customer, row) {
       if (date >= moment(today).subtract(7, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
-      } else if (date < moment(today).subtract(30, 'days')) {
+      } else if (date < moment(today).subtract(45, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
       }
