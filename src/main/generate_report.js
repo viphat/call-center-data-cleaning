@@ -55,11 +55,11 @@ export const generateReport = (batch, outputDirectory) => {
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'M');
       }).then(() => {
-        return fillData(batch, { areaId: 10 });
+        return fillData(batch, { areaId: 9 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'N');
       }).then(() => {
-        return fillData(batch, { areaId: 9 });
+        return fillData(batch, { areaId: 10 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'O');
       }).then(() => {
@@ -355,8 +355,8 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     buildReportRow5(worksheet, 'K', 'Total Urban');
     buildReportRow5(worksheet, 'L', 'Miền Bắc');
     buildReportRow5(worksheet, 'M', 'Miền Trung');
-    buildReportRow5(worksheet, 'N', 'Miền Tây');
-    buildReportRow5(worksheet, 'O', 'Miền Đông');
+    buildReportRow5(worksheet, 'N', 'Miền Đông');
+    buildReportRow5(worksheet, 'O', 'Miền Tây');
     buildReportRow5(worksheet, 'P', 'Total Rural');
     buildReportRow5(worksheet, 'Q', 'Miền Bắc');
     buildReportRow5(worksheet, 'R', 'Miền Trung');
