@@ -37,6 +37,7 @@
     "fs-jetpack": "^1.0.0",
     "glob": "^7.1.2",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "sqlite3": "^3.1.8"
   },
   "devDependencies": {

@@ -1,12 +1,14 @@
 const _  = require('lodash');
 const fs = require('fs');
 const Diacritics = require('diacritic');
-
+const moment = require('moment');
 const Excel = require('exceljs');
+
 import { db } from '../db/prepare_data';
 
 import { buildTemplate } from '../main/build_excel_template';
 import { createCustomer, updateCustomer } from '../db/create_customer';
+
 const dataBeginRow = 6;
 const hospitalName = [2, 6];
 const provinceName = [3, 6];
@@ -288,6 +290,7 @@ function isMissingData(customer, row) {
   if (row.getCell(emailCol).value === null) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
+    customer.missingData = 1;
     customer.missingEmail = 1;
   }
 
@@ -474,10 +477,34 @@ function isIllogicalData(customer, row) {
       flag = true;
     }
 
-    if (date.getFullYear() < 2016 || date.getFullYear() > 2018) {
+    var today = new Date();
+    var currentMonth = today.getMonth();
+    var currentYear = today.getFullYear();
+
+    if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
       customer.illogicalDate = 1;
       flag = true;
     }
+
+    if (sampling == 'S1') {
+      // Không được nhỏ hơn ngày hiện tại (- 15)
+      if (date < moment(today).subtract(15, 'days')) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+    }
+
+    if (sampling == 'S2') {
+      // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
+      if (date >= moment(today).subtract(7, 'days')) {
+        customer.illogicalDate = 1;
+        flag = true;
+      } else if (date < moment(today).subtract(30, 'days')) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+    }
+
   }
   return flag;
 }
