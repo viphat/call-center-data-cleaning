@@ -4,7 +4,7 @@ const fs = require('fs');
 import { db } from '../db/prepare_data.js';
 
 const hospitalCell = 'I2';
-const redundantString = 'Tên BV/PK:';
+const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
 const workbook = new Excel.Workbook();
 let fileTooBig = [];
 let hasErorInHospitalName = [];
@@ -136,7 +136,10 @@ function readNextExcelFile(excelFiles, fileIndex) {
     } else {
       workbook.xlsx.readFile(excelFile).then(()=>{
         let worksheet = workbook.getWorksheet(1);
-        let hospitalName = _.replace(worksheet.getCell(hospitalCell).value, redundantString, '');
+        let hospitalName = worksheet.getCell(hospitalCell).value;
+        _.each(redundantStrings, (redundantString) => {
+          hospitalName = _.replace(hospitalName, redundantString, '');
+        })
         hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
         checkHospitalNameError(hospitalName).then((res) => {
           if (res == true) {
@@ -179,7 +182,9 @@ function checkWithMatches(hospitalName) {
         return reject(false);
       }
       if (res === undefined || res === null) {
-        notFoundHospitalName.push(hospitalName);
+        if (_.includes(notFoundHospitalName, hospitalName) === false) {
+          notFoundHospitalName.push(hospitalName);
+        }
       }
       resolve(true);
     });

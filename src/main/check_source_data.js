@@ -29,7 +29,7 @@ const s1Col = 13;
 const s2Col = 14;
 
 const hospitalNameCell = 'I2';
-const redundantString = 'Tên BV/PK:';
+const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
 
 export const validateSourceData = (excelFiles, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -49,7 +49,10 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
     workbook.xlsx.readFile(excelFile).then(() => {
       let worksheet = workbook.getWorksheet(1);
       // Read Tên Bệnh Viện
-      let hospitalName = _.replace(worksheet.getCell(hospitalNameCell).value, redundantString, '');
+      let hospitalName = worksheet.getCell(hospitalNameCell).value;
+      _.each(redundantStrings, (redundantString) => {
+        hospitalName = _.replace(hospitalName, redundantString, '');
+      })
       hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
       let province_name;
       let rowNumber;

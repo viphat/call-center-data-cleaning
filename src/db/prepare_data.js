@@ -99,10 +99,10 @@ function insertTableProvinces() {
   db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 39, 'Vĩnh Phúc - Rural', 11);
   db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 40, 'Bắc Giang', 11);
   db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 41, 'Nam Định', 11);
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 42, 'Quảng Ngãi - Rural');
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 43, 'Dak Lak - Rural');
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 44, 'Bình Định - Rural');
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 45, 'Quảng Nam - Rural');
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 42, 'Quảng Ngãi - Rural', 12);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 43, 'Dak Lak - Rural', 12);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 44, 'Bình Định - Rural', 12);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 45, 'Quảng Nam - Rural', 12);
 }
 
 function insertTableMatches() {
