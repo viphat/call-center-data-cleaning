@@ -1,6 +1,7 @@
 import { db } from '../db/prepare_data.js';
 const _  = require('lodash');
 const Excel = require('exceljs');
+const fs = require('fs');
 
 const logoPath = './app/vendor/logo.png';
 
@@ -222,7 +223,13 @@ function fillData(batch, filterType) {
 
 export const generateReportTemplate = (batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
-    let reportFilePath = outputDirectory + '/report.xlsx';
+
+    let dir = outputDirectory + '/' + batch;
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir)
+    }
+
+    let reportFilePath = dir + '/report.xlsx';
 
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Abs', {});

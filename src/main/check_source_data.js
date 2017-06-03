@@ -34,7 +34,14 @@ const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
 export const validateSourceData = (excelFiles, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
     let fileIndex = 0;
-    resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex));
+    if ( !_.endsWith(outputDirectory, '/') ) {
+      outputDirectory += '/';
+    }
+    let dir = outputDirectory + batch;
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir)
+    }
+    resolve(readEachFile(excelFiles, batch, dir, fileIndex));
   });
 }
 
@@ -62,10 +69,7 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
         hospital = obj;
         province_name = hospital.province_name;
         rowNumber = dataBeginRow;
-        if ( !_.endsWith(outputDirectory, '/') ) {
-          outputDirectory += '/';
-        }
-        outputPath = outputDirectory + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
+        outputPath = outputDirectory + '/' + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
         return buildTemplate(outputPath, province_name);
       }).then( (outputWorkbook) => {
         return readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber);
