@@ -20,14 +20,21 @@ function createTableCustomers() {
   email TEXT, district TEXT, province TEXT, phone TEXT, baby_name TEXT,\
   baby_gender TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
   sampling TEXT, hospital_id INTEGER, batch TEXT,\
-  hasError INTEGER DEFAULT 0, missingData INTEGER DEFAULT 0,\
-  missingFirstName INTEGER DEFAULT 0, missingLastName INTEGER DEFAULT 0,\
-  missingMomName INTEGER DEFAULT 0, missingDistrict INTEGER DEFAULT 0, missingProvince INTEGER DEFAULT 0,\
+  hasError INTEGER DEFAULT 0,\
+  missingData INTEGER DEFAULT 0,\
+  missingFirstName INTEGER DEFAULT 0, \
+  missingLastName INTEGER DEFAULT 0,\
+  missingMomName INTEGER DEFAULT 0, \
+  missingDistrict INTEGER DEFAULT 0, \
+  missingProvince INTEGER DEFAULT 0,\
   missingAddress INTEGER DEFAULT 0,\
-  missingPhone INTEGER DEFAULT 0, missingEmail INTEGER DEFAULT 0,\
-  missingBabyName INTEGER DEFAULT 0, missingBabyGender INTEGER DEFAULT 0,\
+  missingPhone INTEGER DEFAULT 0, \
+  missingEmail INTEGER DEFAULT 0,\
+  missingBabyName INTEGER DEFAULT 0, \
+  missingBabyGender INTEGER DEFAULT 0,\
   missingBabyInformation INTEGER DEFAULT 0,\
-  missingSampling INTEGER DEFAULT 0, missingDate INTEGER DEFAULT 0,\
+  missingSampling INTEGER DEFAULT 0, \
+  missingDate INTEGER DEFAULT 0,\
   missingMomStatus INTEGER DEFAULT 0,\
   illogicalData INTEGER DEFAULT 0,\
   illogicalPhone INTEGER DEFAULT 0, illogicalName INTEGER DEFAULT 0,\
