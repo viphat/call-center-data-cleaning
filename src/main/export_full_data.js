@@ -7,6 +7,7 @@ const Excel = require('exceljs');
 import { db } from '../db/prepare_data';
 import { writeToFile } from './check_source_data';
 import { buildTemplate } from './build_excel_template';
+import { generateReport } from './generate_report';
 
 export const exportFullData = (outputDirectory) => {
   if ( !_.endsWith(outputDirectory, '/') ) {
@@ -19,10 +20,13 @@ export const exportFullData = (outputDirectory) => {
   if ( !_.endsWith(outputDirectory, '/') ) {
     outputDirectory += '/';
   }
-  let provinceIndex = 0;
   return new Promise((resolve, reject) => {
     getProvinces().then((provinces) => {
-      resolve(buildFileForProvince(outputDirectory, provinces, provinceIndex));
+      let provinceIndex = 0;
+      buildFileForProvince(outputDirectory, provinces, provinceIndex).then((res) =>{
+        // Generate Full Report
+        resolve(generateReport('', outputDirectory))
+      });
     })
   });
 }

@@ -180,18 +180,12 @@ function fillData(batch, filterType) {
     let joinTable = '';
     let params = {};
 
-    if (filterType === 'ByBatch') {
-      whereCondition = 'WHERE customers.batch = $batch';
-      params = {
-        $batch: batch
-      }
-    } else if (filterType === 'Key Urban' || filterType === 'Urban' || filterType === 'Rural') {
+    if (filterType === 'Key Urban' || filterType === 'Urban' || filterType === 'Rural') {
       joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
         JOIN provinces ON hospitals.province_id = provinces.province_id \
         JOIN areas ON provinces.area_id = areas.area_id';
-      whereCondition = 'WHERE customers.batch = $batch AND areas.channel = $channel';
+      whereCondition = 'WHERE areas.channel = $channel';
       params = {
-        $batch: batch,
         $channel: filterType
       }
     } else if (filterType === 'S1' || filterType === 'S2'){
@@ -202,10 +196,20 @@ function fillData(batch, filterType) {
     } else if (filterType.areaId !== undefined && filterType.areaId !== null) {
       joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
         JOIN provinces ON hospitals.province_id = provinces.province_id';
-      whereCondition = 'WHERE customers.batch = $batch AND provinces.area_id = $areaId'
+      whereCondition = 'WHERE provinces.area_id = $areaId'
       params = {
-        $batch: batch,
         $areaId: filterType.areaId
+      }
+    }
+
+    if (batch !== '' && filterType !== 'All') {
+      params = _.merge(params, {
+        $batch: batch
+      });
+      if (whereCondition === '') {
+        whereCondition = 'WHERE customers.batch = $batch'
+      } else {
+        whereCondition += " AND customers.batch = $batch";
       }
     }
 
