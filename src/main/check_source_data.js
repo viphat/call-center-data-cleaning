@@ -397,7 +397,7 @@ function isIllogicalData(customer, row) {
 
   if (lastName !== undefined && lastName !== null && firstName) {
     let fullName = '' + firstName + lastName;
-    if (!isNaN(parseInt(fullName))) {
+    if (!isNaN(parseInt(fullName)) || hasSpecialCharacter(fullName)) {
       // If is a Number
       customer.illogicalName = 1;
       flag = true;
@@ -424,12 +424,16 @@ function isIllogicalData(customer, row) {
         flag = true;
       }
     }
+    if (hasSpecialCharacter(district)) {
+      customer.illogicalAddress = 1;
+      flag = true;
+    }
   }
 
   if (province !== undefined && province !== null) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
-    if (!isNaN(province)) {
+    if (!isNaN(province) || hasSpecialCharacter(province)) {
       customer.illogicalAddress = 1;
       flag = true;
     }
@@ -447,7 +451,7 @@ function isIllogicalData(customer, row) {
   }
 
   if (sampling === 'S2') {
-    if (babyName === null || babyName === undefined || babyName === '') {
+    if (babyName === null || babyName === undefined || babyName === '' || hasSpecialCharacter(babyName)) {
       customer.illogicalSampling = 1;
       flag = true;
     }
@@ -519,4 +523,9 @@ function isIllogicalData(customer, row) {
 function validateEmail(email) {
   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
+}
+
+function hasSpecialCharacter(string) {
+  var re = /[!@#$%^&*_+=\[\]{};:"\\|<>\/?]/;
+  return re.test(string);
 }

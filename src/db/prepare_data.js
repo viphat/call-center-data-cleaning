@@ -107,7 +107,7 @@ function insertTableProvinces() {
 
 function insertTableMatches() {
   db.run('DROP TABLE IF EXISTS matches;');
-  db.run('CREATE TABLE matches(hospital_id INTEGER, name TEXT, FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));');
+  db.run('CREATE TABLE matches(match_id INTEGER PRIMARY KEY, hospital_id INTEGER, name TEXT, FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 1, 'Từ Dũ');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 2, 'Hùng Vương');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 3, 'Bv Phụ Sản MeKong');
