@@ -496,9 +496,15 @@ function isIllogicalData(customer, row) {
       flag = true;
     }
 
+    var mayOf2017 = new Date('2017-05-01');
+    if (date < mayOf2017) {
+      customer.illogicalDate = 1;
+      flag = true;
+    }
+
     if (sampling == 'S1') {
-      // Không được nhỏ hơn ngày hiện tại (- 15)
-      if (date < moment(today).subtract(31, 'days')) {
+      // Không được nhỏ hơn ngày hiện tại - 30 ngày
+      if (date < moment(today).subtract(30, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
       }
@@ -509,7 +515,7 @@ function isIllogicalData(customer, row) {
       if (date >= moment(today).subtract(7, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
-      } else if (date < moment(today).subtract(45, 'days')) {
+      } else if (date < moment(today).subtract(30, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
       }
