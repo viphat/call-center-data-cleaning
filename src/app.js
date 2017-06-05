@@ -56,8 +56,6 @@ function resetAlertAndShowSpinner() {
 }
 
 document.getElementById('btnFullData').addEventListener('click', _ => {
-  outputDirectory = ['/Users/viphat/projects/dct/output'];
-
   if (outputDirectory === undefined || outputDirectory === null) {
     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
     return null;
