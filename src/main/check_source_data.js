@@ -323,13 +323,16 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyNameCol).value === null) {
+  if ( row.getCell(s2Col).value == 'S2' && (row.getCell(babyNameCol).value === null ||
+    row.getCell(babyNameCol).value === undefined || row.getCell(babyNameCol).value === '' )) {
     customer.missingBabyName = 1;
     customer.missingBabyInformation = 1;
     missingFields.push('Tên bé');
   }
 
-  if (row.getCell(s2Col).value == 'S2' && row.getCell(babyGenderCol).value === null) {
+  if (row.getCell(s2Col).value == 'S2' && (row.getCell(babyGenderCol).value === null ||
+    row.getCell(babyGenderCol).value === undefined || row.getCell(babyGenderCol).value === ''
+  )) {
     customer.missingBabyGender = 1;
     customer.missingBabyInformation = 1;
     missingFields.push('Giới tính của bé');
@@ -439,28 +442,16 @@ function isIllogicalData(customer, row) {
   }
 
   if (sampling === 'S1') {
-    if (babyName !== null && babyName !== undefined && babyName !== '') {
-      customer.illogicalSampling = 1;
-      flag = true;
-    }
-    if (babyGender !== null && babyGender !== undefined && babyGender !== '') {
+    if ( (babyName !== null && babyName !== undefined && babyName !== '') ||
+      (babyGender !== null && babyGender !== undefined && babyGender !== '')) {
       customer.illogicalSampling = 1;
       flag = true;
     }
   }
 
-  if (sampling === 'S2') {
-    if (babyName === null || babyName === undefined || babyName === '' || hasSpecialCharacter(babyName)) {
-      customer.illogicalSampling = 1;
-      flag = true;
-    }
-
-    if (babyGender === null || babyGender === undefined || babyGender === '') {
-      customer.illogicalSampling = 1;
-      flag = true;
-    }
-
-    if (babyGender !== 'Trai' && babyGender !== 'Gái' && babyGender !== 'Nam' && babyGender !== 'Nữ') {
+  if (sampling === 'S2' && babyGender !== null && babyGender !== undefined) {
+    if (hasSpecialCharacter(babyGender) ||
+      (babyGender !== 'Trai' && babyGender !== 'Gái' && babyGender !== 'Nam' && babyGender !== 'Nữ')) {
       customer.illogicalSampling = 1;
       flag = true;
     }
