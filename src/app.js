@@ -55,7 +55,44 @@ function resetAlertAndShowSpinner() {
   document.getElementById('spinner').style.display = 'inherit';
 }
 
+document.getElementById('btnFullBatchData').addEventListener('click', _ => {
+
+  batch = document.getElementById('txtBatch').value;
+
+  // batch = 'W2';
+  // outputDirectory = ['/Users/viphat/projects/dct/output'];
+
+  if (batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
+
+
+  if (outputDirectory === undefined || outputDirectory === null) {
+    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+    return null;
+  }
+
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
+
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  mainProcess.exportFullBatchData(batch, outputDirectory).then((response) => {
+    disableSpinner();
+    showSucceedBox('Data Exported. Please check output folder');
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+
+});
+
 document.getElementById('btnFullData').addEventListener('click', _ => {
+
   if (outputDirectory === undefined || outputDirectory === null) {
     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
     return null;

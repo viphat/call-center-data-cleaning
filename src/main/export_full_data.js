@@ -9,6 +9,61 @@ import { writeToFile } from './check_source_data';
 import { buildTemplate } from './build_excel_template';
 import { generateReport } from './generate_report';
 
+export const exportFullBatchData = (batch, outputDirectory) => {
+  if ( !_.endsWith(outputDirectory, '/') ) {
+    outputDirectory += '/';
+  }
+  outputDirectory += batch;
+  if (!fs.existsSync(outputDirectory)) {
+    fs.mkdirSync(outputDirectory);
+  }
+  if ( !_.endsWith(outputDirectory, '/') ) {
+    outputDirectory += '/';
+  }
+
+  return new Promise((resolve, reject) => {
+    let batchName = batch.split(' ').join('_');
+    let outputPath = outputDirectory + 'Total_' + batchName + '.xlsx';
+    let sheetName = { name: 'Total ' + batchName }
+    console.log('Loaded Full Data of batch ' + batch + ' into Excel File.');
+    buildTemplate(outputPath, sheetName.name).then((outputWorkbook) => {
+      getDataOfBatch(batch).then((customers) => {
+        let customerIndex = 0;
+        writeCustomersToFile(outputWorkbook, sheetName, customers, customerIndex).then((writtenResult) => {
+          outputWorkbook.xlsx.writeFile(outputPath);
+          resolve({success: true});
+        });
+      });
+    });
+  });
+}
+
+function getDataOfBatch(batch) {
+  return new Promise((resolve, reject) => {
+    db.all("SELECT customers.customer_id, customers.last_name, customers.first_name,\
+    customers.email, customers.district, customers.province, customers.phone,\
+    customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
+    customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
+    areas.name as area_name, \
+    customers.missingData, \
+    customers.missingMomName, \
+    customers.missingAddress,\
+    customers.missingPhone,\
+    customers.missingBabyInformation, \
+    customers.missingMomStatus, \
+    customers.illogicalData, customers.duplicatedPhone \
+    from customers JOIN hospitals ON \
+    hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
+    hospitals.province_id = provinces.province_id JOIN areas ON \
+    areas.area_id = provinces.area_id WHERE customers.batch = ?", batch, (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(rows);
+    });
+  });
+}
+
 export const exportFullData = (outputDirectory) => {
   if ( !_.endsWith(outputDirectory, '/') ) {
     outputDirectory += '/';
@@ -40,7 +95,7 @@ function buildFileForProvince(outputDirectory, provinces, provinceIndex) {
     checkProvinceHasData(province).then((hasData) => {
       if (hasData == true) {
         console.log('Đang load dữ liệu của ' + province.name);
-        let outputPath = outputDirectory + '/' + Diacritics.clean(province.name).split(' ').join('_') + '.xlsx';
+        let outputPath = outputDirectory + Diacritics.clean(province.name).split(' ').join('_') + '.xlsx';
         buildTemplate(outputPath, province.name).then((outputWorkbook) => {
           getDataOfProvince(province).then((customers) => {
             let customerIndex = 0;
