@@ -17,7 +17,8 @@ export const updateCustomer = (customer) => {
       illogicalData = $illogicalData, illogicalPhone = $illogicalPhone,\
       illogicalName = $illogicalName, illogicalSampling = $illogicalSampling,\
       illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
-      illogicalDate = $illogicalDate, duplicatedPhone = $duplicatedPhone,\
+      illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
+      duplicatedPhone = $duplicatedPhone,\
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2 \
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
@@ -44,6 +45,7 @@ export const updateCustomer = (customer) => {
       $illogicalEmail: customer.illogicalEmail || 0,
       $illogicalAddress: customer.illogicalAddress || 0,
       $illogicalDate: customer.illogicalDate || 0,
+      $illogicalOther: customer.illogicalOther || 0,
       $duplicatedPhone: customer.duplicatedPhone || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,

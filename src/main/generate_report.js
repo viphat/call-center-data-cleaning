@@ -115,43 +115,43 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       row.getCell(cellIndex).value = rowData.MissingPhone;
 
       row = worksheet.getRow(11);
-      row.getCell(cellIndex).value = rowData.MissngEmail;
-
-      row = worksheet.getRow(12);
-      row.getCell(cellIndex).value = rowData.MissingBabyName;
-
-      row = worksheet.getRow(13);
-      row.getCell(cellIndex).value = rowData.MissingBabyGender;
-
-      row = worksheet.getRow(14);
       row.getCell(cellIndex).value = rowData.MissingDate;
 
-      row = worksheet.getRow(15);
+      row = worksheet.getRow(12);
       row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
-      row = worksheet.getRow(16);
+      row = worksheet.getRow(13);
       row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
-      row = worksheet.getRow(17);
+      row = worksheet.getRow(14);
       row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
 
-      row = worksheet.getRow(18);
+      row = worksheet.getRow(15);
       row.getCell(cellIndex).value = rowData.DuplicatedPhoneS2;
 
-      row = worksheet.getRow(19);
+      row = worksheet.getRow(16);
       row.getCell(cellIndex).value = rowData.IllogicalData;
 
-      row = worksheet.getRow(20);
+      row = worksheet.getRow(17);
       row.getCell(cellIndex).value = rowData.IllogicalPhone;
 
-      row = worksheet.getRow(21);
+      row = worksheet.getRow(18);
       row.getCell(cellIndex).value = rowData.IllogicalDate;
 
-      row = worksheet.getRow(22);
+      row = worksheet.getRow(19);
+      row.getCell(cellIndex).value = rowData.IllogicalOther;
+
+      row = worksheet.getRow(20);
       row.getCell(cellIndex).value = rowData.TotalBase - rowData.HasError;
 
-      row = worksheet.getRow(23);
+      row = worksheet.getRow(21);
       row.getCell(cellIndex).value = rowData.MissngEmail;
+
+      row = worksheet.getRow(22);
+      row.getCell(cellIndex).value = rowData.MissingBabyName;
+
+      row = worksheet.getRow(23);
+      row.getCell(cellIndex).value = rowData.MissingBabyGender;
 
       resolve(workbook.xlsx.writeFile(reportFilePath));
     });
@@ -173,6 +173,7 @@ function fillData(batch, filterType) {
     coalesce(SUM(illogicalData),0) As IllogicalData, \
     coalesce(SUM(illogicalDate),0) As IllogicalDate, \
     coalesce(SUM(illogicalPhone),0) AS IllogicalPhone,\
+    coalesce(SUM(illogicalOther),0) AS IllogicalOther,\
     coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
     coalesce(SUM(duplicatedPhoneS2),0) AS DuplicatedPhoneS2 FROM customers'
 
@@ -320,30 +321,30 @@ export const generateReportTemplate = (batch, outputDirectory) => {
 
     worksheet.getCell('A5').value = batch;
 
-    // A6, A21
+    // A6, A20
     buildReportFirstColumnType3(worksheet, 6, 'Raw data received from K-C');
-    buildReportFirstColumnType3(worksheet, 22, 'Valid database (value) - base all');
+    buildReportFirstColumnType3(worksheet, 20, 'Valid database (value) - base all');
 
 
-    // A7, A15, A19, A23
+    // A7, A12, A16, A23
     buildReportFirstColumnType2(worksheet, 7, 'Data missing');
-    buildReportFirstColumnType2(worksheet, 15, 'Duplicated Data (Checking vs. total database since 1st week)');
-    buildReportFirstColumnType2(worksheet, 19, 'Illogical data');
-    buildReportFirstColumnType2(worksheet, 23, 'Email missing');
+    buildReportFirstColumnType2(worksheet, 12, 'Duplicated Data (Checking vs. total database since 1st week)');
+    buildReportFirstColumnType2(worksheet, 16, 'Illogical data');
+    buildReportFirstColumnType2(worksheet, 21, 'Email missing');
+    buildReportFirstColumnType2(worksheet, 22, 'Baby name missing');
+    buildReportFirstColumnType2(worksheet, 23, 'Baby gender missing');
 
-    // A8 - A14, A16 - A18, A21
+    // A8 - A11, A13 - A15, A17-Á9
     buildReportFirstColumnType1(worksheet, 8, "Mom's name");
     buildReportFirstColumnType1(worksheet, 9, "Address (District, Province, City)");
     buildReportFirstColumnType1(worksheet, 10, "Telephone number");
-    buildReportFirstColumnType1(worksheet, 11, "Email address");
-    buildReportFirstColumnType1(worksheet, 12, "Baby information (name)");
-    buildReportFirstColumnType1(worksheet, 13, "Baby information (gender)");
-    buildReportFirstColumnType1(worksheet, 14, "Date of pregnancy/Baby Delivery");
-    buildReportFirstColumnType1(worksheet, 16, "% duplication between S1 and S2");
-    buildReportFirstColumnType1(worksheet, 17, "% duplication within S1");
-    buildReportFirstColumnType1(worksheet, 18, "% duplication within S2");
-    buildReportFirstColumnType1(worksheet, 20, "Illogical phone number");
-    buildReportFirstColumnType1(worksheet, 21, "Illogical date of pregnancy/Baby Delivery");
+    buildReportFirstColumnType1(worksheet, 11, "Date of pregnancy/Baby Delivery");
+    buildReportFirstColumnType1(worksheet, 13, "% duplication between S1 and S2");
+    buildReportFirstColumnType1(worksheet, 14, "% duplication within S1");
+    buildReportFirstColumnType1(worksheet, 15, "% duplication within S2");
+    buildReportFirstColumnType1(worksheet, 17, "Illogical phone number");
+    buildReportFirstColumnType1(worksheet, 18, "Illogical Date of pregnancy/Baby Delivery");
+    buildReportFirstColumnType1(worksheet, 19, "Illogical Other");
 
     // Done 1st Col
 
@@ -507,7 +508,7 @@ function buildReportFirstColumnType3(worksheet, rowIndex, text) {
     bottom: { style: 'thin' }
   }
 
-  if (rowIndex == 22) {
+  if (rowIndex == 20) {
     row.getCell('A').font = {
       bold: true, size: 14, name: 'Calibri', family: 2,
       color: { theme: 0 }
@@ -521,7 +522,7 @@ function buildReportFirstColumnType3(worksheet, rowIndex, text) {
 
   row.getCell('A').alignment = { vertical: 'middle' };
 
-  if (rowIndex == 22) {
+  if (rowIndex == 20) {
     row.getCell('A').fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -544,7 +545,7 @@ function buildReportFirstColumnType2(worksheet, rowIndex, text) {
     bottom: { style: 'thin' }
   }
 
-  if (rowIndex === 23) {
+  if (rowIndex === 21 || rowIndex === 22 || rowIndex === 23) {
     row.getCell('A').font = {
       bold: true, size: 14, name: 'Calibri', family: 2
     }
@@ -557,7 +558,7 @@ function buildReportFirstColumnType2(worksheet, rowIndex, text) {
 
   row.getCell('A').alignment = { vertical: 'middle' };
 
-  if (rowIndex !== 23) {
+  if (rowIndex !== 21 && rowIndex !== 22 && rowIndex !== 23) {
     row.getCell('A').fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -593,11 +594,11 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
   let bold = false;
   let color = { argb: 'FF000000' };
 
-  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 15 || rowIndex == 19 || rowIndex == 22 || rowIndex == 23) {
+  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20 || rowIndex == 21 || rowIndex == 22 || rowIndex == 23) {
     bold = true;
   }
 
-  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 19) {
+  if (rowIndex == 7 || rowIndex == 12 || rowIndex == 16) {
     row.getCell(cellIndex).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -606,7 +607,7 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
     };
   }
 
-  if (rowIndex == 22) {
+  if (rowIndex == 20) {
     row.getCell(cellIndex).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -619,7 +620,7 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
     color = { argb: 'FFFF0000' };
   }
 
-  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 19 || rowIndex == 22) {
+  if (rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20) {
     color = { theme: 0 };
   }
 

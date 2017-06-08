@@ -56,9 +56,7 @@ function resetAlertAndShowSpinner() {
 }
 
 document.getElementById('btnFullBatchData').addEventListener('click', _ => {
-
   batch = document.getElementById('txtBatch').value;
-
   // batch = 'W2';
   // outputDirectory = ['/Users/viphat/projects/dct/output'];
 
@@ -118,7 +116,7 @@ document.getElementById('btnFullData').addEventListener('click', _ => {
 
 document.getElementById('btnReport').addEventListener('click', _ => {
   batch = document.getElementById('txtBatch').value;
-  // batch = 'W1';
+  // batch = 'W2';
   // outputDirectory = ['/Users/viphat/projects/dct/output'];
 
   if (batch === undefined || batch === null || batch === '') {
@@ -177,10 +175,10 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
 });
 
 document.getElementById('btnProcess').addEventListener('click', _ => {
-  // inputFile = ['/Users/viphat/projects/dct/data-sample.zip'];
+  // inputFile = ['/Users/viphat/projects/dct/W2.zip'];
   // outputDirectory = ['/Users/viphat/projects/dct/output'];
   batch = document.getElementById('txtBatch').value;
-  // batch = 'W1';
+  // batch = 'W2';
 
   if (outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');

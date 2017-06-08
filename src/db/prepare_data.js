@@ -40,6 +40,7 @@ function createTableCustomers() {
   illogicalPhone INTEGER DEFAULT 0, illogicalName INTEGER DEFAULT 0,\
   illogicalSampling INTEGER DEFAULT 0, illogicalEmail INTEGER DEFAULT 0,\
   illogicalAddress INTEGER DEFAULT 0, illogicalDate INTEGER DEFAULT 0,\
+  illogicalOther INTEGER DEFAULT 0, \
   duplicatedPhone INTEGER DEFAULT 0,\
   duplicatedPhoneS1 DEFAULT 0, duplicatedPhoneS2 INTEGER DEFAULT 0,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')

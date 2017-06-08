@@ -152,7 +152,10 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           customer.illogicalData = 1;
         }
         updateCustomer(customer);
-      } else if ( customer.missingEmail == 1) {
+      } else if ( customer.missingEmail == 1 ||
+          customer.missingBabyName == 1 || customer.missingBabyGender == 1 ||
+          customer.illogicalEmail == 1
+        ) {
         updateCustomer(customer);
       }
       writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
@@ -296,7 +299,6 @@ function isMissingData(customer, row) {
   if (row.getCell(emailCol).value === null) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
-    customer.missingData = 1;
     customer.missingEmail = 1;
   }
 
@@ -323,19 +325,28 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  if ( row.getCell(s2Col).value == 'S2' && (row.getCell(babyNameCol).value === null ||
-    row.getCell(babyNameCol).value === undefined || row.getCell(babyNameCol).value === '' )) {
-    customer.missingBabyName = 1;
-    customer.missingBabyInformation = 1;
-    missingFields.push('Tên bé');
+  var babyName = row.getCell(babyNameCol).value;
+  var babyGender = row.getCell(babyGenderCol).value;
+
+  if (babyName !== null && babyName !== undefined) {
+    babyName = babyName.replace(/\s/g, '');
   }
 
-  if (row.getCell(s2Col).value == 'S2' && (row.getCell(babyGenderCol).value === null ||
-    row.getCell(babyGenderCol).value === undefined || row.getCell(babyGenderCol).value === ''
+  if (babyGender !== null && babyGender !== undefined) {
+    babyGender = babyGender.replace(/\s/g, '');
+  }
+
+  if ( row.getCell(s2Col).value == 'S2' && (babyName === null ||
+    babyName === undefined || babyName === '' )) {
+    customer.missingBabyName = 1;
+    customer.missingBabyInformation = 1;
+  }
+
+  if (row.getCell(s2Col).value == 'S2' && (babyGender === null ||
+     babyGender === undefined || babyGender === ''
   )) {
     customer.missingBabyGender = 1;
     customer.missingBabyInformation = 1;
-    missingFields.push('Giới tính của bé');
   }
 
   if (row.getCell(dayCol).value === null ||
@@ -441,6 +452,14 @@ function isIllogicalData(customer, row) {
     }
   }
 
+  if (babyName !== null && babyName !== undefined) {
+    babyName = babyName.replace(/\s/g, '')
+  }
+
+  if (babyGender !== null && babyGender !== undefined) {
+    babyGender = babyGender.replace(/\s/g, '')
+  }
+
   if (sampling === 'S1') {
     if ( (babyName !== null && babyName !== undefined && babyName !== '') ||
       (babyGender !== null && babyGender !== undefined && babyGender !== '')) {
@@ -513,6 +532,11 @@ function isIllogicalData(customer, row) {
     }
 
   }
+
+  if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
+    customer.illogicalOther = 1;
+  }
+
   return flag;
 }
 
