@@ -141,7 +141,7 @@ function readNextExcelFile(excelFiles, fileIndex) {
           hospitalName = _.replace(hospitalName, redundantString, '');
         })
         hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
-        checkHospitalNameError(hospitalName).then((res) => {
+        checkHospitalNameError(excelFile, hospitalName).then((res) => {
           if (res == true) {
             if (fileIndex == excelFiles.length) {
               return resolve(null);
@@ -163,7 +163,7 @@ function readNextExcelFile(excelFiles, fileIndex) {
   });
 }
 
-function checkHospitalNameError(hospitalName) {
+function checkHospitalNameError(excelFile, hospitalName) {
   return new Promise((resolve, reject) => {
     if (hospitalName.length < 3) {
       hasErorInHospitalName.push(excelFile);
