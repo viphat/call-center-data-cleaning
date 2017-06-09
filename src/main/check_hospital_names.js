@@ -13,6 +13,9 @@ let fileIndex = 0;
 
 export const writeReportToExcelFile = (extractFolder, checkResult) => {
   let resultFilePath = extractFolder + 'invalidCheckingResult.xlsx';
+  hasErorInHospitalName = [];
+  notFoundHospitalName = [];
+  fileTooBig = [];
   return new Promise((resolve, reject) => {
     writeUnfoundList(resultFilePath, checkResult).then((response) => {
       return writeHospitalList(resultFilePath, checkResult);

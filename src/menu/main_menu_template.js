@@ -2,6 +2,7 @@ import { setupDatabase } from '../db/prepare_data';
 import { mainWindow } from '../background';
 
 const electron = require('electron');
+const dialog = electron.dialog;
 const ipcRenderer = electron.ipcRenderer;
 
 export const mainMenuTemplate = {
@@ -10,7 +11,15 @@ export const mainMenuTemplate = {
     {
       label: 'Setup Database',
       click: () => {
-        setupDatabase();
+        var message = 'Thao tác này sẽ khởi tạo và xóa hoàn toàn dữ liệu từ trước đến nay. Bạn có chắc không?';
+        dialog.showMessageBox({
+          message: message,
+          buttons: ['OK', 'Cancel']
+        }, (response) => {
+          if (response === 0) {
+            setupDatabase();
+          }
+        });
       }
     },
     {

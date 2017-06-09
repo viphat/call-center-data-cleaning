@@ -216,7 +216,7 @@ function insertTableMatches() {
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 98, 'Bv Huyện Phù Cừ');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 99, 'Bv Huyện Kim Động');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 100, 'Bv Huyện Ân Thi');
-  db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 101, 'Bv Huyện Bình Sơn');
+  db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 101, 'Bv Huyện Bình Xuyên');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 102, 'Bv Huyện Phúc Yên');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 103, 'Bv Huyện Yên lạc');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 104, 'Bv Huyện Lạng giang');
@@ -241,6 +241,8 @@ function insertTableMatches() {
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 123, 'TT Y Tế Huyện Thăng Bình');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 124, 'Bv Huyện Tiên Phước');
   db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 125, 'TT Y Tế Huyện Hiệp Đức');
+  db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 126, 'Đa Khoa Thống Nhất');
+  db.run('INSERT INTO matches(hospital_id, name) VALUES(?, ?);', 127, 'Trung tâm chăm sóc sức khỏe sinh sản An Giang');
 }
 
 function insertTableHospitals() {
@@ -346,7 +348,7 @@ function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 98, 'Bv Huyện Phù Cừ', 38);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 99, 'Bv Huyện Kim Động', 38);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 100, 'Bv Huyện Ân Thi', 38);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 101, 'Bv Huyện Bình Sơn', 39);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 101, 'Bv Huyện Bình Xuyên', 39);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 102, 'Bv Huyện Phúc Yên', 39);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 103, 'Bv Huyện Yên lạc', 39);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 104, 'Bv Huyện Lạng giang', 40);
@@ -371,4 +373,6 @@ function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 123, 'TT Y Tế Huyện Thăng Bình', 45);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 124, 'Bv Huyện Tiên Phước', 45);
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 125, 'TT Y Tế Huyện Hiệp Đức', 45);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 126, 'Đa Khoa Thống Nhất', 24);
+	db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?,?,?);', 127, 'Trung tâm chăm sóc sức khỏe sinh sản An Giang', 28);
 }

@@ -80,7 +80,7 @@ export const exportFullData = (outputDirectory) => {
       let provinceIndex = 0;
       buildFileForProvince(outputDirectory, provinces, provinceIndex).then((res) =>{
         // Generate Full Report
-        resolve(generateReport('', outputDirectory))
+        resolve(generateReport('', outputDirectory));
       });
     })
   });
@@ -121,9 +121,7 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
 
     let sheetName = province.name + ' - ' + 'Valid';
 
-    if (customer.illogicalData == 1 || customer.missingMomName == 1 ||
-      customer.missingAddress == 1 || customer.missingPhone == 1 ||
-      customer.missingBabyInformation == 1 || customer.missingMomStatus == 1) {
+    if (customer.illogicalData == 1 || customer.missingData == 1) {
       sheetName = province.name + ' - ' + 'Invalid';
     } else if (customer.duplicatedPhone == 1) {
       sheetName = province.name + ' - ' + 'Duplication';
