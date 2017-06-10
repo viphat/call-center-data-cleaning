@@ -522,10 +522,11 @@ function isIllogicalData(customer, row) {
 
     if (sampling == 'S2') {
       // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
-      if (date >= moment(today).subtract(7, 'days')) {
+      if (date >= today) {
         customer.illogicalDate = 1;
         flag = true;
-      } else if (date < moment(today).subtract(30, 'days')) {
+      }
+      if (date < moment(today).subtract(30, 'days')) {
         customer.illogicalDate = 1;
         flag = true;
       }

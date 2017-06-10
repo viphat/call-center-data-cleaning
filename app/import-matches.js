@@ -11,8 +11,6 @@ var fsJetpack = _interopDefault(require('fs-jetpack'));
 const mainProcess = electron.remote.require('./background');
 const dialog = electron.remote.dialog;
 const electron$1 = require('electron');
-// Holy crap! This is browser window with HTML and stuff, but I can read
-// here files form disk like it's node.js! Welcome to Electron world :)
 let inputFile;
 let isProcessing;
 
