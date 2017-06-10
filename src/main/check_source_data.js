@@ -514,10 +514,10 @@ function isIllogicalData(customer, row) {
 
     if (sampling == 'S1') {
       // Không được nhỏ hơn ngày hiện tại - 30 ngày
-      if (date < moment(today).subtract(30, 'days')) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
+      // if (date < moment(today).subtract(30, 'days')) {
+      //   customer.illogicalDate = 1;
+      //   flag = true;
+      // }
     }
 
     if (sampling == 'S2') {
@@ -526,10 +526,10 @@ function isIllogicalData(customer, row) {
         customer.illogicalDate = 1;
         flag = true;
       }
-      if (date < moment(today).subtract(30, 'days')) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
+      // if (date < moment(today).subtract(30, 'days')) {
+      //   customer.illogicalDate = 1;
+      //   flag = true;
+      // }
     }
 
   }
