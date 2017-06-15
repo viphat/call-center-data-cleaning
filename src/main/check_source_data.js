@@ -340,7 +340,7 @@ function isMissingData(customer, row) {
     babyGender = babyGender.replace(/\s/g, '');
   }
 
-  if ( row.getCell(s2Col).value == 'S2' && (babyName === null ||
+  if (row.getCell(s2Col).value == 'S2' && (babyName === null ||
     babyName === undefined || babyName === '' )) {
     customer.missingBabyName = 1;
     customer.missingBabyInformation = 1;
@@ -481,80 +481,72 @@ function isIllogicalData(customer, row) {
       flag = true;
     }
   }
-  // day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined
 
+  if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
+    customer.illogicalOther = 1;
+  }
+
+  // day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined
   if (date !== null && date !== undefined) {
     customer.day = date;
     customer.month = null;
     customer.year = null;
-
     let day, month, year;
-    let dateArr = date.split('/');
-    if (dateArr.length === 3) {
-      month = dateArr[0];
-      day = dateArr[1];
-      year = dateArr[2];
+    date = new Date(date);
+
+    if (date == 'Invalid Date') {
+      let dateArr = customer.day.split('/');
+      if (dateArr.length === 3) {
+        day = dateArr[0];
+        month = dateArr[1];
+        year = dateArr[2];
+        date = new Date(month + '/' + day + '/' + year);
+        if (date == 'Invalid Date') {
+          customer.illogicalDate = 1;
+          return flag = true;
+        }
+       }
+    } else {
+      day = date.getDay();
+      month = date.getMonth() + 1;
+      year = date.getFullYear();
     }
 
-    date = new Date(month + '/' + day + '/' + year);
+    customer.day = day;
+    customer.month = month;
+    customer.year = year;
 
-    if (date === 'Invalid Date') {
+    if (parseInt(month) == 2 && parseInt(day) > 29) {
       customer.illogicalDate = 1;
       flag = true;
-    } else {
-      customer.day = day;
-      customer.month = month;
-      customer.year = year;
-
-      if (parseInt(month) == 2 && parseInt(day) > 29) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
-
-      if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
-
-      var today = new Date();
-      var currentYear = today.getFullYear();
-
-      if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
-
-      var mayOf2017 = new Date('2017-05-01');
-      if (date < mayOf2017) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
-
-      // if (sampling == 'S1') {
-      //   // Không được nhỏ hơn ngày hiện tại - 30 ngày
-      //   if (date < moment(today).subtract(30, 'days')) {
-      //     customer.illogicalDate = 1;
-      //     flag = true;
-      //   }
-      // }
-
-      if (sampling == 'S2') {
-        // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
-        if (date >= today) {
-          customer.illogicalDate = 1;
-          flag = true;
-        }
-        // if (date < moment(today).subtract(30, 'days')) {
-        //   customer.illogicalDate = 1;
-        //   flag = true;
-        // }
-      }
-
     }
-  }
 
-  if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
-    customer.illogicalOther = 1;
+    if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
+      customer.illogicalDate = 1;
+      flag = true;
+    }
+
+    var today = new Date();
+    var currentYear = today.getFullYear();
+
+    if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
+      customer.illogicalDate = 1;
+      flag = true;
+    }
+
+    var mayOf2017 = new Date('2017-05-01');
+    if (date < mayOf2017) {
+      customer.illogicalDate = 1;
+      flag = true;
+    }
+
+    if (sampling == 'S2') {
+      // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
+      if (date >= today) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+    }
   }
 
   return flag;
