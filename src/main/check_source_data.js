@@ -22,11 +22,14 @@ const provinceCol = 6;
 const phoneCol = 7;
 const babyNameCol = 8;
 const babyGenderCol = 9;
-const dayCol = 10;
-const monthCol = 11;
-const yearCol = 12;
-const s1Col = 13;
-const s2Col = 14;
+const dateCol = 10;
+// const dayCol = 10;
+// const monthCol = 11;
+// const yearCol = 12;
+// const s1Col = 13;
+// const s2Col = 14;
+const s1Col = 11;
+const s2Col = 12;
 
 const hospitalNameCell = 'I2';
 const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
@@ -98,9 +101,9 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       phone: row.getCell(phoneCol).value,
       babyName: row.getCell(babyNameCol).value,
       babyGender: row.getCell(babyGenderCol).value,
-      day: row.getCell(dayCol).value,
-      month: row.getCell(monthCol).value,
-      year: row.getCell(yearCol).value,
+      // day: row.getCell(dayCol).value,
+      // month: row.getCell(monthCol).value,
+      // year: row.getCell(yearCol).value,
       s1: row.getCell(s1Col).value,
       s2: row.getCell(s2Col).value,
       hospital_id: hospital.hospital_id,
@@ -268,10 +271,11 @@ function isEmptyRow(row) {
       row.getCell(districtCol).value === null      &&
       row.getCell(provinceCol).value === null      &&
       row.getCell(phoneCol).value === null         &&
-      row.getCell(dayCol).value === null           &&
-      row.getCell(monthCol).value === null         &&
-      row.getCell(yearCol).value === null
+      row.getCell(dateCol).value === null
     ) {
+    // row.getCell(dayCol).value === null           &&
+    // row.getCell(monthCol).value === null         &&
+    // row.getCell(yearCol).value === null
     // Empty Row
     return true;
   }
@@ -349,10 +353,11 @@ function isMissingData(customer, row) {
     customer.missingBabyInformation = 1;
   }
 
-  if (row.getCell(dayCol).value === null ||
-      row.getCell(monthCol).value === null ||
-      row.getCell(yearCol).value === null
-    ) {
+  // row.getCell(dayCol).value === null ||
+  // row.getCell(monthCol).value === null ||
+  // row.getCell(yearCol).value === null
+
+  if (row.getCell(dateCol).value === null) {
     customer.missingDate = 1;
     customer.missingMomStatus = customer.missingMomStatus || 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
@@ -375,9 +380,10 @@ function isIllogicalData(customer, row) {
   let province = row.getCell(provinceCol).value;
   let babyName = row.getCell(babyNameCol).value;
   let babyGender = row.getCell(babyGenderCol).value;
-  let day = row.getCell(dayCol).value;
-  let month = row.getCell(monthCol).value;
-  let year = row.getCell(yearCol).value;
+  let date = row.getCell(dateCol).value;
+  // let day = row.getCell(dayCol).value;
+  // let month = row.getCell(monthCol).value;
+  // let year = row.getCell(yearCol).value;
 
   let sampling = '';
   let flag = false;
@@ -475,63 +481,76 @@ function isIllogicalData(customer, row) {
       flag = true;
     }
   }
+  // day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined
 
-  if (day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined) {
-    day = '' + day;
-    month = '' + month;
-    year = '' + year;
-    let date = new Date(month + '/' + day + '/' + year);
+  if (date !== null && date !== undefined) {
+    customer.day = date;
+    customer.month = null;
+    customer.year = null;
+
+    let day, month, year;
+    let dateArr = date.split('/');
+    if (dateArr.length === 3) {
+      month = dateArr[0];
+      day = dateArr[1];
+      year = dateArr[2];
+    }
+
+    date = new Date(month + '/' + day + '/' + year);
 
     if (date === 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
-    }
+    } else {
+      customer.day = day;
+      customer.month = month;
+      customer.year = year;
 
-    if (parseInt(month) == 2 && parseInt(day) > 29) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
-
-    if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
-
-    var today = new Date();
-    var currentMonth = today.getMonth();
-    var currentYear = today.getFullYear();
-
-    if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
-
-    var mayOf2017 = new Date('2017-05-01');
-    if (date < mayOf2017) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
-
-    if (sampling == 'S1') {
-      // Không được nhỏ hơn ngày hiện tại - 30 ngày
-      // if (date < moment(today).subtract(30, 'days')) {
-      //   customer.illogicalDate = 1;
-      //   flag = true;
-      // }
-    }
-
-    if (sampling == 'S2') {
-      // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
-      if (date >= today) {
+      if (parseInt(month) == 2 && parseInt(day) > 29) {
         customer.illogicalDate = 1;
         flag = true;
       }
-      // if (date < moment(today).subtract(30, 'days')) {
-      //   customer.illogicalDate = 1;
-      //   flag = true;
-      // }
-    }
 
+      if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+
+      var today = new Date();
+      var currentYear = today.getFullYear();
+
+      if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+
+      var mayOf2017 = new Date('2017-05-01');
+      if (date < mayOf2017) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
+
+      // if (sampling == 'S1') {
+      //   // Không được nhỏ hơn ngày hiện tại - 30 ngày
+      //   if (date < moment(today).subtract(30, 'days')) {
+      //     customer.illogicalDate = 1;
+      //     flag = true;
+      //   }
+      // }
+
+      if (sampling == 'S2') {
+        // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
+        if (date >= today) {
+          customer.illogicalDate = 1;
+          flag = true;
+        }
+        // if (date < moment(today).subtract(30, 'days')) {
+        //   customer.illogicalDate = 1;
+        //   flag = true;
+        // }
+      }
+
+    }
   }
 
   if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
