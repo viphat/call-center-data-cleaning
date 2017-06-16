@@ -492,25 +492,39 @@ function isIllogicalData(customer, row) {
     customer.month = null;
     customer.year = null;
     let day, month, year;
-    date = new Date(date);
+    console.log(customer.phone)
+    console.log(date);
 
-    if (date == 'Invalid Date') {
-      let dateArr = customer.day.split('/');
-      if (dateArr.length === 3) {
-        day = dateArr[0];
-        month = dateArr[1];
-        year = dateArr[2];
-        date = new Date(month + '/' + day + '/' + year);
-        if (date == 'Invalid Date') {
-          customer.illogicalDate = 1;
-          return flag = true;
-        }
-       }
-    } else {
-      day = date.getDay();
+    if (date instanceof Date) {
+      console.log('Instance Of Date');
+      day = date.getDate();
       month = date.getMonth() + 1;
       year = date.getFullYear();
+      console.log(day);
+      console.log(month);
+    } else {
+      date = new Date(date);
+      if (date == 'Invalid Date') {
+        let dateArr = customer.day.split('/');
+        console.log(dateArr);
+        if (dateArr.length === 3) {
+          console.log(dateArr[0]);
+          console.log(dateArr[1]);
+          day = dateArr[0];
+          month = dateArr[1];
+          year = dateArr[2];
+          date = new Date(year + '-' + month + '-' + day);
+          if (date == 'Invalid Date') {
+            customer.illogicalDate = 1;
+            return flag = true;
+          }
+        }
+      }
     }
+
+    day = date.getDate();
+    month = date.getMonth() + 1;
+    year = date.getFullYear();
 
     customer.day = day;
     customer.month = month;

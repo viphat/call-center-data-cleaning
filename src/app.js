@@ -90,7 +90,6 @@ document.getElementById('btnFullBatchData').addEventListener('click', _ => {
 });
 
 document.getElementById('btnFullData').addEventListener('click', _ => {
-
   if (outputDirectory === undefined || outputDirectory === null) {
     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
     return null;
@@ -175,10 +174,10 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
 });
 
 document.getElementById('btnProcess').addEventListener('click', _ => {
-  // inputFile = ['/Users/viphat/projects/dct/W2.zip'];
+  // inputFile = ['/Users/viphat/projects/dct/W4-TEST.zip'];
   // outputDirectory = ['/Users/viphat/projects/dct/output'];
   batch = document.getElementById('txtBatch').value;
-  // batch = 'W2';
+  // batch = 'W3';
 
   if (outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
