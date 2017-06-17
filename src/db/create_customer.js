@@ -6,6 +6,7 @@ export const updateCustomer = (customer) => {
       return reject('failed');
     }
     db.run('UPDATE customers SET\
+      day = $day, month = $month, year = $year,\
       hasError = $hasError, missingData = $missingData,\
       missingFirstName = $missingFirstName, missingLastName = $missingLastName, missingMomName = $missingMomName,\
       missingDistrict = $missingDistrict, missingProvince = $missingProvince,\
@@ -22,6 +23,9 @@ export const updateCustomer = (customer) => {
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2 \
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
+      $day: customer.day,
+      $month: customer.month,
+      $year: customer.year,
       $hasError: customer.hasError || 0,
       $missingData: customer.missingData || 0,
       $missingFirstName: customer.missingFirstName || 0,
@@ -139,7 +143,15 @@ function isPhoneDuplicate(customer) {
       return resolve(customer);
     }
 
-    db.get('SELECT customer_id FROM customers WHERE customers.phone = ? AND customers.customer_id != ?',
+    db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
+    customers.email, customers.district, customers.province, customers.phone,\
+    customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
+    customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
+    areas.name as area_name \
+    from customers JOIN hospitals ON \
+    hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
+    hospitals.province_id = provinces.province_id JOIN areas ON \
+    areas.area_id = provinces.area_id WHERE customers.phone = ? AND customers.customer_id != ?',
       customer.phone, customer.customer_id, (err, res) => {
       if (err) {
         return reject(err);
@@ -148,6 +160,7 @@ function isPhoneDuplicate(customer) {
       if (res === undefined || res === null) {
         resolve(customer);
       } else {
+        customer.duplicatedWith = res;
         customer.isPhoneDuplicated = true;
         customer.duplicatedPhone = 1;
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {

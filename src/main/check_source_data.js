@@ -120,6 +120,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       let missingData = isMissingData(customer, row);
       let illogicalData = isIllogicalData(customer, row);
       let duplicateData = customer.isPhoneDuplicated;
+
       let rowData = [
         customer.customer_id,
         customer.lastName,
@@ -139,12 +140,14 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         hospital.area_channel,
         hospital.area_name
       ];
+
       let outputSheetName = province_name + ' - ' + 'Valid';
       if (missingData || illogicalData) {
         outputSheetName = province_name + ' - ' + 'Invalid';
       } else if (duplicateData === true) {
         outputSheetName = province_name + ' - ' + 'Duplication';
       }
+
       if (duplicateData == true || missingData == true || illogicalData == true) {
         // Update Database
         customer.hasError = 1;
@@ -154,16 +157,41 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         if (illogicalData) {
           customer.illogicalData = 1;
         }
-        updateCustomer(customer);
-      } else if ( customer.missingEmail == 1 ||
-          customer.missingBabyName == 1 || customer.missingBabyGender == 1 ||
-          customer.illogicalEmail == 1
-        ) {
-        updateCustomer(customer);
       }
-      writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-        resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
-      });
+
+      updateCustomer(customer);
+
+      if (duplicateData == true) {
+        var duplicatedWith = customer.duplicatedWith;
+        var duplicatedRow = [
+          duplicatedWith.customer_id,
+          duplicatedWith.last_name,
+          duplicatedWith.first_name,
+          duplicatedWith.email,
+          duplicatedWith.district,
+          duplicatedWith.province,
+          duplicatedWith.phone,
+          duplicatedWith.baby_name,
+          duplicatedWith.baby_gender,
+          duplicatedWith.day,
+          duplicatedWith.month,
+          duplicatedWith.year,
+          duplicatedWith.s1,
+          duplicatedWith.s2,
+          duplicatedWith.hospital_name,
+          duplicatedWith.area_channel,
+          duplicatedWith.area_name
+        ]
+        writeToFile(outputWorkbook, outputSheetName, province_name, duplicatedRow).then((workbook) => {
+          writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
+            resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+          });
+        });
+      } else {
+        writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
+          resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+        });
+      }
     });
   });
 }
