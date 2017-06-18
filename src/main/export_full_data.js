@@ -42,14 +42,13 @@ function getDataOfBatch(batch) {
   return new Promise((resolve, reject) => {
     db.all("SELECT customers.customer_id, customers.last_name, customers.first_name,\
     customers.email, customers.district, customers.province, customers.phone,\
-    customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
+    customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
     areas.name as area_name, \
     customers.missingData, \
     customers.missingMomName, \
     customers.missingAddress,\
     customers.missingPhone,\
-    customers.missingBabyInformation, \
     customers.missingMomStatus, \
     customers.illogicalData, customers.duplicatedPhone \
     from customers JOIN hospitals ON \
@@ -135,8 +134,6 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
       customer.district,
       customer.province,
       customer.phone,
-      customer.baby_name,
-      customer.baby_gender,
       customer.day,
       customer.month,
       customer.year,
@@ -157,14 +154,13 @@ function getDataOfProvince(province) {
   return new Promise((resolve, reject) => {
     db.all("SELECT customers.customer_id, customers.last_name, customers.first_name,\
     customers.email, customers.district, customers.province, customers.phone,\
-    customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
+    customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
     areas.name as area_name, \
     customers.missingData, \
     customers.missingMomName, \
     customers.missingAddress,\
     customers.missingPhone,\
-    customers.missingBabyInformation, \
     customers.missingMomStatus, \
     customers.illogicalData, customers.duplicatedPhone \
     from customers JOIN hospitals ON \

@@ -20,14 +20,7 @@ const emailCol = 4;
 const districtCol = 5;
 const provinceCol = 6;
 const phoneCol = 7;
-const babyNameCol = 8;
-const babyGenderCol = 9;
 const dateCol = 10;
-// const dayCol = 10;
-// const monthCol = 11;
-// const yearCol = 12;
-// const s1Col = 13;
-// const s2Col = 14;
 const s1Col = 11;
 const s2Col = 12;
 
@@ -48,6 +41,52 @@ export const validateSourceData = (excelFiles, batch, outputDirectory) => {
   });
 }
 
+function detectDatePattern(workbook, excelFile){
+  // After study some of input files, I assume that we have 4 common pattern:
+  // Date Value - mm/dd/yyyy
+  // Date Value - dd/mm/yyyy
+  // String Value - dd/mm/yyyy
+  // String Value - mm/dd/yyyy
+  return new Promise((resolve, reject)=>{
+    workbook.xlsx.readFile(excelFile).then(() =>{
+      let worksheet = workbook.getWorksheet(1);
+      let rowNumber = dataBeginRow;
+      let row = worksheet.getRow(rowNumber);
+      while (!isEmptyRow(row)) {
+        var mayOf2017 = new Date('2017-05-01');
+        var originDateValue = row.getCell(dateCol).value;
+        if (originDateValue instanceof Date) {
+          // It's OK.
+          if (originDateValue < mayOf2017) {
+            // Maybe not
+            resolve('dd/mm/yyyy');
+          }
+        } else {
+          // It's a String
+          let date = new Date(originDateValue);
+          if (date == 'Invalid Date') {
+            let dateArr = originDateValue.split('/');
+            if (dateArr.length === 3) {
+              let day = dateArr[0];
+              let month = dateArr[1];
+              let year = dateArr[2];
+              date = new Date(year + '-' + month + '-' + day);
+              if (date == 'Invalid Date') {
+
+              } else {
+                resolve('dd/mm/yyyy');
+              }
+            }
+          }
+        }
+        rowNumber += 1;
+        row = worksheet.getRow(rowNumber);
+      }
+      resolve('mm/dd/yyyy');
+    });
+  });
+}
+
 function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
   return new Promise((resolve, reject) => {
     let excelFile = excelFiles[fileIndex];
@@ -56,36 +95,40 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
     }
     let workbook = new Excel.Workbook();
     console.log('Read: ' + excelFile);
-    workbook.xlsx.readFile(excelFile).then(() => {
-      let worksheet = workbook.getWorksheet(1);
-      // Read Tên Bệnh Viện
-      let hospitalName = worksheet.getCell(hospitalNameCell).value;
-      _.each(redundantStrings, (redundantString) => {
-        hospitalName = _.replace(hospitalName, redundantString, '');
-      })
-      hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
-      let province_name;
-      let rowNumber;
-      let outputPath;
-      let hospital;
-      getHospital(hospitalName).then((obj) => {
-        hospital = obj;
-        province_name = hospital.province_name;
-        rowNumber = dataBeginRow;
-        outputPath = outputDirectory + '/' + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
-        return buildTemplate(outputPath, province_name);
-      }).then( (outputWorkbook) => {
-        return readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber);
-      }).then( (outputWorkbook) => {
-        outputWorkbook.xlsx.writeFile(outputPath).then(() =>{
-          resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex + 1));
+    console.log('Detecting Date Pattern of the file');
+    detectDatePattern(workbook, excelFile).then((datePattern)=>{
+      console.log(datePattern);
+      workbook.xlsx.readFile(excelFile).then(() => {
+        let worksheet = workbook.getWorksheet(1);
+        // Read Tên Bệnh Viện
+        let hospitalName = worksheet.getCell(hospitalNameCell).value;
+        _.each(redundantStrings, (redundantString) => {
+          hospitalName = _.replace(hospitalName, redundantString, '');
         })
+        hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
+        let province_name;
+        let rowNumber;
+        let outputPath;
+        let hospital;
+        getHospital(hospitalName).then((obj) => {
+          hospital = obj;
+          province_name = hospital.province_name;
+          rowNumber = dataBeginRow;
+          outputPath = outputDirectory + '/' + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
+          return buildTemplate(outputPath, province_name);
+        }).then( (outputWorkbook) => {
+          return readEachRow(outputWorkbook, batch, worksheet, datePattern, hospital, province_name, rowNumber);
+        }).then( (outputWorkbook) => {
+          outputWorkbook.xlsx.writeFile(outputPath).then(() =>{
+            resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex + 1));
+          })
+        });
       });
     });
   });
 }
 
-function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber) {
+function readEachRow(outputWorkbook, batch, worksheet, datePattern, hospital, province_name, rowNumber) {
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
     console.log('Row: ' + rowNumber);
@@ -99,11 +142,6 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       district: row.getCell(districtCol).value,
       province: row.getCell(provinceCol).value,
       phone: row.getCell(phoneCol).value,
-      babyName: row.getCell(babyNameCol).value,
-      babyGender: row.getCell(babyGenderCol).value,
-      // day: row.getCell(dayCol).value,
-      // month: row.getCell(monthCol).value,
-      // year: row.getCell(yearCol).value,
       s1: row.getCell(s1Col).value,
       s2: row.getCell(s2Col).value,
       hospital_id: hospital.hospital_id,
@@ -113,12 +151,12 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
     createCustomer(customer).then((response) => {
 
       if (response.alreadyImported === true) {
-        return resolve(readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber + 1));
+        return resolve(readEachRow(outputWorkbook, batch, worksheet, datePattern, hospital, province_name, rowNumber + 1));
       }
 
       customer = response;
       let missingData = isMissingData(customer, row);
-      let illogicalData = isIllogicalData(customer, row);
+      let illogicalData = isIllogicalData(customer, row, datePattern);
       let duplicateData = customer.isPhoneDuplicated;
 
       let rowData = [
@@ -129,8 +167,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         customer.district,
         customer.province,
         row.getCell(phoneCol).value,
-        customer.babyName,
-        customer.babyGender,
+        // '',  // Placeholder for babyName
+        // '',  // Placeholder for babyGender
         customer.day,
         customer.month,
         customer.year,
@@ -171,8 +209,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           duplicatedWith.district,
           duplicatedWith.province,
           duplicatedWith.phone,
-          duplicatedWith.baby_name,
-          duplicatedWith.baby_gender,
+          // '', // Placeholder for BabyName
+          // '', // Placeholder for BabyGender
           duplicatedWith.day,
           duplicatedWith.month,
           duplicatedWith.year,
@@ -184,12 +222,12 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         ]
         writeToFile(outputWorkbook, outputSheetName, province_name, duplicatedRow).then((workbook) => {
           writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-            resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+            resolve(readEachRow(workbook, batch, worksheet, datePattern, hospital, province_name, rowNumber+1));
           });
         });
       } else {
         writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-          resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+          resolve(readEachRow(workbook, batch, worksheet, datePattern, hospital, province_name, rowNumber+1));
         });
       }
     });
@@ -265,14 +303,6 @@ export const writeToFile = (outputWorkbook, outputSheetName, province_name, rowD
     row.getCell(15).border = row.getCell(1).border;
     row.getCell(15).alignment = row.getCell(1).alignment;
 
-    row.getCell(16).font = row.getCell(1).font;
-    row.getCell(16).border = row.getCell(1).border;
-    row.getCell(16).alignment = row.getCell(1).alignment;
-
-    row.getCell(17).font = row.getCell(1).font;
-    row.getCell(17).border = row.getCell(1).border;
-    row.getCell(17).alignment = row.getCell(1).alignment;
-
     resolve(workbook);
   });
 }
@@ -301,9 +331,6 @@ function isEmptyRow(row) {
       row.getCell(phoneCol).value === null         &&
       row.getCell(dateCol).value === null
     ) {
-    // row.getCell(dayCol).value === null           &&
-    // row.getCell(monthCol).value === null         &&
-    // row.getCell(yearCol).value === null
     // Empty Row
     return true;
   }
@@ -357,37 +384,9 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  var babyName = row.getCell(babyNameCol).value;
-  var babyGender = row.getCell(babyGenderCol).value;
-
-  if (babyName !== null && babyName !== undefined) {
-    babyName = babyName.replace(/\s/g, '');
-  }
-
-  if (babyGender !== null && babyGender !== undefined) {
-    babyGender = babyGender.replace(/\s/g, '');
-  }
-
-  if (row.getCell(s2Col).value == 'S2' && (babyName === null ||
-    babyName === undefined || babyName === '' )) {
-    customer.missingBabyName = 1;
-    customer.missingBabyInformation = 1;
-  }
-
-  if (row.getCell(s2Col).value == 'S2' && (babyGender === null ||
-     babyGender === undefined || babyGender === ''
-  )) {
-    customer.missingBabyGender = 1;
-    customer.missingBabyInformation = 1;
-  }
-
-  // row.getCell(dayCol).value === null ||
-  // row.getCell(monthCol).value === null ||
-  // row.getCell(yearCol).value === null
-
   if (row.getCell(dateCol).value === null) {
     customer.missingDate = 1;
-    customer.missingMomStatus = customer.missingMomStatus || 1;
+    customer.missingMomStatus = 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
   }
 
@@ -399,19 +398,14 @@ function isMissingData(customer, row) {
 }
 
 
-function isIllogicalData(customer, row) {
+function isIllogicalData(customer, row, datePattern) {
   let phone = row.getCell(phoneCol).value;
   let lastName = row.getCell(lastNameCol).value;
   let firstName = row.getCell(firstNameCol).value;
   let email = row.getCell(emailCol).value;
   let district = row.getCell(districtCol).value;
   let province = row.getCell(provinceCol).value;
-  let babyName = row.getCell(babyNameCol).value;
-  let babyGender = row.getCell(babyGenderCol).value;
   let date = row.getCell(dateCol).value;
-  // let day = row.getCell(dayCol).value;
-  // let month = row.getCell(monthCol).value;
-  // let year = row.getCell(yearCol).value;
 
   let sampling = '';
   let flag = false;
@@ -486,30 +480,6 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if (babyName !== null && babyName !== undefined) {
-    babyName = babyName.replace(/\s/g, '')
-  }
-
-  if (babyGender !== null && babyGender !== undefined) {
-    babyGender = babyGender.replace(/\s/g, '')
-  }
-
-  if (sampling === 'S1') {
-    if ( (babyName !== null && babyName !== undefined && babyName !== '') ||
-      (babyGender !== null && babyGender !== undefined && babyGender !== '')) {
-      customer.illogicalSampling = 1;
-      flag = true;
-    }
-  }
-
-  if (sampling === 'S2' && babyGender !== null && babyGender !== undefined) {
-    if (hasSpecialCharacter(babyGender) ||
-      (babyGender !== 'Trai' && babyGender !== 'Gái' && babyGender !== 'Nam' && babyGender !== 'Nữ')) {
-      customer.illogicalSampling = 1;
-      flag = true;
-    }
-  }
-
   if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
     customer.illogicalOther = 1;
   }
@@ -520,71 +490,115 @@ function isIllogicalData(customer, row) {
     customer.month = null;
     customer.year = null;
     let day, month, year;
-    console.log(customer.phone)
-    console.log(date);
+    // console.log(customer.phone);
+    // console.log(date);
+    let mayOf2017 = new Date('2017-05-01');
 
     if (date instanceof Date) {
-      console.log('Instance Of Date');
+      // console.log('Instance Of Date');
       day = date.getDate();
       month = date.getMonth() + 1;
       year = date.getFullYear();
-      console.log(day);
-      console.log(month);
+      if (datePattern == 'dd/mm/yyyy') {
+        let tmp = day;
+        day = month;
+        month = tmp;
+      }
     } else {
       date = new Date(date);
       if (date == 'Invalid Date') {
+        // console.log('Invalid Date');
         let dateArr = customer.day.split('/');
-        console.log(dateArr);
+        // console.log(dateArr);
         if (dateArr.length === 3) {
-          console.log(dateArr[0]);
-          console.log(dateArr[1]);
-          day = dateArr[0];
-          month = dateArr[1];
-          year = dateArr[2];
-          date = new Date(year + '-' + month + '-' + day);
-          if (date == 'Invalid Date') {
-            customer.illogicalDate = 1;
-            return flag = true;
+          if (datePattern == 'dd/mm/yyyy') {
+            day = dateArr[0];
+            month = dateArr[1];
+            year = dateArr[2];
+          } else {
+            day = dateArr[1];
+            month = dateArr[0];
+            year = dateArr[2];
+          }
+        }
+      } else {
+        day = date.getDate();
+        month = date.getMonth() + 1;
+        year = date.getFullYear();
+        if (datePattern === 'dd/mm/yyyy') {
+          if (day <= 12) {
+            let tmp = day;
+            day = month;
+            month = tmp;
           }
         }
       }
     }
 
-    day = date.getDate();
-    month = date.getMonth() + 1;
-    year = date.getFullYear();
+    date = new Date(year + '-' + month + '-' + day);
+
+    if (date != 'Invalid Date'){
+      if (date < mayOf2017 && datePattern == 'dd/mm/yyyy') {
+        // Try to Switch Day & Month Again
+        if (day <= 12) {
+          let tmp = day;
+          day = month;
+          month = tmp;
+        }
+      } else if (datePattern == 'dd/mm/yyyy' && sampling == 'S2' && date >= today) {
+        if (day <= 12) {
+          let tmp = day;
+          day = month;
+          month = tmp;
+        }
+      }
+
+    } else {
+      if (day <= 12) {
+        let tmp = day;
+        day = month;
+        month = tmp;
+      }
+    }
 
     customer.day = day;
     customer.month = month;
     customer.year = year;
 
-    if (parseInt(month) == 2 && parseInt(day) > 29) {
+    // console.log('Read: Day ' + customer.day + ' - Month ' +
+    //   customer.month + ' - Year ' + customer.year);
+
+    date = new Date(year + '-' + month + '-' + day);
+
+    if (date == 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
-    }
+    } else {
+      if (parseInt(month) == 2 && parseInt(day) > 29) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
 
-    if ( (parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
+      if ((parseInt(month) == 4 || parseInt(month) == 6 || parseInt(month) == 9 || parseInt(month) == 11) && parseInt(day) > 30) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
 
-    var today = new Date();
-    var currentYear = today.getFullYear();
+      var today = new Date();
+      var currentYear = today.getFullYear();
 
-    if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
+      if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
 
-    var mayOf2017 = new Date('2017-05-01');
-    if (date < mayOf2017) {
-      customer.illogicalDate = 1;
-      flag = true;
-    }
+      if (date < mayOf2017) {
+        customer.illogicalDate = 1;
+        flag = true;
+      }
 
-    if (sampling == 'S2') {
-      // Trong vòng 1 tháng so với ngày import và không được lớn hơn hiện tại
-      if (date >= today) {
+      if (sampling == 'S2' && date >= today) {
+        // Ngày sinh của em bé không được lớn hơn hoặc bằng ngày import
         customer.illogicalDate = 1;
         flag = true;
       }

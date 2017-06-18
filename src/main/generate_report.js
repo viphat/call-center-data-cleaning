@@ -147,12 +147,6 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       row = worksheet.getRow(21);
       row.getCell(cellIndex).value = rowData.MissngEmail;
 
-      row = worksheet.getRow(22);
-      row.getCell(cellIndex).value = rowData.MissingBabyName;
-
-      row = worksheet.getRow(23);
-      row.getCell(cellIndex).value = rowData.MissingBabyGender;
-
       resolve(workbook.xlsx.writeFile(reportFilePath));
     });
   });
@@ -165,9 +159,6 @@ function fillData(batch, filterType) {
     coalesce(SUM(missingMomName),0) AS MissingMomName, coalesce(SUM(missingAddress),0) AS MissingAddress,\
     coalesce(SUM(missingPhone),0) AS MissingPhone, \
     coalesce(SUM(missingEmail),0) AS MissngEmail, \
-    coalesce(SUM(missingBabyInformation),0) As MissingBabyInformation, \
-    coalesce(SUM(missingBabyName),0) As MissingBabyName, \
-    coalesce(SUM(missingBabyGender),0) As MissingBabyGender, \
     coalesce(SUM(missingDate),0) As MissingDate, \
     coalesce(SUM(missingMomStatus),0) AS MissingMomStatus, \
     coalesce(SUM(illogicalData),0) As IllogicalData, \
@@ -325,16 +316,13 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     buildReportFirstColumnType3(worksheet, 6, 'Raw data received from K-C');
     buildReportFirstColumnType3(worksheet, 20, 'Valid database (value) - base all');
 
-
-    // A7, A12, A16, A23
+    // A7, A12, A16, A21
     buildReportFirstColumnType2(worksheet, 7, 'Data missing');
     buildReportFirstColumnType2(worksheet, 12, 'Duplicated Data (Checking vs. total database since 1st week)');
     buildReportFirstColumnType2(worksheet, 16, 'Illogical data');
     buildReportFirstColumnType2(worksheet, 21, 'Email missing');
-    buildReportFirstColumnType2(worksheet, 22, 'Baby name missing');
-    buildReportFirstColumnType2(worksheet, 23, 'Baby gender missing');
 
-    // A8 - A11, A13 - A15, A17-Á9
+    // A8 - A11, A13 - A15, A17-A19
     buildReportFirstColumnType1(worksheet, 8, "Mom's name");
     buildReportFirstColumnType1(worksheet, 9, "Address (District, Province, City)");
     buildReportFirstColumnType1(worksheet, 10, "Telephone number");
@@ -377,7 +365,7 @@ export const generateReportTemplate = (batch, outputDirectory) => {
 
     // Data
     let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
-    let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+    let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
     for (let rowArrIndex = 0; rowArrIndex < rowArr.length; rowArrIndex += 1) {
       for (let colArrIndex = 0; colArrIndex < colArr.length; colArrIndex += 1 ) {
@@ -545,7 +533,7 @@ function buildReportFirstColumnType2(worksheet, rowIndex, text) {
     bottom: { style: 'thin' }
   }
 
-  if (rowIndex === 21 || rowIndex === 22 || rowIndex === 23) {
+  if (rowIndex === 21) {
     row.getCell('A').font = {
       bold: true, size: 14, name: 'Calibri', family: 2
     }
@@ -558,7 +546,7 @@ function buildReportFirstColumnType2(worksheet, rowIndex, text) {
 
   row.getCell('A').alignment = { vertical: 'middle' };
 
-  if (rowIndex !== 21 && rowIndex !== 22 && rowIndex !== 23) {
+  if (rowIndex !== 21) {
     row.getCell('A').fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -594,7 +582,7 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
   let bold = false;
   let color = { argb: 'FF000000' };
 
-  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20 || rowIndex == 21 || rowIndex == 22 || rowIndex == 23) {
+  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20 || rowIndex == 21) {
     bold = true;
   }
 

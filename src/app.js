@@ -174,7 +174,7 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
 });
 
 document.getElementById('btnProcess').addEventListener('click', _ => {
-  // inputFile = ['/Users/viphat/projects/dct/W4-TEST.zip'];
+  // inputFile = ['/Users/viphat/projects/dct/MIEN TAY.zip'];
   // outputDirectory = ['/Users/viphat/projects/dct/output'];
   batch = document.getElementById('txtBatch').value;
   // batch = 'W3';
