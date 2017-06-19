@@ -74,61 +74,50 @@ export const createCustomer = (customer) => {
     if (customer.s2 !== undefined && customer.s2 !== null && customer.s2 !== '') {
       if (customer.sampling === '') {
         customer.sampling = 'S2';
-      } else {
-        if (
-          customer.babyName !== undefined && customer.babyName !== null &&
-          customer.babyName !== '' && customer.babyGender !== undefined &&
-          customer.babyGender !== null && customer.babyGender !== ''
-        ) {
-          customer.sampling = 'S2';
-        } else {
-          customer.sampling = 'S1';
-        }
       }
     }
 
     // Check Alreay Insert Before?
-    db.get('SELECT customer_id from customers WHERE customers.hospital_id = ? AND \
-      customers.first_name = ? AND customers.last_name = ? AND customers.phone = ?',
-      customer.hospital_id, customer.firstName, customer.lastName,
-      customer.phone, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
+    // db.get('SELECT customer_id from customers WHERE customers.hospital_id = ? AND \
+    //   customers.first_name = ? AND customers.last_name = ? AND customers.phone = ?',
+    //   customer.hospital_id, customer.firstName, customer.lastName,
+    //   customer.phone, (err, result) => {
+    //   if (err) {
+    //     return reject(err);
+    //   }
 
-      if (result !== null && result !== undefined) {
-        // Duplicated - Already Imported before
-        return resolve({ alreadyImported: true });
-      }
-
-      db.run('INSERT INTO customers(first_name, last_name, email, district, province, phone, baby_name, baby_gender, day, month, year, s1, s2, sampling, hospital_id, batch) VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);',
-      {
-        $firstName: customer.firstName,
-        $lastName: customer.lastName,
-        $email: customer.email,
-        $district: customer.district,
-        $province: customer.province,
-        $phone: customer.phone,
-        $babyName: customer.babyName,
-        $babyGender: customer.babyGender,
-        $day: customer.day,
-        $month: customer.month,
-        $year: customer.year,
-        $s1: customer.s1,
-        $s2: customer.s2,
-        $sampling: customer.sampling,
-        $hospital_id: customer.hospital_id,
-        $batch: customer.batch
-      }, (errRes) => {
-        db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
-          customer.customer_id = row.customer_id;
-          isPhoneDuplicate(customer).then((customerAfterCheckDuplication) => {
-            resolve(customerAfterCheckDuplication);
-          })
+    //   if (result !== null && result !== undefined) {
+    //     // Duplicated - Already Imported before
+    //     return resolve({ alreadyImported: true });
+    //   }
+    db.run('INSERT INTO customers(first_name, last_name, email, district, province, phone, baby_name, baby_gender, day, month, year, s1, s2, sampling, hospital_id, batch) VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);',
+    {
+      $firstName: customer.firstName,
+      $lastName: customer.lastName,
+      $email: customer.email,
+      $district: customer.district,
+      $province: customer.province,
+      $phone: customer.phone,
+      $babyName: customer.babyName,
+      $babyGender: customer.babyGender,
+      $day: customer.day,
+      $month: customer.month,
+      $year: customer.year,
+      $s1: customer.s1,
+      $s2: customer.s2,
+      $sampling: customer.sampling,
+      $hospital_id: customer.hospital_id,
+      $batch: customer.batch
+    }, (errRes) => {
+      db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
+        customer.customer_id = row.customer_id;
+        isPhoneDuplicate(customer).then((customerAfterCheckDuplication) => {
+          resolve(customerAfterCheckDuplication);
         })
-      });
+      })
     });
   });
+  // });
 }
 
 function isPhoneDuplicate(customer) {
