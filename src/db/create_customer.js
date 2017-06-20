@@ -120,7 +120,7 @@ export const createCustomer = (customer) => {
   // });
 }
 
-function isPhoneDuplicate(customer) {
+export function isPhoneDuplicate(customer) {
   return new Promise((resolve, reject) => {
 
     if (customer.phone === undefined || customer.phone === null) {

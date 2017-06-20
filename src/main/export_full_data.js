@@ -8,6 +8,7 @@ import { db } from '../db/prepare_data';
 import { writeToFile } from './check_source_data';
 import { buildTemplate } from './build_excel_template';
 import { generateReport } from './generate_report';
+import { isPhoneDuplicate } from '../db/create_customer';
 
 export const exportFullBatchData = (batch, outputDirectory) => {
   if ( !_.endsWith(outputDirectory, '/') ) {
@@ -114,16 +115,9 @@ function buildFileForProvince(outputDirectory, provinces, provinceIndex) {
 function writeCustomersToFile(outputWorkbook, province, customers, customerIndex) {
   return new Promise((resolve, reject) => {
     let customer = customers[customerIndex];
+
     if (customer === undefined || customer === null) {
       return resolve(null);
-    }
-
-    let sheetName = province.name + ' - ' + 'Valid';
-
-    if (customer.illogicalData == 1 || customer.missingData == 1) {
-      sheetName = province.name + ' - ' + 'Invalid';
-    } else if (customer.duplicatedPhone == 1) {
-      sheetName = province.name + ' - ' + 'Duplication';
     }
 
     let rowData = [
@@ -144,9 +138,46 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
       customer.area_name
     ]
 
-    writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
-      resolve(writeCustomersToFile(outputWorkbook, province, customers, customerIndex + 1));
-    });
+    let sheetName = province.name + ' - ' + 'Valid';
+
+    if (customer.illogicalData == 1 || customer.missingData == 1) {
+      sheetName = province.name + ' - ' + 'Invalid';
+    }
+
+    if (customer.duplicatedPhone == 1) {
+      sheetName = province.name + ' - ' + 'Duplication';
+      isPhoneDuplicate(customer).then((customerAfterCheckingDuplication) => {
+        let duplicatedRow = [
+          customerAfterCheckingDuplication.duplicatedWith.customer_id,
+          customerAfterCheckingDuplication.duplicatedWith.last_name,
+          customerAfterCheckingDuplication.duplicatedWith.first_name,
+          customerAfterCheckingDuplication.duplicatedWith.email,
+          customerAfterCheckingDuplication.duplicatedWith.district,
+          customerAfterCheckingDuplication.duplicatedWith.province,
+          customerAfterCheckingDuplication.duplicatedWith.phone,
+          // '', // Placeholder for BabyName
+          // '', // Placeholder for BabyGender
+          customerAfterCheckingDuplication.duplicatedWith.day,
+          customerAfterCheckingDuplication.duplicatedWith.month,
+          customerAfterCheckingDuplication.duplicatedWith.year,
+          customerAfterCheckingDuplication.duplicatedWith.s1,
+          customerAfterCheckingDuplication.duplicatedWith.s2,
+          customerAfterCheckingDuplication.duplicatedWith.hospital_name,
+          customerAfterCheckingDuplication.duplicatedWith.area_channel,
+          customerAfterCheckingDuplication.duplicatedWith.area_name
+        ]
+        writeToFile(outputWorkbook, sheetName, province.name, duplicatedRow).then((res)=> {
+          writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
+            resolve(writeCustomersToFile(outputWorkbook, province, customers, customerIndex + 1));
+          });
+        });
+      })
+    } else {
+      writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
+        resolve(writeCustomersToFile(outputWorkbook, province, customers, customerIndex + 1));
+      });
+    }
+
   });
 }
 
