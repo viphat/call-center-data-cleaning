@@ -135,7 +135,8 @@ export function isPhoneDuplicate(customer) {
     db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
     customers.email, customers.district, customers.province, customers.phone,\
     customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
-    customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
+    customers.s1, customers.s2, hospitals.name as hospital_name, \
+    provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name \
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \

@@ -61,6 +61,7 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getColumn('M').width = 23.8;
   worksheet.getColumn('N').width = 23.8;
   worksheet.getColumn('O').width = 23.8;
+  worksheet.getColumn('P').width = 23.8;
 
   worksheet.getRow('5').height = 30;
 
@@ -242,27 +243,37 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getCell('L6').border = worksheet.getCell('A5').border;
   worksheet.getCell('L6').value = 'S2';
 
-  worksheet.mergeCells('M5:M6');
+  worksheet.mergeCells('M5:P5');
+
   worksheet.getCell('M5').font = worksheet.getCell('A5').font;
   worksheet.getCell('M5').fill = worksheet.getCell('A5').fill;
   worksheet.getCell('M5').alignment = worksheet.getCell('A5').alignment;
   worksheet.getCell('M5').border = worksheet.getCell('A5').border;
-  worksheet.getCell('M5').value = 'Tên bệnh viện';
+  worksheet.getCell('M5').value = 'Thông tin bệnh viện';
 
-  worksheet.mergeCells('N5:N6');
-  worksheet.getCell('N5').font = worksheet.getCell('A5').font;
-  worksheet.getCell('N5').fill = worksheet.getCell('A5').fill;
-  worksheet.getCell('N5').alignment = worksheet.getCell('A5').alignment;
-  worksheet.getCell('N5').border = worksheet.getCell('A5').border;
-  worksheet.getCell('N5').value = 'Channel\n(Key urban/Urban/Rural)';
+  worksheet.getCell('M6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('M6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('M6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('M6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('M6').value = 'Tên bệnh viện';
 
-  worksheet.mergeCells('O5:O6');
-  worksheet.getCell('O5').font = worksheet.getCell('A5').font;
-  worksheet.getCell('O5').fill = worksheet.getCell('A5').fill;
-  worksheet.getCell('O5').alignment = worksheet.getCell('A5').alignment;
-  worksheet.getCell('O5').border = worksheet.getCell('A5').border;
-  worksheet.getCell('O5').value = 'Khu vực';
+  worksheet.getCell('N6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('N6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('N6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('N6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('N6').value = 'Tỉnh Thành';
 
+  worksheet.getCell('O6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('O6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('O6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('O6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('O6').value = 'Channel\n(Key urban/Urban/Rural)';
+
+  worksheet.getCell('P6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('P6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('P6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('P6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('P6').value = 'Khu vực';
   // End Table Headers
 
   // Add Logo
@@ -273,6 +284,3 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
 
   worksheet.addImage(logo, 'A1:B3');
 }
-
-
-

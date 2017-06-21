@@ -10,9 +10,6 @@ import { buildTemplate } from '../main/build_excel_template';
 import { createCustomer, updateCustomer } from '../db/create_customer';
 
 const dataBeginRow = 6;
-const hospitalName = [2, 6];
-const provinceName = [3, 6];
-
 const indexCol = 1;
 const lastNameCol = 2;
 const firstNameCol = 3;
@@ -20,11 +17,11 @@ const emailCol = 4;
 const districtCol = 5;
 const provinceCol = 6;
 const phoneCol = 7;
-const dateCol = 10;
-const s1Col = 11;
-const s2Col = 12;
+const dateCol = 8;
+const s1Col = 9;
+const s2Col = 10;
 
-const hospitalNameCell = 'I2';
+const hospitalNameCell = 'H2';
 const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
 
 export const validateSourceData = (excelFiles, batch, outputDirectory) => {
@@ -126,6 +123,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         customer.s1,
         customer.s2,
         hospital.hospital_name,
+        hospital.province_name,
         hospital.area_channel,
         hospital.area_name
       ];
@@ -168,6 +166,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           duplicatedWith.s1,
           duplicatedWith.s2,
           duplicatedWith.hospital_name,
+          duplicatedWith.province_name,
           duplicatedWith.area_channel,
           duplicatedWith.area_name
         ]
@@ -253,6 +252,10 @@ export const writeToFile = (outputWorkbook, outputSheetName, province_name, rowD
     row.getCell(15).font = row.getCell(1).font;
     row.getCell(15).border = row.getCell(1).border;
     row.getCell(15).alignment = row.getCell(1).alignment;
+
+    row.getCell(16).font = row.getCell(1).font;
+    row.getCell(16).border = row.getCell(1).border;
+    row.getCell(16).alignment = row.getCell(1).alignment;
 
     resolve(workbook);
   });

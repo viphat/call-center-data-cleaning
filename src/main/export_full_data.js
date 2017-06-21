@@ -44,7 +44,9 @@ function getDataOfBatch(batch) {
     db.all("SELECT customers.customer_id, customers.last_name, customers.first_name,\
     customers.email, customers.district, customers.province, customers.phone,\
     customers.day, customers.month, customers.year,\
-    customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
+    customers.s1, customers.s2, hospitals.name as hospital_name, \
+    provinces.name as province_name, \
+    areas.channel as area_channel, \
     areas.name as area_name, \
     customers.missingData, \
     customers.missingMomName, \
@@ -134,6 +136,7 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
       customer.s1,
       customer.s2,
       customer.hospital_name,
+      customer.province_name,
       customer.area_channel,
       customer.area_name
     ]
@@ -163,6 +166,7 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
           customerAfterCheckingDuplication.duplicatedWith.s1,
           customerAfterCheckingDuplication.duplicatedWith.s2,
           customerAfterCheckingDuplication.duplicatedWith.hospital_name,
+          customerAfterCheckingDuplication.duplicatedWith.province_name,
           customerAfterCheckingDuplication.duplicatedWith.area_channel,
           customerAfterCheckingDuplication.duplicatedWith.area_name
         ]
