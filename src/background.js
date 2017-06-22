@@ -88,6 +88,7 @@ function checkData(inputFile, outputDirectory) {
     }).catch((errRes) => {
       reject(errRes);
     }).then((checkResult) => {
+      console.log(checkResult);
       if (checkResult.fileTooBig.length > 0 || checkResult.hasErorInHospitalName.length > 0 ||
         checkResult.notFoundHospitalName.length > 0
       ) {

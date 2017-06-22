@@ -3,7 +3,7 @@ const Excel = require('exceljs');
 const fs = require('fs');
 import { db } from '../db/prepare_data.js';
 
-const hospitalCell = 'I2';
+const hospitalCell = 'H2';
 const redundantStrings = ['Tên BV/PK:', 'Tên BV/PK :'];
 const workbook = new Excel.Workbook();
 let fileTooBig = [];
@@ -16,6 +16,7 @@ export const writeReportToExcelFile = (extractFolder, checkResult) => {
   hasErorInHospitalName = [];
   notFoundHospitalName = [];
   fileTooBig = [];
+  console.log(resultFilePath);
   return new Promise((resolve, reject) => {
     writeUnfoundList(resultFilePath, checkResult).then((response) => {
       return writeHospitalList(resultFilePath, checkResult);
@@ -131,9 +132,11 @@ function readFiles(excelFiles) {
 function readNextExcelFile(excelFiles, fileIndex) {
   return new Promise((resolve, reject) => {
     let excelFile = excelFiles[fileIndex];
-    console.log(excelFile);
+    if (excelFile === null || excelFile === undefined) {
+      return resolve(null);
+    }
     let stats = fs.statSync(excelFile);
-    if (stats.size / 1000000.0 > 1.0) {
+    if (stats.size / 1000000.0 > 2.0) {
       fileTooBig.push(excelFile);
       return resolve(readNextExcelFile(excelFiles, fileIndex + 1));
     } else {
@@ -149,7 +152,7 @@ function readNextExcelFile(excelFiles, fileIndex) {
             if (fileIndex == excelFiles.length) {
               return resolve(null);
             }
-            return resolve(readNextExcelFile(excelFiles, fileIndex+1));
+            return resolve(readNextExcelFile(excelFiles, fileIndex + 1));
           } else {
             checkWithMatches(hospitalName).then( (response) => {
               if (fileIndex == excelFiles.length - 1) {
