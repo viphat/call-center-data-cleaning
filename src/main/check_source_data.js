@@ -168,8 +168,20 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           duplicatedWith.hospital_name,
           duplicatedWith.province_name,
           duplicatedWith.area_channel,
-          duplicatedWith.area_name
+          duplicatedWith.area_name,
+          duplicatedWith.batch
         ]
+        if (duplicatedWith.batch == customer.batch) {
+          duplicatedWith.duplicatedPhone = 1;
+          if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
+            duplicatedWith.duplicatedPhoneS1 = 1;
+          }
+          if (customer.sampling === 'S2' && duplicatedWith.sampling === 'S2') {
+            duplicatedWith.duplicatedPhoneS2 = 1;
+          }
+          updateCustomer(duplicatedWith);
+        }
+        rowData += customer.batch;
         writeToFile(outputWorkbook, outputSheetName, province_name, duplicatedRow).then((workbook) => {
           writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
             resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
@@ -256,6 +268,12 @@ export const writeToFile = (outputWorkbook, outputSheetName, province_name, rowD
     row.getCell(16).font = row.getCell(1).font;
     row.getCell(16).border = row.getCell(1).border;
     row.getCell(16).alignment = row.getCell(1).alignment;
+
+    if (outputSheetName.endsWith('Duplication')) {
+      row.getCell(17).font = row.getCell(1).font;
+      row.getCell(17).border = row.getCell(1).border;
+      row.getCell(17).alignment = row.getCell(1).alignment;
+    }
 
     resolve(workbook);
   });

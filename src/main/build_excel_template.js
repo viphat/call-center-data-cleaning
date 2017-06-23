@@ -276,6 +276,15 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getCell('P6').value = 'Khu vực';
   // End Table Headers
 
+  if (worksheet.name.endsWith('Duplication')) {
+    worksheet.mergeCells('Q5:Q6');
+    worksheet.getCell('Q5').font = worksheet.getCell('A5').font;
+    worksheet.getCell('Q5').fill = worksheet.getCell('A5').fill;
+    worksheet.getCell('Q5').alignment = worksheet.getCell('A5').alignment;
+    worksheet.getCell('Q5').border = worksheet.getCell('A5').border;
+    worksheet.getCell('Q5').value = 'Tuần';
+  }
+
   // Add Logo
   let logo = workbook.addImage({
     filename: logoPath,
