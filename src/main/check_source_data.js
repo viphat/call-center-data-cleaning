@@ -150,6 +150,7 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
 
       if (duplicateData == true) {
         var duplicatedWith = customer.duplicatedWith;
+
         var duplicatedRow = [
           duplicatedWith.customer_id,
           duplicatedWith.last_name,
@@ -171,7 +172,11 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           duplicatedWith.area_name,
           duplicatedWith.batch
         ]
+
+        console.log(duplicatedRow);
+
         if (duplicatedWith.batch == customer.batch) {
+          duplicatedWith.hasError = 1;
           duplicatedWith.duplicatedPhone = 1;
           if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
             duplicatedWith.duplicatedPhoneS1 = 1;
@@ -181,7 +186,8 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           }
           updateCustomer(duplicatedWith);
         }
-        rowData += customer.batch;
+
+        rowData.push(customer.batch);
         writeToFile(outputWorkbook, outputSheetName, province_name, duplicatedRow).then((workbook) => {
           writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
             resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));

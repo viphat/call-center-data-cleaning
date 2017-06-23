@@ -53,7 +53,8 @@ function getDataOfBatch(batch) {
     customers.missingAddress,\
     customers.missingPhone,\
     customers.missingMomStatus, \
-    customers.illogicalData, customers.duplicatedPhone \
+    customers.illogicalData, customers.duplicatedPhone, \
+    customers.batch \
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
@@ -150,31 +151,38 @@ function writeCustomersToFile(outputWorkbook, province, customers, customerIndex
     if (customer.duplicatedPhone == 1) {
       sheetName = province.name + ' - ' + 'Duplication';
       isPhoneDuplicate(customer).then((customerAfterCheckingDuplication) => {
+        var duplicatedWith = customerAfterCheckingDuplication.duplicatedWith
         let duplicatedRow = [
-          customerAfterCheckingDuplication.duplicatedWith.customer_id,
-          customerAfterCheckingDuplication.duplicatedWith.last_name,
-          customerAfterCheckingDuplication.duplicatedWith.first_name,
-          customerAfterCheckingDuplication.duplicatedWith.email,
-          customerAfterCheckingDuplication.duplicatedWith.district,
-          customerAfterCheckingDuplication.duplicatedWith.province,
-          customerAfterCheckingDuplication.duplicatedWith.phone,
-          // '', // Placeholder for BabyName
-          // '', // Placeholder for BabyGender
-          customerAfterCheckingDuplication.duplicatedWith.day,
-          customerAfterCheckingDuplication.duplicatedWith.month,
-          customerAfterCheckingDuplication.duplicatedWith.year,
-          customerAfterCheckingDuplication.duplicatedWith.s1,
-          customerAfterCheckingDuplication.duplicatedWith.s2,
-          customerAfterCheckingDuplication.duplicatedWith.hospital_name,
-          customerAfterCheckingDuplication.duplicatedWith.province_name,
-          customerAfterCheckingDuplication.duplicatedWith.area_channel,
-          customerAfterCheckingDuplication.duplicatedWith.area_name
+          duplicatedWith.customer_id,
+          duplicatedWith.last_name,
+          duplicatedWith.first_name,
+          duplicatedWith.email,
+          duplicatedWith.district,
+          duplicatedWith.province,
+          duplicatedWith.phone,
+          duplicatedWith.day,
+          duplicatedWith.month,
+          duplicatedWith.year,
+          duplicatedWith.s1,
+          duplicatedWith.s2,
+          duplicatedWith.hospital_name,
+          duplicatedWith.province_name,
+          duplicatedWith.area_channel,
+          duplicatedWith.area_name,
+          duplicatedWith.batch
         ]
-        writeToFile(outputWorkbook, sheetName, province.name, duplicatedRow).then((res)=> {
+        rowData.push(customer.batch)
+        if (duplicatedWith.batch != customer.batch) {
+          writeToFile(outputWorkbook, sheetName, province.name, duplicatedRow).then((res)=> {
+            writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
+              resolve(writeCustomersToFile(outputWorkbook, province, customers, customerIndex + 1));
+            });
+          });
+        } else {
           writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
             resolve(writeCustomersToFile(outputWorkbook, province, customers, customerIndex + 1));
           });
-        });
+        }
       })
     } else {
       writeToFile(outputWorkbook, sheetName, province.name, rowData).then((res) => {
