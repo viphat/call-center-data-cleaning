@@ -20,6 +20,7 @@ export const updateCustomer = (customer) => {
       illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
+      duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2 \
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
@@ -51,6 +52,7 @@ export const updateCustomer = (customer) => {
       $illogicalDate: customer.illogicalDate || 0,
       $illogicalOther: customer.illogicalOther || 0,
       $duplicatedPhone: customer.duplicatedPhone || 0,
+      $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
     }, (err) => {
@@ -65,19 +67,28 @@ export const updateCustomer = (customer) => {
 export const createCustomer = (customer) => {
   return new Promise((resolve, reject) => {
     customer.phone = '' + customer.phone.replace(/[\.\-\_\s\+\(\)]/g,'');
-    customer.sampling = '';
+    // customer.sampling = '';
     customer.isPhoneDuplicated = false;
+
     if (customer.s1 !== undefined && customer.s1 !== null && customer.s1 !== '') {
-      customer.sampling = 'S1';
+      if (customer.sampling == 'S2'){
+        customer.illogicalSampling = 1;
+        customer.sampling = 'S2';
+        customer.s1 = '';
+        customer.s2 = 'S1';
+      };
     }
 
     if (customer.s2 !== undefined && customer.s2 !== null && customer.s2 !== '') {
-      if (customer.sampling === '') {
-        customer.sampling = 'S2';
+      if (customer.sampling == 'S1'){
+        customer.illogicalSampling = 1;
+        customer.sampling = 'S1';
+        customer.s2 = '';
+        customer.s1 = 'S2';
       }
     }
 
-    // Check Alreay Insert Before?
+    // Check Already Insert Before?
     // db.get('SELECT customer_id from customers WHERE customers.hospital_id = ? AND \
     //   customers.first_name = ? AND customers.last_name = ? AND customers.phone = ?',
     //   customer.hospital_id, customer.firstName, customer.lastName,
@@ -90,7 +101,19 @@ export const createCustomer = (customer) => {
     //     // Duplicated - Already Imported before
     //     return resolve({ alreadyImported: true });
     //   }
-    db.run('INSERT INTO customers(first_name, last_name, email, district, province, phone, baby_name, baby_gender, day, month, year, s1, s2, sampling, hospital_id, batch) VALUES($firstName, $lastName, $email, $district, $province, $phone, $babyName, $babyGender, $day, $month, $year, $s1, $s2, $sampling, $hospital_id, $batch);',
+
+    db.run('INSERT INTO customers(\
+        first_name, last_name, email,\
+        district, province, phone,\
+        baby_name, baby_gender,\
+        day, month, year, s1, s2, sampling,\
+        illogicalSampling,\
+        hospital_id, batch) \
+        VALUES($firstName, $lastName, $email,\
+        $district, $province, $phone, $babyName,\
+        $babyGender, $day, $month, $year, $s1, $s2, $sampling,\
+        $illogicalSampling,\
+        $hospital_id, $batch);',
     {
       $firstName: customer.firstName,
       $lastName: customer.lastName,
@@ -106,6 +129,7 @@ export const createCustomer = (customer) => {
       $s1: customer.s1,
       $s2: customer.s2,
       $sampling: customer.sampling,
+      $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
       $batch: customer.batch
     }, (errRes) => {
@@ -142,7 +166,8 @@ export function isPhoneDuplicate(customer) {
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
-    areas.area_id = provinces.area_id WHERE customers.phone = ? AND customers.customer_id != ?',
+    areas.area_id = provinces.area_id \
+    WHERE customers.phone = ? AND customers.customer_id != ?',
       customer.phone, customer.customer_id, (err, res) => {
       if (err) {
         return reject(err);
@@ -157,7 +182,10 @@ export function isPhoneDuplicate(customer) {
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {
           resolve(customer);
         } else {
-          db.get('SELECT customer_id FROM customers WHERE customers.customer_id = ? AND customers.phone = ? AND customers.sampling = ?',
+          // Chưa hiểu đoạn này lắm, sao mình phải vào database lấy record này ra lần nữa nhỉ?
+          // Để làm gì nhỉ?
+          db.get('SELECT customer_id FROM customers \
+            WHERE customers.customer_id != ? AND customers.phone = ? AND customers.sampling = ?',
             customer.customer_id, customer.phone, customer.sampling, (err, subRes) => {
             if (subRes !== undefined && subRes !== null) {
               if (customer.sampling === 'S1') {
@@ -166,6 +194,8 @@ export function isPhoneDuplicate(customer) {
               if (customer.sampling === 'S2') {
                 customer.duplicatedPhoneS2 = 1;
               }
+            } else {
+              customer.duplicatedPhoneBetweenS1AndS2 = 1;
             }
             resolve(customer);
           });

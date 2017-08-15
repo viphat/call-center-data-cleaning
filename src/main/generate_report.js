@@ -121,7 +121,7 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
       row = worksheet.getRow(13);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhoneBetweenS1AndS2;
 
       row = worksheet.getRow(14);
       row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
@@ -165,7 +165,9 @@ function fillData(batch, filterType) {
     coalesce(SUM(illogicalDate),0) As IllogicalDate, \
     coalesce(SUM(illogicalPhone),0) AS IllogicalPhone,\
     coalesce(SUM(illogicalOther),0) AS IllogicalOther,\
-    coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
+    coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, \
+    coalesce(SUM(duplicatedPhoneBetweenS1AndS2),0) As DuplicatedPhoneBetweenS1AndS2, \
+    coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
     coalesce(SUM(duplicatedPhoneS2),0) AS DuplicatedPhoneS2 FROM customers'
 
     let whereCondition = '';

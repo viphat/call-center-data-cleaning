@@ -46,7 +46,6 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
     }
     let workbook = new Excel.Workbook();
     console.log('Read: ' + excelFile);
-    console.log('Detecting Date Pattern of the file');
     workbook.xlsx.readFile(excelFile).then(() => {
       let worksheet = workbook.getWorksheet(1);
       // Read Tên Bệnh Viện
@@ -66,7 +65,7 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
         outputPath = outputDirectory + '/' + Diacritics.clean(province_name).split(' ').join('_') + '.xlsx';
         return buildTemplate(outputPath, province_name);
       }).then( (outputWorkbook) => {
-        return readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber);
+        return readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, province_name, rowNumber);
       }).then( (outputWorkbook) => {
         outputWorkbook.xlsx.writeFile(outputPath).then(() =>{
           resolve(readEachFile(excelFiles, batch, outputDirectory, fileIndex + 1));
@@ -76,13 +75,14 @@ function readEachFile(excelFiles, batch, outputDirectory, fileIndex) {
   });
 }
 
-function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber) {
+function readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, province_name, rowNumber) {
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
     console.log('Row: ' + rowNumber);
     if (isEmptyRow(row)) {
       return resolve(outputWorkbook);
     }
+
     let customer = {
       lastName: row.getCell(lastNameCol).value,
       firstName: row.getCell(firstNameCol).value,
@@ -95,11 +95,16 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
       hospital_id: hospital.hospital_id,
       batch: batch
     }
+
+    if (excelFile.endsWith('S1.xlsx')) {
+      customer.sampling = 'S1';
+    } else {
+      customer.sampling = 'S2';
+    }
     // Insert Data to Database
     createCustomer(customer).then((response) => {
-
       if (response.alreadyImported === true) {
-        return resolve(readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, rowNumber + 1));
+        return resolve(readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, province_name, rowNumber + 1));
       }
 
       customer = response;
@@ -180,9 +185,10 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
           duplicatedWith.duplicatedPhone = 1;
           if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
             duplicatedWith.duplicatedPhoneS1 = 1;
-          }
-          if (customer.sampling === 'S2' && duplicatedWith.sampling === 'S2') {
+          } else if (customer.sampling === 'S2' && duplicatedWith.sampling === 'S2') {
             duplicatedWith.duplicatedPhoneS2 = 1;
+          } else {
+            duplicatedWith.duplicatedPhoneBetweenS1AndS2 = 1;
           }
           updateCustomer(duplicatedWith);
         }
@@ -190,12 +196,12 @@ function readEachRow(outputWorkbook, batch, worksheet, hospital, province_name, 
         rowData.push(customer.batch);
         writeToFile(outputWorkbook, outputSheetName, province_name, duplicatedRow).then((workbook) => {
           writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-            resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+            resolve(readEachRow(excelFile, workbook, batch, worksheet, hospital, province_name, rowNumber+1));
           });
         });
       } else {
         writeToFile(outputWorkbook, outputSheetName, province_name, rowData).then((workbook) => {
-          resolve(readEachRow(workbook, batch, worksheet, hospital, province_name, rowNumber+1));
+          resolve(readEachRow(excelFile, workbook, batch, worksheet, hospital, province_name, rowNumber+1));
         });
       }
     });
@@ -469,16 +475,13 @@ function isIllogicalData(customer, row) {
     customer.year = null;
     let day, month, year;
     let mayOf2017 = new Date('2017-05-01');
-    console.log(date);
     if (date instanceof Date) {
-      console.log('Instance Of Date');
       day = date.getDate();
       month = date.getMonth() + 1;
       year = date.getFullYear();
     } else {
       date = new Date(date);
       if (date == 'Invalid Date') {
-        console.log('Invalid Date');
         let dateArr = customer.day.split('/');
         if (dateArr.length == 1) {
           dateArr = customer.day.split('-');
@@ -490,7 +493,6 @@ function isIllogicalData(customer, row) {
           year = dateArr[2];
         }
       } else {
-        console.log('String but Valid');
         day = date.getDate();
         month = date.getMonth() + 1;
         year = date.getFullYear();

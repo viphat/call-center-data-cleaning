@@ -5,11 +5,12 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    insertTableAreas();
-    insertTableProvinces();
-    insertTableHospitals();
-    insertTableMatches();
-    createTableCustomers();
+    db.run('ALTER TABLE customers ADD COLUMN duplicatedPhoneBetweenS1AndS2 INTEGER DEFAULT 0');
+    // insertTableAreas();
+    // insertTableProvinces();
+    // insertTableHospitals();
+    // insertTableMatches();
+    // createTableCustomers();
   });
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
 }
@@ -42,7 +43,9 @@ function createTableCustomers() {
   illogicalAddress INTEGER DEFAULT 0, illogicalDate INTEGER DEFAULT 0,\
   illogicalOther INTEGER DEFAULT 0, \
   duplicatedPhone INTEGER DEFAULT 0,\
-  duplicatedPhoneS1 DEFAULT 0, duplicatedPhoneS2 INTEGER DEFAULT 0,\
+  duplicatedPhoneBetweenS1AndS2 INTEGER DEFAULT 0,\
+  duplicatedPhoneS1 DEFAULT 0, \
+  duplicatedPhoneS2 INTEGER DEFAULT 0,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')
 }
 
