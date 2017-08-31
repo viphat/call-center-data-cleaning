@@ -164,8 +164,6 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, prov
           duplicatedWith.district,
           duplicatedWith.province,
           duplicatedWith.phone,
-          // '', // Placeholder for BabyName
-          // '', // Placeholder for BabyGender
           duplicatedWith.day,
           duplicatedWith.month,
           duplicatedWith.year,
@@ -178,7 +176,7 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, prov
           duplicatedWith.batch
         ]
 
-        console.log(duplicatedRow);
+        // console.log(duplicatedRow);
 
         if (duplicatedWith.batch == customer.batch) {
           duplicatedWith.hasError = 1;
@@ -466,6 +464,7 @@ function isIllogicalData(customer, row) {
 
   if (customer.illogicalName == 1 || customer.illogicalAddress == 1 || customer.illogicalSampling == 1) {
     customer.illogicalOther = 1;
+    flag = true;
   }
 
   // day !== null && day !== undefined && month !== null && month !== undefined && year !== null && year !== undefined

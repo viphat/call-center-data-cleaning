@@ -141,7 +141,11 @@ function readNextExcelFile(excelFiles, fileIndex) {
       return resolve(readNextExcelFile(excelFiles, fileIndex + 1));
     } else {
       workbook.xlsx.readFile(excelFile).then(()=>{
+        console.log(excelFile);
         let worksheet = workbook.getWorksheet(1);
+        if (worksheet === undefined) {
+          console.log(workbook);
+        }
         let hospitalName = worksheet.getCell(hospitalCell).value;
         _.each(redundantStrings, (redundantString) => {
           hospitalName = _.replace(hospitalName, redundantString, '');
@@ -184,7 +188,7 @@ function checkWithMatches(hospitalName) {
   return new Promise((resolve, reject) => {
     db.get("SELECT hospital_id, name from matches where name LIKE ?", "%" + hospitalName + "%", (err, res) => {
       if (err) {
-        console.log(err);
+        console.log('Fetch DB Error: ' + err);
         return reject(false);
       }
       if (res === undefined || res === null) {
