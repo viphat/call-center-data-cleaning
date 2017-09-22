@@ -343,13 +343,13 @@ function isMissingData(customer, row) {
     customer.missingEmail = 1;
   }
 
-  if (row.getCell(districtCol).value === null) {
+  if (row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) {
     missingFields.push('Quận/Huyện');
     customer.missingDistrict = 1;
     customer.missingAddress = 1;
   }
 
-  if (row.getCell(provinceCol).value === null) {
+  if (row.getCell(provinceCol).value === null || row.getCell(provinceCol).value.length == 0) {
     missingFields.push('Tỉnh/Thành');
     customer.missingProvince = 1;
     customer.missingAddress = customer.missingAddress || 1;
@@ -441,22 +441,24 @@ function isIllogicalData(customer, row) {
     district = '' + district;
     district = district.trim().replace(/\s+/g, ' ');
     let iDistrict = parseInt(district);
-    if (!isNaN(iDistrict)) {
-      if (iDistrict < 1 && iDistrict > 12) {
+    if (district.length > 0) {
+      if (!isNaN(iDistrict)) {
+        if (iDistrict < 1 && iDistrict > 12) {
+          customer.illogicalAddress = 1;
+          flag = true;
+        }
+      }
+      if (hasSpecialCharacter(district)) {
         customer.illogicalAddress = 1;
         flag = true;
       }
-    }
-    if (hasSpecialCharacter(district)) {
-      customer.illogicalAddress = 1;
-      flag = true;
     }
   }
 
   if (province !== undefined && province !== null) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
-    if (!isNaN(province) || hasSpecialCharacter(province)) {
+    if (!isNaN(province) || (province.length > 0 &&  hasSpecialCharacter(province))) {
       customer.illogicalAddress = 1;
       flag = true;
     }
