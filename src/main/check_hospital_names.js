@@ -186,7 +186,7 @@ function checkHospitalNameError(excelFile, hospitalName) {
 
 function checkWithMatches(hospitalName) {
   return new Promise((resolve, reject) => {
-    db.get("SELECT hospital_id, name from matches where name LIKE ?", hospitalName, (err, res) => {
+    db.get("SELECT hospital_id, name from matches where name = ?", hospitalName, (err, res) => {
       if (err) {
         console.log('Fetch DB Error: ' + err);
         return reject(false);

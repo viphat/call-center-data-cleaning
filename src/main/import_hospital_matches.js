@@ -30,7 +30,7 @@ export const importMatchesFromFile = (excelFile) => {
   });
 
   function writeToDb(hospitalName, id) {
-    db.get("SELECT hospital_id, name from matches where name LIKE ?", hospitalName, (err, res) => {
+    db.get("SELECT hospital_id, name from matches where name = ?", hospitalName, (err, res) => {
       if (res === undefined || res === null) {
         id = parseInt(id);
         if (!isNaN(id)) {
