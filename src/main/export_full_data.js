@@ -89,6 +89,22 @@ export const exportFullData = (outputDirectory) => {
   });
 }
 
+export const exportFullReport = (outputDirectory) => {
+  if ( !_.endsWith(outputDirectory, '/') ) {
+    outputDirectory += '/';
+  }
+  outputDirectory += 'Full';
+  if (!fs.existsSync(outputDirectory)) {
+    fs.mkdirSync(outputDirectory);
+  }
+  if ( !_.endsWith(outputDirectory, '/') ) {
+    outputDirectory += '/';
+  }
+  return new Promise((resolve, reject) => {
+    resolve(generateReport('', outputDirectory));
+  });
+}
+
 function buildFileForProvince(outputDirectory, provinces, provinceIndex) {
   return new Promise((resolve, reject) => {
     let province = provinces[provinceIndex];

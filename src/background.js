@@ -16,7 +16,7 @@ import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospita
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
 import { generateReport } from './main/generate_report';
-import { exportFullData, exportFullBatchData } from './main/export_full_data';
+import { exportFullData, exportFullReport, exportFullBatchData } from './main/export_full_data';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -112,6 +112,7 @@ exports.importMatches = importMatches;
 exports.clearBatchData = clearBatchData;
 exports.generateReport = generateReport;
 exports.exportFullData = exportFullData;
+exports.exportFullReport = exportFullReport;
 exports.exportFullBatchData = exportFullBatchData;
 
 // exports.clearBatch = clearBatch;
