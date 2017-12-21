@@ -147,6 +147,9 @@ function readNextExcelFile(excelFiles, fileIndex) {
           console.log(workbook);
         }
         let hospitalName = worksheet.getCell(hospitalCell).value;
+        if (hospitalName == null || hospitalName == undefined || hospitalName == '') {
+          hospitalName = worksheet.getCell('G2').value;
+        }
         _.each(redundantStrings, (redundantString) => {
           hospitalName = _.replace(hospitalName, redundantString, '');
         })
