@@ -324,8 +324,8 @@ function isMissingData(customer, row) {
   let missingFields = [];
 
   if (row.getCell(lastNameCol).value === null) {
-    missingFields.push('Họ');
-    customer.missingLastName = 1;
+    // missingFields.push('Họ');
+    // customer.missingLastName = 1;
   }
 
   if (row.getCell(firstNameCol).value === null) {
@@ -333,7 +333,7 @@ function isMissingData(customer, row) {
     customer.missingFirstName = 1;
   }
 
-  if (row.getCell(firstNameCol).value === null || row.getCell(lastNameCol).value === null) {
+  if (row.getCell(firstNameCol).value === null) {
     customer.missingMomName = 1;
   }
 
