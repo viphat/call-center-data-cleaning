@@ -12,7 +12,8 @@ import { mainMenuTemplate } from './menu/main_menu_template';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
-import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names';
+import { writeReportToExcelFile } from './main/check_hospital_names';
+import { checkHospitalNames } from './main/check_hospital_names_v2';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
 import { generateReport } from './main/generate_report';
@@ -69,36 +70,11 @@ function checkData(inputFile, outputDirectory) {
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
-    extractFile(inputFile, extractFolder).then(response => {
-      // extractFile
-      return readExcelFiles(extractFolder);
-    }).catch((errResp) => {
-      reject(errResp);
-    }).then((excelFiles) =>{
-      // readExcelFiles
-      if (excelFiles.length === 0) {
-        reject('We have not found any excel file in your input source.');
-      } else {
-        return checkHospitalNames(excelFiles);
-      }
-    }).catch((errRes) => {
-      reject(errRes);
-    }).then((checkResult) => {
+    checkHospitalNames(inputFile).then((checkResult) => {
       console.log(checkResult);
-      if (checkResult.fileTooBig.length > 0 || checkResult.hasErorInHospitalName.length > 0 ||
-        checkResult.notFoundHospitalName.length > 0
-      ) {
-        return writeReportToExcelFile(outputDirectory + '/', checkResult);
-      } else {
-        resolve('Checked. Please check the result in output directory.');
-      }
     }).catch((errRes) => {
       reject(errRes);
-    }).then((resultFilePath) => {
-      resolve('Data Input need to be revised before continue to processing. Please check in ' + resultFilePath);
-    }).catch((errRes) => {
-      reject(errRes);
-    });
+    })
   });
 }
 

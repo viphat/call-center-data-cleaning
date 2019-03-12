@@ -11,7 +11,7 @@ const dialog = remote.dialog;
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
 
-let inputFile, outputDirectory, isProcessing, batch;
+let inputFile, outputDirectory, isProcessing, batch, source;
 
 document.getElementById('outputDirectory').addEventListener('click', _=>{
   outputDirectory = dialog.showOpenDialog({
@@ -25,7 +25,7 @@ document.getElementById('inputFile').addEventListener('click', _=>{
   inputFile = dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [
-      { name: 'Archived File', extensions: ['zip'] }
+      { name: 'Excel File', extensions: ['xls', 'xlsx'] }
     ]
   });
   var label = document.getElementById('inputFileLabel');
@@ -55,184 +55,198 @@ function resetAlertAndShowSpinner() {
   document.getElementById('spinner').style.display = 'inherit';
 }
 
-document.getElementById('btnFullBatchData').addEventListener('click', _ => {
+function assignFormValues() {
   batch = document.getElementById('txtBatch').value;
-  // batch = 'W2';
-  // outputDirectory = ['/Users/viphat/projects/dct/output'];
 
-  if (batch === undefined || batch === null || batch === '') {
-    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
-    return null;
+  if (document.querySelector('input[name="txtSource"]:checked') !== null) {
+    source = document.querySelector('input[name="txtSource"]:checked').value;
+  } else {
+    source = undefined;
   }
+}
+
+function isFormInvalid() {
+  console.log(outputDirectory)
+  console.log(inputFile)
+  console.log(batch)
+  console.log(document.querySelector('input[name="txtSource"]:checked'))
+
+  return outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '' || document.querySelector('input[name="txtSource"]:checked') === null
+}
+
+// document.getElementById('btnFullBatchData').addEventListener('click', _ => {
+//   // batch = 'W2';
+//   // outputDirectory = ['/Users/viphat/projects/dct/output'];
+
+//   if (batch === undefined || batch === null || batch === '') {
+//     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+//     return null;
+//   }
 
 
-  if (outputDirectory === undefined || outputDirectory === null) {
-    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
-    return null;
-  }
+//   if (outputDirectory === undefined || outputDirectory === null) {
+//     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+//     return null;
+//   }
 
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-  isProcessing = true;
-  resetAlertAndShowSpinner();
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-  mainProcess.exportFullBatchData(batch, outputDirectory).then((response) => {
-    disableSpinner();
-    showSucceedBox('Data Exported. Please check output folder');
-  }, (errRes) => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
+//   mainProcess.exportFullBatchData(batch, outputDirectory).then((response) => {
+//     disableSpinner();
+//     showSucceedBox('Data Exported. Please check output folder');
+//   }, (errRes) => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
-});
+// document.getElementById('btnFullReport').addEventListener('click', _ => {
+//   if (outputDirectory === undefined || outputDirectory === null) {
+//     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+//     return null;
+//   }
 
-document.getElementById('btnFullReport').addEventListener('click', _ => {
-  if (outputDirectory === undefined || outputDirectory === null) {
-    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
-    return null;
-  }
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-  isProcessing = true;
-  resetAlertAndShowSpinner();
+//   mainProcess.exportFullReport(outputDirectory).then((response) => {
+//     disableSpinner();
+//     showSucceedBox('Data Exported. Please check output folder');
+//   }, (errRes) => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
-  mainProcess.exportFullReport(outputDirectory).then((response) => {
-    disableSpinner();
-    showSucceedBox('Data Exported. Please check output folder');
-  }, (errRes) => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
+// document.getElementById('btnFullData').addEventListener('click', _ => {
+//   if (outputDirectory === undefined || outputDirectory === null) {
+//     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+//     return null;
+//   }
 
-});
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-document.getElementById('btnFullData').addEventListener('click', _ => {
-  if (outputDirectory === undefined || outputDirectory === null) {
-    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
-    return null;
-  }
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
+//   mainProcess.exportFullData(outputDirectory).then((response) => {
+//     disableSpinner();
+//     showSucceedBox('Data Exported. Please check output folder');
+//   }, (errRes) => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
-  isProcessing = true;
-  resetAlertAndShowSpinner();
+// document.getElementById('btnReport').addEventListener('click', _ => {
+//   batch = document.getElementById('txtBatch').value;
+//   // batch = 'W2';
+//   // outputDirectory = ['/Users/viphat/projects/dct/output'];
 
-  mainProcess.exportFullData(outputDirectory).then((response) => {
-    disableSpinner();
-    showSucceedBox('Data Exported. Please check output folder');
-  }, (errRes) => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
+//   if (batch === undefined || batch === null || batch === '') {
+//     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+//     return null;
+//   }
 
-});
+//   if (outputDirectory === undefined || outputDirectory === null) {
+//     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+//     return null;
+//   }
 
-document.getElementById('btnReport').addEventListener('click', _ => {
-  batch = document.getElementById('txtBatch').value;
-  // batch = 'W2';
-  // outputDirectory = ['/Users/viphat/projects/dct/output'];
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-  if (batch === undefined || batch === null || batch === '') {
-    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
-    return null;
-  }
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-  if (outputDirectory === undefined || outputDirectory === null) {
-    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
-    return null;
-  }
+//   mainProcess.generateReport(batch, outputDirectory).then( (reportFilePath) => {
+//     disableSpinner();
+//     showSucceedBox('Report generated. Please check file ' + reportFilePath);
+//   }, (errRes) => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
+// document.getElementById('btnClearBatch').addEventListener('click', _ => {
+//   batch = document.getElementById('txtBatch').value;
+//   // batch = 'W1';
 
-  isProcessing = true;
-  resetAlertAndShowSpinner();
+//   if (batch === undefined || batch === null || batch === '') {
+//     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+//     return null;
+//   }
 
-  mainProcess.generateReport(batch, outputDirectory).then( (reportFilePath) => {
-    disableSpinner();
-    showSucceedBox('Report generated. Please check file ' + reportFilePath);
-  }, (errRes) => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-});
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-document.getElementById('btnClearBatch').addEventListener('click', _ => {
-  batch = document.getElementById('txtBatch').value;
-  // batch = 'W1';
+//   mainProcess.clearBatchData(batch).then( (response) => {
+//     disableSpinner();
+//     showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
+//   }, (errRes) => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
-  if (batch === undefined || batch === null || batch === '') {
-    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
-    return null;
-  }
+// document.getElementById('btnProcess').addEventListener('click', _ => {
+//   // inputFile = ['/Users/viphat/projects/dct/HA NOI.zip'];
+//   // outputDirectory = ['/Users/viphat/projects/dct/output'];
+//   // batch = 'W3';
 
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
+//   if (isFormInvalid()) {
+//     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
+//     return null;
+//   }
 
-  isProcessing = true;
-  resetAlertAndShowSpinner();
+//   if (isProcessing === true) {
+//     dialog.showErrorBox('Notification', 'Processing...');
+//     return null;
+//   }
 
-  mainProcess.clearBatchData(batch).then( (response) => {
-    disableSpinner();
-    showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
-  }, (errRes) => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
+//   isProcessing = true;
+//   resetAlertAndShowSpinner();
 
-});
-
-document.getElementById('btnProcess').addEventListener('click', _ => {
-  // inputFile = ['/Users/viphat/projects/dct/HA NOI.zip'];
-  // outputDirectory = ['/Users/viphat/projects/dct/output'];
-  batch = document.getElementById('txtBatch').value;
-  // batch = 'W3';
-
-  if (outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '') {
-    dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
-    return null;
-  }
-
-  if (isProcessing === true) {
-    dialog.showErrorBox('Notification', 'Processing...');
-    return null;
-  }
-
-  isProcessing = true;
-  resetAlertAndShowSpinner();
-
-  mainProcess.processData(inputFile, outputDirectory, batch).then( (response) => {
-    disableSpinner();
-    showSucceedBox(response);
-  }, errRes => {
-    disableSpinner();
-    showFailedBox(errRes);
-  });
-});
+//   mainProcess.processData(inputFile, outputDirectory, batch).then( (response) => {
+//     disableSpinner();
+//     showSucceedBox(response);
+//   }, errRes => {
+//     disableSpinner();
+//     showFailedBox(errRes);
+//   });
+// });
 
 document.getElementById('btnCheck').addEventListener('click', _ => {
   // For Quick Development Purpose
   // TODO: Clean it.
-  // inputFile = ['/Users/viphat/projects/dct/data-sample.zip'];
-  // outputDirectory = ['/Users/viphat/projects/dct/output'];
+  inputFile = ['/Users/viphat/Downloads/hosca/OTB_Report Huggies 4.03- 10.03_11791 data.xlsx'];
+  outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
   // End
 
-  if (outputDirectory === undefined || inputFile === undefined) {
+  assignFormValues();
+
+  if (isFormInvalid()) {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;
   }

@@ -18,7 +18,7 @@
       <div class="col-md-12">
         <form class='form' class='form-horizontal' novalidate="">
           <div class='form-group row'>
-            <label class='control-label col-sm-4 text-success' for='inputFile'>Input File (.zip file only)</label>
+            <label class='control-label col-sm-4 text-success' for='inputFile'>Input File (.xlsx file only)</label>
             <div class='col-sm-8'>
               <button type='button' id='inputFile' class='btn-sm btn btn-info'>Select File</button>
               <span id='inputFileLabel'></span>
@@ -32,23 +32,40 @@
             </div>
           </div>
           <div class='form-group row'>
-            <label class='text-success control-label col-sm-4' for='txtBatch'>Batch</label>
+            <label class='text-success control-label col-sm-4' for='txtSource'>Source</label>
             <div class='col-sm-8'>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="txtSource" value="IMC" style="margin-right: 10px;">IMC
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="txtSource" value="OTB" style="margin-right: 10px;">OTB
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class='form-group row'>
+            <label class='text-success control-label col-sm-4' for='txtBatch'>Batch</label>
+            <div class='col-sm-6'>
               <input type='text' class='form-control' id='txtBatch' name='txtBatch'/>
             </div>
           </div>
+
           <div class='form-group'>
             <button style='margin-bottom: 10px;' type='button' class='btn btn-success' id='btnCheck'>
               <i class='fa fa-check-circle'></i>
               <span style='margin-left: 5px;'>Checking Data</span>
             </button>
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-danger' id='btnClearBatch'>
+            <!-- <button style='margin-bottom: 10px;' type='button' class='btn btn-danger' id='btnClearBatch'>
               <i class='fa fa-close'></i>
               <span style='margin-left: 5px;'>Clear Batch Data</span>
-            </button>
+            </button> -->
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-primary' id='btnProcess'>
+            <!-- <button style='margin-bottom: 10px;' type='button' class='btn btn-primary' id='btnProcess'>
               <i class='fa fa-rocket'></i>
               <span style='margin-left: 5px;'>Import Data</span>
             </button>
@@ -71,7 +88,7 @@
             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullBatchData'>
               <i class='fa fa-superpowers'></i>
               <span style='margin-left: 5px;'>Export Full Batch Data</span>
-            </button>
+            </button> -->
           </div>
           <div id='spinner' style='text-align: center; display: none;'>
             <i class="text-danger fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
