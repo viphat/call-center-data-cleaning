@@ -120,8 +120,6 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, hospital, prov
         customer.district,
         customer.province,
         row.getCell(phoneCol).value,
-        // '',  // Placeholder for babyName
-        // '',  // Placeholder for babyGender
         customer.day,
         customer.month,
         customer.year,

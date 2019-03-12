@@ -11,8 +11,7 @@ export const updateCustomer = (customer) => {
       missingFirstName = $missingFirstName, missingLastName = $missingLastName, missingMomName = $missingMomName,\
       missingDistrict = $missingDistrict, missingProvince = $missingProvince,\
       missingAddress = $missingAddress, missingPhone = $missingPhone,\
-      missingEmail = $missingEmail, missingBabyInformation = $missingBabyInformation,\
-      missingBabyName = $missingBabyName, missingBabyGender = $missingBabyGender,\
+      missingEmail = $missingEmail,\
       missingSampling = $missingSampling, missingDate = $missingDate,\
       missingMomStatus = $missingMomStatus,\
       illogicalData = $illogicalData, illogicalPhone = $illogicalPhone,\
@@ -37,9 +36,6 @@ export const updateCustomer = (customer) => {
       $missingAddress: customer.missingAddress || 0,
       $missingPhone: customer.missingPhone || 0,
       $missingEmail: customer.missingEmail || 0,
-      $missingBabyInformation: customer.missingBabyInformation || 0,
-      $missingBabyName: customer.missingBabyName || 0,
-      $missingBabyGender: customer.missingBabyGender || 0,
       $missingSampling: customer.missingSampling || 0,
       $missingDate: customer.missingDate || 0,
       $missingMomStatus: customer.missingMomStatus || 0,
@@ -105,13 +101,11 @@ export const createCustomer = (customer) => {
     db.run('INSERT INTO customers(\
         first_name, last_name, email,\
         district, province, phone,\
-        baby_name, baby_gender,\
         day, month, year, s1, s2, sampling,\
         illogicalSampling,\
         hospital_id, batch) \
         VALUES($firstName, $lastName, $email,\
-        $district, $province, $phone, $babyName,\
-        $babyGender, $day, $month, $year, $s1, $s2, $sampling,\
+        $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
         $illogicalSampling,\
         $hospital_id, $batch);',
     {
@@ -121,8 +115,6 @@ export const createCustomer = (customer) => {
       $district: customer.district,
       $province: customer.province,
       $phone: customer.phone,
-      $babyName: customer.babyName,
-      $babyGender: customer.babyGender,
       $day: customer.day,
       $month: customer.month,
       $year: customer.year,
@@ -158,7 +150,7 @@ export function isPhoneDuplicate(customer) {
 
     db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
     customers.email, customers.district, customers.province, customers.phone,\
-    customers.baby_name, customers.baby_gender, customers.day, customers.month, customers.year,\
+    customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name, \

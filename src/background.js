@@ -41,10 +41,6 @@ function importMatches(inputFile) {
   });
 }
 
-// function clearBatch(batch) {
-//   return clearBatchData(batch);
-// }
-
 function processData(inputFile, outputDirectory, batch) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
@@ -115,9 +111,6 @@ exports.exportFullData = exportFullData;
 exports.exportFullReport = exportFullReport;
 exports.exportFullBatchData = exportFullBatchData;
 
-// exports.clearBatch = clearBatch;
-//
-
 const setApplicationMenu = () => {
   const menus = [mainMenuTemplate];
   if (env.name !== 'production') {
@@ -147,10 +140,6 @@ app.on('ready', () => {
     protocol: 'file:',
     slashes: true,
   }));
-
-  if (env.name === 'development') {
-    mainWindow.openDevTools();
-  }
 });
 
 app.on('window-all-closed', () => {
@@ -168,7 +157,6 @@ ipcMain.on('open-help-window', () =>{
     parent: mainWindow
   });
 
-
   helpWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'help.html'),
     protocol: 'file:'
@@ -177,7 +165,6 @@ ipcMain.on('open-help-window', () =>{
   helpWindow.on('closed', () => {
     helpWindow = null;
   });
-
 });
 
 ipcMain.on('close-help-window', () => {
@@ -206,7 +193,6 @@ ipcMain.on('open-import-matches-window', () =>{
   importMatchesWindow.on('closed', () => {
     importMatchesWindow = null;
   });
-
 });
 
 ipcMain.on('close-import-matches-window', () => {
