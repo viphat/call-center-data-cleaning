@@ -74,13 +74,19 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
     console.log('Row: ' + rowNumber);
+
     if (isEmptyRow(row)) {
       return resolve(outputWorkbook);
     }
 
     let hospitalName = row.getCell(hospitalNameCol).value;
+    hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
+
+    console.log(hospitalName);
 
     getHospital(hospitalName).then((hospital) => {
+      console.log(hospital);
+
       let customer = {
         lastName: row.getCell(lastNameCol).value,
         firstName: row.getCell(firstNameCol).value,
@@ -94,6 +100,8 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         batch: batch,
         source: source
       }
+
+      console.log(customer);
 
       if (row.getCell(s1Col).value === 'S1') {
         customer.sampling = 'S1';

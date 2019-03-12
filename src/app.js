@@ -147,40 +147,46 @@ function isFormInvalid() {
 //   });
 // });
 
-// document.getElementById('btnReport').addEventListener('click', _ => {
-//   batch = document.getElementById('txtBatch').value;
-//   // batch = 'W2';
-//   // outputDirectory = ['/Users/viphat/projects/dct/output'];
+document.getElementById('btnReport').addEventListener('click', _ => {
+  // outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
+  // batch = 'W1';
+  // source = 'IMC';
+  assignFormValues();
 
-//   if (batch === undefined || batch === null || batch === '') {
-//     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
-//     return null;
-//   }
+  if (batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
 
-//   if (outputDirectory === undefined || outputDirectory === null) {
-//     dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
-//     return null;
-//   }
+  if (source === undefined || source === null || source === '') {
+    dialog.showErrorBox('Notification', 'You must fill in source field before processing.');
+    return null;
+  }
 
-//   if (isProcessing === true) {
-//     dialog.showErrorBox('Notification', 'Processing...');
-//     return null;
-//   }
+  if (outputDirectory === undefined || outputDirectory === null) {
+    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+    return null;
+  }
 
-//   isProcessing = true;
-//   resetAlertAndShowSpinner();
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
 
-//   mainProcess.generateReport(batch, outputDirectory).then( (reportFilePath) => {
-//     disableSpinner();
-//     showSucceedBox('Report generated. Please check file ' + reportFilePath);
-//   }, (errRes) => {
-//     disableSpinner();
-//     showFailedBox(errRes);
-//   });
-// });
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  mainProcess.generateReport(batch, source, outputDirectory).then( (reportFilePath) => {
+    disableSpinner();
+    showSucceedBox('Report generated. Please check file ' + reportFilePath);
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+});
 
 document.getElementById('btnClearBatch').addEventListener('click', _ => {
-  batch = document.getElementById('txtBatch').value;
+  assignFormValues();
 
   if (batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
@@ -206,11 +212,10 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
 
 document.getElementById('btnProcess').addEventListener('click', _ => {
   assignFormValues();
-
-  inputFile = ['/Users/viphat/Downloads/hosca/IMC_Report Huggies 4 3-10 3-306 data.xlsx'];
-  outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
-  batch = 'W1';
-  source = 'IMC';
+  // inputFile = ['/Users/viphat/Downloads/hosca/IMC_Report Huggies 4 3-10 3-306 data.xlsx'];
+  // outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
+  // batch = 'W1';
+  // source = 'IMC';
 
   if (isFormInvalid()) {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');

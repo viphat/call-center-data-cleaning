@@ -5,87 +5,138 @@ const fs = require('fs');
 
 const logoPath = './app/vendor/logo.png';
 
-export const generateReport = (batch, outputDirectory) => {
+export const generateReport = (batch, source, outputDirectory) => {
   return new Promise((resolve, reject) => {
-    generateReportTemplate(batch, outputDirectory).then((reportFilePath) => {
-      fillData(batch, 'All').then((rowData) => {
+    generateReportTemplate(batch, source, outputDirectory).then((reportFilePath) => {
+      fillData(batch, source, 'All').then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'B');
       }).then(() => {
-        return fillData(batch, 'ByBatch');
+        return fillData(batch, source, 'ByBatch');
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'C');
       }).then(() => {
-        return fillData(batch, 'Key Urban');
+        return fillData(batch, source, 'Key Urban 1');
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'D');
       }).then(() => {
-        return fillData(batch, { areaId: 1 });
+        return fillData(batch, source, { areaId: 1 }); // Hồ Chí Minh
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'E');
       }).then(() => {
-        return fillData(batch, { areaId: 2 });
+        return fillData(batch, source, { areaId: 2 }); // Hà Nội
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'F');
       }).then(() => {
-        return fillData(batch, { areaId: 3 });
+        return fillData(batch, source, { areaId: 6 }); // Hải Phòng
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'G');
       }).then(() => {
-        return fillData(batch, { areaId: 4 });
+        return fillData(batch, source, 'Key Urban 2');
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'H');
       }).then(() => {
-        return fillData(batch, { areaId: 5 });
+        return fillData(batch, source, { areaId: 3 }); // Đà Nẵng
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'I');
       }).then(() => {
-        return fillData(batch, { areaId: 6 });
+        return fillData(batch, source, { areaId: 4 }); // Cần Thơ
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'J');
       }).then(() => {
-        return fillData(batch, 'Urban');
+        return fillData(batch, source, 'Urban');
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'K');
       }).then(() => {
-        return fillData(batch, { areaId: 7 });
+        return fillData(batch, source, { provinceId: 7 }); // Nghệ An
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'L');
       }).then(() => {
-        return fillData(batch, { areaId: 8 });
+        return fillData(batch, source, { provinceId: 9 }); // Thái Nguyên
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'M');
       }).then(() => {
-        return fillData(batch, { areaId: 9 });
+        return fillData(batch, source, { provinceId: 23 }); // Bình Dương
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'N');
       }).then(() => {
-        return fillData(batch, { areaId: 10 });
+        return fillData(batch, source, { provinceId: 21 }); // Bình Định
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'O');
       }).then(() => {
-        return fillData(batch, 'Rural');
+        return fillData(batch, source, { provinceId: 17 }); // Bắc Ninh
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'P');
       }).then(() => {
-        return fillData(batch, { areaId: 11 });
+        return fillData(batch, source, { provinceId: 14 }); // Hưng Yên
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'Q');
       }).then(() => {
-        return fillData(batch, { areaId: 12 });
+        return fillData(batch, source, { provinceId: 27 }); // Bến Tre
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'R');
       }).then(() => {
-        return fillData(batch, 'S1');
+        return fillData(batch, source, { provinceId: 46 }); // Bạc Liêu
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'S');
       }).then(() => {
-        return fillData(batch, 'S2');
+        return fillData(batch, source, { provinceId: 47 }); // Kiên Giang
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'T');
       }).then(() => {
+        return fillData(batch, source, { provinceId: 31 }); // Vĩnh Long
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'U');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 24 }); // Đồng Nai
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'V');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 18 }); // Thừa Thiên Huế
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'W');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 20 }); // Đắk Lắk
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'X');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 11 }); // Hải Dương
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'Y');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 15 }); // Ninh Bình
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'Z');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 19 }); // Quảng Ngãi
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AA');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 48 }); // Sóc Trăng
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AB');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 29 }); // Trà Vinh
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AC');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 16 }); // Vĩnh Phúc
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AD');
+      }).then(() => {
+        return fillData(batch, source, { provinceId: 13 }); // Thái Bình
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AE');
+      }).then(() => {
+        return fillData(batch, source, 'S1');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AF');
+      }).then(() => {
+        return fillData(batch, source, 'S2');
+      }).then((rowData) => {
+        return writeToTemplate(reportFilePath, rowData, 'AG');
+      }).then(() => {
         resolve(reportFilePath);
       });
-
     });
   });
 }
@@ -151,7 +202,7 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
   });
 }
 
-function fillData(batch, filterType) {
+function fillData(batch, source, filterType) {
   return new Promise((resolve, reject) => {
     let baseQuery = 'SELECT COUNT(*) AS TotalBase, coalesce(SUM(hasError),0) AS HasError,\
     coalesce(SUM(missingData),0) AS MissingData,\
@@ -173,7 +224,7 @@ function fillData(batch, filterType) {
     let joinTable = '';
     let params = {};
 
-    if (filterType === 'Key Urban' || filterType === 'Urban' || filterType === 'Rural') {
+    if (filterType === 'Key Urban 1' || filterType === 'Key Urban 2' || filterType === 'Urban') {
       joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
         JOIN provinces ON hospitals.province_id = provinces.province_id \
         JOIN areas ON provinces.area_id = areas.area_id';
@@ -193,6 +244,13 @@ function fillData(batch, filterType) {
       params = {
         $areaId: filterType.areaId
       }
+    } else if (filterType.provinceId !== undefined && filterType.provinceId !== null) {
+      joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
+        JOIN provinces ON hospitals.province_id = provinces.province_id';
+      whereCondition = 'WHERE provinces.province_id = $provinceId'
+      params = {
+        $provinceId: filterType.provinceId
+      }
     }
 
     if (batch !== '' && filterType !== 'All') {
@@ -203,6 +261,17 @@ function fillData(batch, filterType) {
         whereCondition = 'WHERE customers.batch = $batch'
       } else {
         whereCondition += " AND customers.batch = $batch";
+      }
+    }
+
+    if (source == 'IMC' || source == 'OTB') {
+      params = _.merge(params, {
+        $source: source
+      });
+      if (whereCondition === '') {
+        whereCondition = 'WHERE customers.source = $source'
+      } else {
+        whereCondition += " AND customers.source = $source";
       }
     }
 
@@ -218,7 +287,7 @@ function fillData(batch, filterType) {
 }
 
 
-export const generateReportTemplate = (batch, outputDirectory) => {
+export const generateReportTemplate = (batch, source, outputDirectory) => {
   return new Promise((resolve, reject) => {
 
     let dir = outputDirectory + '/' + batch;
@@ -226,7 +295,7 @@ export const generateReportTemplate = (batch, outputDirectory) => {
       fs.mkdirSync(dir)
     }
 
-    let reportFilePath = dir + '/report.xlsx';
+    let reportFilePath = dir + '/report_' + source + '.xlsx';
 
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Abs', {});
@@ -267,9 +336,22 @@ export const generateReportTemplate = (batch, outputDirectory) => {
 
     worksheet.getColumn('S').width = 30;
     worksheet.getColumn('T').width = 30;
+    worksheet.getColumn('U').width = 30;
+    worksheet.getColumn('V').width = 30;
+    worksheet.getColumn('W').width = 30;
+    worksheet.getColumn('X').width = 30;
+    worksheet.getColumn('Y').width = 30;
+    worksheet.getColumn('Z').width = 30;
+    worksheet.getColumn('AA').width = 30;
+    worksheet.getColumn('AB').width = 30;
+    worksheet.getColumn('AC').width = 30;
+    worksheet.getColumn('AD').width = 30;
+    worksheet.getColumn('AE').width = 30;
+    worksheet.getColumn('AF').width = 30;
+    worksheet.getColumn('AG').width = 30;
     // A1
 
-    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2017 PROJECT';
+    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2019 PROJECT';
 
     worksheet.getCell('B1').font = {
       bold: true, size: 26, name: 'Calibri', family: 2,
@@ -288,7 +370,7 @@ export const generateReportTemplate = (batch, outputDirectory) => {
 
     worksheet.getCell('B2').alignment = { horizontal: 'center', vertical: 'middle' };
 
-    worksheet.getCell('B2').value = 'Step 1: Database Clean';
+    worksheet.getCell('B2').value = 'Step 1: Database Clean - Summary Report';
 
     // A4
     worksheet.getCell('A5').border = {
@@ -314,7 +396,7 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     worksheet.getCell('A5').value = batch;
 
     // A6, A20
-    buildReportFirstColumnType3(worksheet, 6, 'Raw data received from K-C');
+    buildReportFirstColumnType3(worksheet, 6, 'Raw data received from' + source);
     buildReportFirstColumnType3(worksheet, 20, 'Valid database (value) - base all');
 
     // A7, A12, A16, A21
@@ -338,34 +420,48 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     // Done 1st Col
 
     // Row 4 - D4, K4, P4, S4
-    buildReportRow4(worksheet, 'D', 'D4:J4', 'KEY URBAN');
-    buildReportRow4(worksheet, 'K', 'K4:O4', 'URBAN');
-    buildReportRow4(worksheet, 'P', 'P4:R4', 'RURAL');
-    buildReportRow4(worksheet, 'S', 'S4:T4', 'SAMPLING');
+    buildReportRow4(worksheet, 'D', 'D4:G4', 'KEY URBAN 1');
+    buildReportRow4(worksheet, 'H', 'H4:J4', 'KEY URBAN 2');
+    buildReportRow4(worksheet, 'K', 'K4:AE4', 'URBAN');
+    buildReportRow4(worksheet, 'AF', 'AF4:AG4', 'SAMPLING');
 
     // // Row 5, B4-T4
     buildReportRow5(worksheet, 'B', 'Total Project');
     buildReportRow5(worksheet, 'C', 'Total ' + batch);
-    buildReportRow5(worksheet, 'D', 'Total Key Urban');
+    buildReportRow5(worksheet, 'D', 'Total Key Urban 1');
     buildReportRow5(worksheet, 'E', 'HCM');
     buildReportRow5(worksheet, 'F', 'Hà Nội');
-    buildReportRow5(worksheet, 'G', 'Đà Nẵng');
-    buildReportRow5(worksheet, 'H', 'Cần  Thơ');
-    buildReportRow5(worksheet, 'I', 'Khánh Hòa');
-    buildReportRow5(worksheet, 'J', 'Hải Phòng');
+    buildReportRow5(worksheet, 'G', 'Hải Phòng');
+    buildReportRow5(worksheet, 'H', 'Total Key Urban 2');
+    buildReportRow5(worksheet, 'I', 'Đà Nẵng');
+    buildReportRow5(worksheet, 'J', 'Cần Thơ');
     buildReportRow5(worksheet, 'K', 'Total Urban');
-    buildReportRow5(worksheet, 'L', 'Miền Bắc');
-    buildReportRow5(worksheet, 'M', 'Miền Trung');
-    buildReportRow5(worksheet, 'N', 'Miền Đông');
-    buildReportRow5(worksheet, 'O', 'Miền Tây');
-    buildReportRow5(worksheet, 'P', 'Total Rural');
-    buildReportRow5(worksheet, 'Q', 'Miền Bắc');
-    buildReportRow5(worksheet, 'R', 'Miền Trung');
-    buildReportRow5(worksheet, 'S', 'Pregnant Mom');
-    buildReportRow5(worksheet, 'T', 'New Mom');
+    buildReportRow5(worksheet, 'L', 'Nghệ An');
+    buildReportRow5(worksheet, 'M', 'Thái Nguyên');
+    buildReportRow5(worksheet, 'N', 'Bình Dương');
+    buildReportRow5(worksheet, 'O', 'Bình Định');
+    buildReportRow5(worksheet, 'P', 'Bắc Ninh');
+    buildReportRow5(worksheet, 'Q', 'Hưng Yên');
+    buildReportRow5(worksheet, 'R', 'Bến Tre');
+    buildReportRow5(worksheet, 'S', 'Bạc Liêu');
+    buildReportRow5(worksheet, 'T', 'Kiên Giang');
+    buildReportRow5(worksheet, 'U', 'Vĩnh Long');
+    buildReportRow5(worksheet, 'V', 'Đồng Nai');
+    buildReportRow5(worksheet, 'W', 'Thừa Thiên Huế');
+    buildReportRow5(worksheet, 'X', 'Đắk Lắk');
+    buildReportRow5(worksheet, 'Y', 'Hải Dương');
+    buildReportRow5(worksheet, 'Z', 'Ninh Bình');
+    buildReportRow5(worksheet, 'AA', 'Quảng Ngãi');
+    buildReportRow5(worksheet, 'AB', 'Sóc Trăng');
+    buildReportRow5(worksheet, 'AC', 'Trà Vinh');
+    buildReportRow5(worksheet, 'AD', 'Vĩnh Phúc');
+    buildReportRow5(worksheet, 'AE', 'Thái Bình');
+    buildReportRow5(worksheet, 'AF', 'Pregnant Mom');
+    buildReportRow5(worksheet, 'AG', 'New Mom');
 
     // Data
-    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG'];
+
     let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
     for (let rowArrIndex = 0; rowArrIndex < rowArr.length; rowArrIndex += 1) {
@@ -395,23 +491,19 @@ function buildReportRow5(worksheet, cellIndex, text) {
     fgColor = { theme: 5, tint: 0.5999938962981048 };
   }
 
-  if (cellIndex == 'D' || cellIndex == 'E' || cellIndex == 'F' || cellIndex == 'G' ||
-    cellIndex == 'H' || cellIndex == 'I' || cellIndex == 'J'
-  ) {
+  if (cellIndex == 'D' || cellIndex == 'E' || cellIndex == 'F' || cellIndex == 'G') {
     fgColor = { argb: 'FFFFFF00' };
   }
 
-  if (cellIndex == 'K' || cellIndex == 'L' || cellIndex == 'M' || cellIndex == 'N' ||
-    cellIndex == 'O'
-  ) {
+  if (cellIndex == 'H' || cellIndex == 'I' || cellIndex == 'J') {
     fgColor = { theme: 6, tint: 0.3999755851924192 };
   }
 
-  if (cellIndex == 'P' || cellIndex == 'Q' || cellIndex == 'R') {
+  if (cellIndex == 'K' || cellIndex == 'L' || cellIndex == 'M' || cellIndex == 'N' || cellIndex == 'O' || cellIndex == 'P' || cellIndex == 'Q' || cellIndex == 'R' || cellIndex == 'S' || cellIndex == 'T' || cellIndex == 'U' || cellIndex == 'V' || cellIndex == 'W' || cellIndex == 'X' || cellIndex == 'Y' || cellIndex == 'Z' || cellIndex == 'AA' || cellIndex == 'AB' || cellIndex == 'AC' || cellIndex == 'AD' || cellIndex == 'AE') {
     fgColor = { theme: 9, tint: 0.3999755851924192 };
   }
 
-  if (cellIndex == 'S' || cellIndex == 'T') {
+  if (cellIndex == 'AF' || cellIndex == 'AG') {
     fgColor = { theme: 9, tint: 0.5999938962981048 };
   }
 
@@ -454,13 +546,13 @@ function buildReportRow4(worksheet, cellIndex, mergeRange, text) {
     case 'D':
       fgColor = { argb: 'FFFFFF00' };
       break;
-    case 'K':
+    case 'H':
       fgColor = { theme: 6, tint: 0.3999755851924192 };
       break;
-    case 'P':
+    case 'K':
       fgColor = { theme: 9, tint: 0.3999755851924192 };
       break;
-    case 'S':
+    case 'AF':
       fgColor = { theme: 9, tint: 0.5999938962981048 };
       break;
   }

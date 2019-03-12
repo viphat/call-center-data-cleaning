@@ -15,7 +15,7 @@ import { validateSourceData } from './main/check_source_data_v2';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names_v2';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
-import { generateReport } from './main/generate_report';
+import { generateReport } from './main/generate_report_v2';
 import { exportFullData, exportFullReport, exportFullBatchData } from './main/export_full_data';
 
 const electron = require('electron');
@@ -59,6 +59,9 @@ function checkData(inputFile, outputDirectory) {
     checkHospitalNames(inputFile).then((notFoundHospitalNames) => {
       if (notFoundHospitalNames.length > 0) {
         writeReportToExcelFile(outputDirectory + '/', notFoundHospitalNames);
+        resolve('Kiểm tra hoàn tất - Xem báo cáo trong ' + outputDirectory);
+      } else {
+        resolve('Kiểm tra hoàn tất');
       }
     }).catch((errRes) => {
       reject(errRes);
