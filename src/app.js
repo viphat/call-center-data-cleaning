@@ -193,6 +193,11 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
     return null;
   }
 
+  if (source === undefined || source === null || source === '') {
+    dialog.showErrorBox('Notification', 'You must fill in source field before processing.');
+    return null;
+  }
+
   if (isProcessing === true) {
     dialog.showErrorBox('Notification', 'Processing...');
     return null;
@@ -201,7 +206,7 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
   isProcessing = true;
   resetAlertAndShowSpinner();
 
-  mainProcess.clearBatchData(batch).then( (response) => {
+  mainProcess.clearBatchData(batch, source).then( (response) => {
     disableSpinner();
     showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
   }, (errRes) => {

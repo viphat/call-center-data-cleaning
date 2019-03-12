@@ -82,11 +82,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
-    console.log(hospitalName);
-
     getHospital(hospitalName).then((hospital) => {
-      console.log(hospital);
-
       let customer = {
         lastName: row.getCell(lastNameCol).value,
         firstName: row.getCell(firstNameCol).value,
@@ -100,8 +96,6 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         batch: batch,
         source: source
       }
-
-      console.log(customer);
 
       if (row.getCell(s1Col).value === 'S1') {
         customer.sampling = 'S1';
@@ -335,21 +329,21 @@ function isMissingData(customer, row) {
   // Kiểm tra thiếu thông tin
   let missingFields = [];
 
-  if (row.getCell(lastNameCol).value === null) {
-    // missingFields.push('Họ');
-    // customer.missingLastName = 1;
-  }
+  // if (row.getCell(lastNameCol).value === null) {
+  //   missingFields.push('Họ');
+  //   customer.missingLastName = 1;
+  // }
 
-  if (row.getCell(firstNameCol).value === null) {
+  if (row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') {
     missingFields.push('Tên');
     customer.missingFirstName = 1;
   }
 
-  if (row.getCell(firstNameCol).value === null) {
+  if (row.getCell(firstNameCol).value === null || row.getCell(firstNameCol).value === '') {
     customer.missingMomName = 1;
   }
 
-  if (row.getCell(emailCol).value === null) {
+  if (row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
     customer.missingEmail = 1;
