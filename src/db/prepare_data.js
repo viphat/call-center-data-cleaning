@@ -5,13 +5,13 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    // db.run('ALTER TABLE customers ADD COLUMN duplicatedPhoneBetweenS1AndS2 INTEGER DEFAULT 0');
     insertTableAreas();
     insertTableProvinces();
     insertTableHospitals();
     insertTableMatches();
     createTableCustomers();
   });
+
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
 }
 
@@ -19,7 +19,7 @@ function createTableCustomers() {
   db.run('DROP TABLE IF EXISTS customers;');
   db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT,\
   email TEXT, district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
-  sampling TEXT, hospital_id INTEGER, batch TEXT,\
+  sampling TEXT, hospital_id INTEGER, batch TEXT, source TEXT,\
   hasError INTEGER DEFAULT 0,\
   missingData INTEGER DEFAULT 0,\
   missingFirstName INTEGER DEFAULT 0, \

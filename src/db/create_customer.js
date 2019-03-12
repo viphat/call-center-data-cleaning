@@ -103,11 +103,11 @@ export const createCustomer = (customer) => {
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
         illogicalSampling,\
-        hospital_id, batch) \
+        hospital_id, batch, source) \
         VALUES($firstName, $lastName, $email,\
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
         $illogicalSampling,\
-        $hospital_id, $batch);',
+        $hospital_id, $batch, $source);',
     {
       $firstName: customer.firstName,
       $lastName: customer.lastName,
@@ -123,7 +123,8 @@ export const createCustomer = (customer) => {
       $sampling: customer.sampling,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
-      $batch: customer.batch
+      $batch: customer.batch,
+      $source: customer.source
     }, (errRes) => {
       db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
         customer.customer_id = row.customer_id;
@@ -154,7 +155,7 @@ export function isPhoneDuplicate(customer) {
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name, \
-    customers.sampling, customers.batch \
+    customers.sampling, customers.batch, customers.source \
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \

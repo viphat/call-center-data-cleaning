@@ -66,11 +66,6 @@ function assignFormValues() {
 }
 
 function isFormInvalid() {
-  console.log(outputDirectory)
-  console.log(inputFile)
-  console.log(batch)
-  console.log(document.querySelector('input[name="txtSource"]:checked'))
-
   return outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '' || document.querySelector('input[name="txtSource"]:checked') === null
 }
 
@@ -184,73 +179,68 @@ function isFormInvalid() {
 //   });
 // });
 
-// document.getElementById('btnClearBatch').addEventListener('click', _ => {
-//   batch = document.getElementById('txtBatch').value;
-//   // batch = 'W1';
+document.getElementById('btnClearBatch').addEventListener('click', _ => {
+  batch = document.getElementById('txtBatch').value;
 
-//   if (batch === undefined || batch === null || batch === '') {
-//     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
-//     return null;
-//   }
+  if (batch === undefined || batch === null || batch === '') {
+    dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
+    return null;
+  }
 
-//   if (isProcessing === true) {
-//     dialog.showErrorBox('Notification', 'Processing...');
-//     return null;
-//   }
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
 
-//   isProcessing = true;
-//   resetAlertAndShowSpinner();
+  isProcessing = true;
+  resetAlertAndShowSpinner();
 
-//   mainProcess.clearBatchData(batch).then( (response) => {
-//     disableSpinner();
-//     showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
-//   }, (errRes) => {
-//     disableSpinner();
-//     showFailedBox(errRes);
-//   });
-// });
+  mainProcess.clearBatchData(batch).then( (response) => {
+    disableSpinner();
+    showSucceedBox('Clear All Data of ' + batch + ' Batch successfully.');
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+});
 
-// document.getElementById('btnProcess').addEventListener('click', _ => {
-//   // inputFile = ['/Users/viphat/projects/dct/HA NOI.zip'];
-//   // outputDirectory = ['/Users/viphat/projects/dct/output'];
-//   // batch = 'W3';
-
-//   if (isFormInvalid()) {
-//     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
-//     return null;
-//   }
-
-//   if (isProcessing === true) {
-//     dialog.showErrorBox('Notification', 'Processing...');
-//     return null;
-//   }
-
-//   isProcessing = true;
-//   resetAlertAndShowSpinner();
-
-//   mainProcess.processData(inputFile, outputDirectory, batch).then( (response) => {
-//     disableSpinner();
-//     showSucceedBox(response);
-//   }, errRes => {
-//     disableSpinner();
-//     showFailedBox(errRes);
-//   });
-// });
-
-document.getElementById('btnCheck').addEventListener('click', _ => {
-  // For Quick Development Purpose
-  // TODO: Clean it.
-  inputFile = ['/Users/viphat/Downloads/hosca/OTB_Report Huggies 4.03- 10.03_11791 data.xlsx'];
-  outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
-  // End
-
+document.getElementById('btnProcess').addEventListener('click', _ => {
   assignFormValues();
 
-  batch = 'B1';
-  source = 'OTB';
+  inputFile = ['/Users/viphat/Downloads/hosca/IMC_Report Huggies 4 3-10 3-306 data.xlsx'];
+  outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
+  batch = 'W1';
+  source = 'IMC';
 
   if (isFormInvalid()) {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
+    return null;
+  }
+
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
+
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  mainProcess.processData(inputFile, batch, source, outputDirectory).then( (response) => {
+    disableSpinner();
+    showSucceedBox(response);
+  }, errRes => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+});
+
+document.getElementById('btnCheck').addEventListener('click', _ => {
+  // inputFile = ['/Users/viphat/Downloads/hosca/OTB_Report Huggies 4.03- 10.03_11791 data.xlsx'];
+  // outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
+  assignFormValues();
+
+  if (outputDirectory === undefined || inputFile === undefined) {
+    dialog.showErrorBox('Notification', 'Bạn phải khai báo Input File và Output Directory trước khi Kiểm tra Data.');
     return null;
   }
 

@@ -7,18 +7,18 @@ const invalid_title = 'DATA CLEANING RESULT - INVALID LIST';
 const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST';
 const logoPath = './app/vendor/logo.png';
 
-export const buildTemplate = (outputPath, province_name) => {
+export const buildTemplate = (outputPath) => {
   let workbook = new Excel.Workbook();
 
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(outputPath)) {
-      return resolve(writeTemplate(outputPath, province_name, workbook));
+      return resolve(writeTemplate(outputPath, workbook));
     } else {
       workbook.xlsx.readFile(outputPath).then(() => {
-        let sheetName = province_name + ' - ' + 'Valid';
+        let sheetName = 'Valid';
         let worksheet = workbook.getWorksheet(sheetName);
         if (worksheet === undefined) {
-          return resolve(writeTemplate(outputPath, province_name, workbook));
+          return resolve(writeTemplate(outputPath, workbook));
         }
         resolve(workbook);
       });
@@ -26,17 +26,17 @@ export const buildTemplate = (outputPath, province_name) => {
   });
 }
 
-function writeTemplate(outputPath, province_name, workbook) {
+function writeTemplate(outputPath, workbook) {
   return new Promise((resolve, reject) => {
-    let sheetName = province_name + ' - ' + 'Valid';
+    let sheetName = 'Valid';
     let worksheet = workbook.addWorksheet(sheetName, {});
-    writeBaseTemplate(workbook, worksheet, valid_title, province_name);
-    sheetName = province_name + ' - ' + 'Invalid';
+    writeBaseTemplate(workbook, worksheet, valid_title);
+    sheetName = 'Invalid';
     worksheet = workbook.addWorksheet(sheetName, {});
-    writeBaseTemplate(workbook, worksheet, invalid_title, province_name);
-    sheetName = province_name + ' - ' + 'Duplication';
+    writeBaseTemplate(workbook, worksheet, invalid_title);
+    sheetName = 'Duplication';
     worksheet = workbook.addWorksheet(sheetName, {});
-    writeBaseTemplate(workbook, worksheet, duplication_title, province_name);
+    writeBaseTemplate(workbook, worksheet, duplication_title);
     // Write to File
     workbook.xlsx.writeFile(outputPath).then(() => {
       resolve(workbook);
@@ -44,7 +44,7 @@ function writeTemplate(outputPath, province_name, workbook) {
   });
 }
 
-function writeBaseTemplate(workbook, worksheet, title, province_name) {
+function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getColumn('A').width = 6;
   worksheet.getColumn('B').width = 17;
   worksheet.getColumn('C').width = 17;
@@ -72,33 +72,6 @@ function writeBaseTemplate(workbook, worksheet, title, province_name) {
   worksheet.getCell('E1').alignment = { vertical: 'middle' };
 
   worksheet.getCell('E1').value = title;
-
-  worksheet.getCell('E3').font = {
-    bold: true
-  };
-
-  worksheet.getCell('E3').value = 'City/Province';
-
-  worksheet.getCell('F3').font = {
-    bold: true,
-    size: 10,
-    color: { argb: 'FF0000FF' },
-    name: 'Arial',
-    family: 2
-  };
-
-  worksheet.getCell('F3').fill = {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: { theme: 5, tint: 0.5999938962981048 },
-    bgColor: { indexed: 64 }
-  };
-
-  worksheet.getCell('F3').alignment = {
-    horizontal: 'right', vertical: 'middle'
-  }
-
-  worksheet.getCell('F3').value = province_name;
 
   worksheet.getCell('H2').font = {
     italic: true,

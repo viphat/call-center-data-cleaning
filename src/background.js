@@ -11,7 +11,7 @@ import { devMenuTemplate } from './menu/dev_menu_template';
 import { mainMenuTemplate } from './menu/main_menu_template';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
-import { validateSourceData } from './main/check_source_data';
+import { validateSourceData } from './main/check_source_data_v2';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names_v2';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
@@ -41,24 +41,11 @@ function importMatches(inputFile) {
   });
 }
 
-function processData(inputFile, outputDirectory, batch) {
+function processData(inputFile, batch, source, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
-  let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
-    extractFile(inputFile, extractFolder).then(response => {
-      return readExcelFiles(extractFolder);
-    }, errRes => {
-      reject(errRes);
-    }).then(excelFiles =>{
-      if (excelFiles.length === 0) {
-        reject('Không tìm thấy File excel nào trong File dữ liệu đầu vào.');
-      } else {
-        return validateSourceData(excelFiles, batch, outputDirectory);
-      }
-    }, errRes => {
-      reject(errRes);
-    }).then((result) => {
+    validateSourceData(inputFile, batch, source, outputDirectory).then((result) => {
       resolve('Xử lý thành công! Vui lòng kiểm tra kết quả ở thư mục ' + outputDirectory);
     });
   });
@@ -67,7 +54,7 @@ function processData(inputFile, outputDirectory, batch) {
 function checkData(inputFile, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
-  let extractFolder = outputDirectory + '/input/';
+
   return new Promise((resolve, reject) => {
     checkHospitalNames(inputFile).then((notFoundHospitalNames) => {
       if (notFoundHospitalNames.length > 0) {
