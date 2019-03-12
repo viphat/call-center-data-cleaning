@@ -2,7 +2,6 @@ import { db } from '../db/prepare_data.js';
 const _  = require('lodash');
 const Excel = require('exceljs');
 
-
 export const importMatchesFromFile = (excelFile) => {
   return new Promise((resolve, reject) => {
     let workbook = new Excel.Workbook();
@@ -10,7 +9,7 @@ export const importMatchesFromFile = (excelFile) => {
       let worksheet = workbook.getWorksheet(1);
       let rowIndex = 1;
       let row = worksheet.getRow(rowIndex);
-      if (row.getCell(1).value !== 'Hospital Name' && row.getCell(2).value !== 'Equivalent ID') {
+      if (row.getCell(1).value !== 'Tên Bệnh Viện' && row.getCell(2).value !== 'ID tương ứng') {
         return reject(false);
       }
       rowIndex += 1;
@@ -39,5 +38,4 @@ export const importMatchesFromFile = (excelFile) => {
       }
     });
   }
-
 }

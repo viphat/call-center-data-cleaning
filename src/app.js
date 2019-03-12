@@ -246,6 +246,9 @@ document.getElementById('btnCheck').addEventListener('click', _ => {
 
   assignFormValues();
 
+  batch = 'B1';
+  source = 'OTB';
+
   if (isFormInvalid()) {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;

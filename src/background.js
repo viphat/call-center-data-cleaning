@@ -12,8 +12,7 @@ import { mainMenuTemplate } from './menu/main_menu_template';
 import { extractFile } from './main/extract_file';
 import { readExcelFiles } from './main/read_excel_files';
 import { validateSourceData } from './main/check_source_data';
-import { writeReportToExcelFile } from './main/check_hospital_names';
-import { checkHospitalNames } from './main/check_hospital_names_v2';
+import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names_v2';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
 import { generateReport } from './main/generate_report';
@@ -70,8 +69,10 @@ function checkData(inputFile, outputDirectory) {
   outputDirectory = _.first(outputDirectory);
   let extractFolder = outputDirectory + '/input/';
   return new Promise((resolve, reject) => {
-    checkHospitalNames(inputFile).then((checkResult) => {
-      console.log(checkResult);
+    checkHospitalNames(inputFile).then((notFoundHospitalNames) => {
+      if (notFoundHospitalNames.length > 0) {
+        writeReportToExcelFile(outputDirectory + '/', notFoundHospitalNames);
+      }
     }).catch((errRes) => {
       reject(errRes);
     })
