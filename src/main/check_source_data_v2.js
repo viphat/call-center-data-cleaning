@@ -178,8 +178,6 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.batch
           ]
 
-          // console.log(duplicatedRow);
-
           if (duplicatedWith.batch == customer.batch) {
             duplicatedWith.hasError = 1;
             duplicatedWith.duplicatedPhone = 1;
@@ -196,12 +194,24 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           rowData.push(customer.batch);
           writeToFile(outputWorkbook, outputSheetName, duplicatedRow).then((workbook) => {
             writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
-              resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+              if (rowNumber % 1000 === 0) {
+                setTimeout(function(){
+                  resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                }, 0);
+              } else {
+                resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+              }
             });
           });
         } else {
           writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
-            resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+            if (rowNumber % 1000 === 0) {
+                setTimeout(function(){
+                  resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                }, 0);
+              } else {
+                resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+              }
           });
         }
       });
