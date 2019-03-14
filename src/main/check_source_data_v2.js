@@ -90,6 +90,9 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         district: row.getCell(districtCol).value,
         province: row.getCell(provinceCol).value,
         phone: row.getCell(phoneCol).value,
+        day: row.getCell(dayCol).value,
+        month: row.getCell(monthCol).value,
+        year: row.getCell(yearCol).value,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
         hospital_id: hospital.hospital_id,
@@ -472,15 +475,12 @@ function isIllogicalData(customer, row) {
   date = new Date(date);
 
   if (date !== null && date !== undefined) {
-    customer.day = date;
-    customer.month = null;
-    customer.year = null;
     let day, month, year;
     let projectStartDate = new Date('2019-01-01');
 
-    customer.day = day;
-    customer.month = month;
-    customer.year = year;
+    day = customer.day;
+    month = customer.month;
+    year = customer.year;
 
     if (date == 'Invalid Date') {
       customer.illogicalDate = 1;
@@ -497,6 +497,7 @@ function isIllogicalData(customer, row) {
       }
 
       var today = new Date();
+      var next9Months = today.setMonth(today.getMonth() + 9);
       var currentYear = today.getFullYear();
 
       if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
@@ -513,6 +514,11 @@ function isIllogicalData(customer, row) {
         // Ngày sinh của em bé không được lớn hơn hoặc bằng ngày import
         customer.illogicalDate = 1;
         flag = true;
+      } else {
+        if (date > next9Months) {
+          customer.illogicalDate = 1;
+          flag = true;
+        }
       }
     }
   }
