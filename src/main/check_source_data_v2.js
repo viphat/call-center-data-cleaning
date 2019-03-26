@@ -27,6 +27,8 @@ const s1Col = 11;
 const s2Col = 12;
 const hospitalNameCol = 13;
 
+let collectedDateCol = 17; // 17 for OTB or 19 for IMC
+
 export const validateSourceData = (excelFile, batch, source, outputDirectory) => {
   return new Promise((resolve, reject) => {
     if ( !_.endsWith(outputDirectory, '/') ) {
@@ -43,6 +45,10 @@ export const validateSourceData = (excelFile, batch, source, outputDirectory) =>
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
+    }
+
+    if (source == 'IMC') {
+      collectedDateCol = 19;
     }
 
     resolve(readFile(excelFile, batch, source, dir));
@@ -82,6 +88,13 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
+    let collectedDate = row.getCell(collectedDateCol).value;
+    collectedDate = new Date(collectedDate);
+
+    let collectedDay = collectedDate.getDate();
+    let collectedMonth = collectedDate.getMonth() + 1;
+    let collectedYear = collectedDate.getFullYear();
+
     getHospital(hospitalName).then((hospital) => {
       let customer = {
         lastName: row.getCell(lastNameCol).value,
@@ -95,6 +108,9 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         year: row.getCell(yearCol).value,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
+        collectedDay: collectedDay,
+        collectedMonth: collectedMonth,
+        collectedYear: collectedYear,
         hospital_id: hospital.hospital_id,
         batch: batch,
         source: source
@@ -135,7 +151,11 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           hospital.hospital_name,
           hospital.province_name,
           hospital.area_channel,
-          hospital.area_name
+          hospital.area_name,
+          customer.source,
+          customer.collectedDay,
+          customer.collectedMonth,
+          customer.collectedYear
         ];
 
         let outputSheetName = 'Valid';
@@ -178,7 +198,10 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.province_name,
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
-            duplicatedWith.batch
+            duplicatedWith.batch,
+            duplicatedWith.collectedDay,
+            duplicatedWith.collectedMonth,
+            duplicatedWith.collectedYear
           ]
 
           if (duplicatedWith.batch == customer.batch) {
@@ -295,10 +318,26 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(16).border = row.getCell(1).border;
     row.getCell(16).alignment = row.getCell(1).alignment;
 
+    row.getCell(17).font = row.getCell(1).font;
+    row.getCell(17).border = row.getCell(1).border;
+    row.getCell(17).alignment = row.getCell(1).alignment;
+
+    row.getCell(18).font = row.getCell(1).font;
+    row.getCell(18).border = row.getCell(1).border;
+    row.getCell(18).alignment = row.getCell(1).alignment;
+
+    row.getCell(19).font = row.getCell(1).font;
+    row.getCell(19).border = row.getCell(1).border;
+    row.getCell(19).alignment = row.getCell(1).alignment;
+
+    row.getCell(20).font = row.getCell(1).font;
+    row.getCell(20).border = row.getCell(1).border;
+    row.getCell(20).alignment = row.getCell(1).alignment;
+
     if (outputSheetName.endsWith('Duplication')) {
-      row.getCell(17).font = row.getCell(1).font;
-      row.getCell(17).border = row.getCell(1).border;
-      row.getCell(17).alignment = row.getCell(1).alignment;
+      row.getCell(21).font = row.getCell(1).font;
+      row.getCell(21).border = row.getCell(1).border;
+      row.getCell(21).alignment = row.getCell(1).alignment;
     }
 
     resolve(workbook);

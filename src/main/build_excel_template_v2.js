@@ -61,6 +61,10 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getColumn('N').width = 23.8;
   worksheet.getColumn('O').width = 23.8;
   worksheet.getColumn('P').width = 23.8;
+  worksheet.getColumn('Q').width = 10;
+  worksheet.getColumn('R').width = 9.5;
+  worksheet.getColumn('S').width = 9.5;
+  worksheet.getColumn('T').width = 9.5;
 
   worksheet.getRow('5').height = 30;
 
@@ -246,15 +250,47 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getCell('P6').alignment = worksheet.getCell('A5').alignment;
   worksheet.getCell('P6').border = worksheet.getCell('A5').border;
   worksheet.getCell('P6').value = 'Khu vực';
+
+  worksheet.mergeCells('Q5:Q6');
+  worksheet.getCell('Q5').font = worksheet.getCell('A5').font;
+  worksheet.getCell('Q5').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('Q5').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('Q5').border = worksheet.getCell('A5').border;
+  worksheet.getCell('Q5').value = 'Agency';
+
+  worksheet.mergeCells('R5:T5');
+  worksheet.getCell('R5').font = worksheet.getCell('A5').font;
+  worksheet.getCell('R5').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('R5').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('R5').border = worksheet.getCell('A5').border;
+  worksheet.getCell('R5').value = 'Thời gian lấy mẫu';
+
+  worksheet.getCell('R6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('R6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('R6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('R6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('R6').value = 'Ngày';
+
+  worksheet.getCell('S6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('S6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('S6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('S6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('S6').value = 'Tháng';
+
+  worksheet.getCell('T6').font = worksheet.getCell('A5').font;
+  worksheet.getCell('T6').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('T6').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('T6').border = worksheet.getCell('A5').border;
+  worksheet.getCell('T6').value = 'Năm';
   // End Table Headers
 
   if (worksheet.name.endsWith('Duplication')) {
-    worksheet.mergeCells('Q5:Q6');
-    worksheet.getCell('Q5').font = worksheet.getCell('A5').font;
-    worksheet.getCell('Q5').fill = worksheet.getCell('A5').fill;
-    worksheet.getCell('Q5').alignment = worksheet.getCell('A5').alignment;
-    worksheet.getCell('Q5').border = worksheet.getCell('A5').border;
-    worksheet.getCell('Q5').value = 'Tuần';
+    worksheet.mergeCells('U5:U6');
+    worksheet.getCell('U5').font = worksheet.getCell('A5').font;
+    worksheet.getCell('U5').fill = worksheet.getCell('A5').fill;
+    worksheet.getCell('U5').alignment = worksheet.getCell('A5').alignment;
+    worksheet.getCell('U5').border = worksheet.getCell('A5').border;
+    worksheet.getCell('U5').value = 'Tuần';
   }
 
   // Add Logo

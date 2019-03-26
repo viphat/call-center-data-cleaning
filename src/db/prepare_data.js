@@ -5,14 +5,24 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    insertTableAreas();
-    insertTableProvinces();
-    insertTableHospitals();
-    insertTableMatches();
-    createTableCustomers();
+    // insertTableAreas();
+    // insertTableProvinces();
+    // insertTableHospitals();
+    // insertTableMatches();
+    // createTableCustomers();
+    addColumnsToCustomers();
   });
 
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
+}
+
+function addColumnsToCustomers() {
+  db.run('ALTER TABLE customers\
+    ADD collectedDay INTEGER');
+  db.run('ALTER TABLE customers\
+    ADD collectedMonth INTEGER');
+  db.run('ALTER TABLE customers\
+    ADD collectedYear INTEGER');
 }
 
 function createTableCustomers() {

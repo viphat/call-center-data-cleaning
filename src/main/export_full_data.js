@@ -45,6 +45,7 @@ function getDataOfBatch(batch) {
     customers.email, customers.district, customers.province, customers.phone,\
     customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, \
+    customers.collectedDay, customers.collectedMonth, customers.collectedYear,\
     provinces.name as province_name, \
     areas.channel as area_channel, \
     areas.name as area_name, \
@@ -215,6 +216,7 @@ function getDataOfProvince(province) {
     customers.email, customers.district, customers.province, customers.phone,\
     customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, areas.channel as area_channel, \
+    customers.collectedDay, customers.collectedMonth, customers.collectedYear,\
     areas.name as area_name, \
     customers.missingData, \
     customers.missingMomName, \
