@@ -198,10 +198,11 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.province_name,
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
-            duplicatedWith.batch,
+            duplicatedWith.source,
             duplicatedWith.collectedDay,
             duplicatedWith.collectedMonth,
-            duplicatedWith.collectedYear
+            duplicatedWith.collectedYear,
+            duplicatedWith.batch
           ]
 
           if (duplicatedWith.batch == customer.batch) {
