@@ -84,20 +84,6 @@ export const createCustomer = (customer) => {
       }
     }
 
-    // Check Already Insert Before?
-    // db.get('SELECT customer_id from customers WHERE customers.hospital_id = ? AND \
-    //   customers.first_name = ? AND customers.last_name = ? AND customers.phone = ?',
-    //   customer.hospital_id, customer.firstName, customer.lastName,
-    //   customer.phone, (err, result) => {
-    //   if (err) {
-    //     return reject(err);
-    //   }
-
-    //   if (result !== null && result !== undefined) {
-    //     // Duplicated - Already Imported before
-    //     return resolve({ alreadyImported: true });
-    //   }
-
     db.run('INSERT INTO customers(\
         first_name, last_name, email,\
         district, province, phone,\
@@ -133,13 +119,57 @@ export const createCustomer = (customer) => {
     }, (errRes) => {
       db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
         customer.customer_id = row.customer_id;
-        isPhoneDuplicate(customer).then((customerAfterCheckDuplication) => {
-          resolve(customerAfterCheckDuplication);
-        })
-      })
+        isPhoneDuplicate(customer).then((c1) => {
+          console.log(c1);
+          isPhoneDuplicateWithAnotherAgency(c1).then((c2) => {
+            console.log(c2);
+            resolve(c2);
+          });
+        });
+      });
     });
   });
-  // });
+}
+
+export function isPhoneDuplicateWithAnotherAgency(customer) {
+  return new Promise((resolve, reject) => {
+
+    if (customer.phone === undefined || customer.phone === null) {
+      return resolve(customer);
+    }
+
+    if (customer.phone.length < 8 || customer.phone.length > 12 || isNaN(parseInt(customer.phone))) {
+      return resolve(customer);
+    }
+
+    db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
+    customers.email, customers.district, customers.province, customers.phone,\
+    customers.day, customers.month, customers.year,\
+    customers.s1, customers.s2, hospitals.name as hospital_name, \
+    provinces.name as province_name, areas.channel as area_channel, \
+    areas.name as area_name,\
+    customers.sampling, customers.batch, customers.source,\
+    customers.collectedDay, customers.collectedMonth, customers.collectedYear\
+    from customers JOIN hospitals ON \
+    hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
+    hospitals.province_id = provinces.province_id JOIN areas ON \
+    areas.area_id = provinces.area_id \
+    WHERE customers.phone = ? AND customers.customer_id != ? AND customers.source != ?',
+      customer.phone, customer.customer_id, customer.source, (err, res) => {
+      if (err) {
+        return reject(err);
+      }
+
+      if (res === undefined || res === null) {
+        resolve(customer);
+      } else {
+        customer.duplicateWithAnotherAgency = res;
+        customer.duplicatedWithAnotherAgency = 1;
+        customer.isPhoneDuplicatedWithAnotherAgency = true;
+        resolve(customer);
+      }
+    });
+  })
 }
 
 export function isPhoneDuplicate(customer) {
@@ -166,8 +196,8 @@ export function isPhoneDuplicate(customer) {
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
     areas.area_id = provinces.area_id \
-    WHERE customers.phone = ? AND customers.customer_id != ?',
-      customer.phone, customer.customer_id, (err, res) => {
+    WHERE customers.phone = ? AND customers.customer_id != ? AND customers.source = ?',
+      customer.phone, customer.customer_id, customer.source, (err, res) => {
       if (err) {
         return reject(err);
       }

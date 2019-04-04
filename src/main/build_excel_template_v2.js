@@ -5,6 +5,7 @@ const fs = require('fs');
 const valid_title = 'DATA CLEANING RESULT - VALID LIST';
 const invalid_title = 'DATA CLEANING RESULT - INVALID LIST';
 const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST';
+const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENCY LIST';
 const logoPath = './app/vendor/logo.png';
 
 export const buildTemplate = (outputPath) => {
@@ -37,6 +38,9 @@ function writeTemplate(outputPath, workbook) {
     sheetName = 'Duplication';
     worksheet = workbook.addWorksheet(sheetName, {});
     writeBaseTemplate(workbook, worksheet, duplication_title);
+    sheetName = 'Duplication With Another Agency';
+    worksheet = workbook.addWorksheet(sheetName, {});
+    writeBaseTemplate(workbook, worksheet, duplication_with_another_agency_title);
     // Write to File
     workbook.xlsx.writeFile(outputPath).then(() => {
       resolve(workbook);
@@ -284,7 +288,7 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getCell('T6').value = 'Năm';
   // End Table Headers
 
-  if (worksheet.name.endsWith('Duplication')) {
+  if (worksheet.name.endsWith('Duplication') || worksheet.name.endsWith('Duplication With Another Agency')) {
     worksheet.mergeCells('U5:U6');
     worksheet.getCell('U5').font = worksheet.getCell('A5').font;
     worksheet.getCell('U5').fill = worksheet.getCell('A5').fill;

@@ -89,6 +89,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
     let collectedDate = row.getCell(collectedDateCol).value;
+
     collectedDate = new Date(collectedDate);
 
     let collectedDay = collectedDate.getDate();
@@ -134,6 +135,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         let missingData = isMissingData(customer, row);
         let illogicalData = isIllogicalData(customer, row);
         let duplicateData = customer.isPhoneDuplicated;
+        let duplicateDataWithAnotherAgency = customer.isPhoneDuplicatedWithAnotherAgency;
 
         let rowData = [
           customer.customer_id,
@@ -163,6 +165,8 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           outputSheetName = 'Invalid';
         } else if (duplicateData === true) {
           outputSheetName = 'Duplication';
+        } else if (duplicateDataWithAnotherAgency === true) {
+          outputSheetName = 'Duplication With Another Agency';
         }
 
         if (duplicateData == true || missingData == true || illogicalData == true) {
@@ -178,8 +182,14 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
 
         updateCustomer(customer);
 
-        if (duplicateData == true) {
-          var duplicatedWith = customer.duplicatedWith;
+        if (duplicateData == true || duplicateDataWithAnotherAgency == true) {
+          var duplicatedWith
+
+          if (duplicateDataWithAnotherAgency) {
+            duplicatedWith = customer.duplicateWithAnotherAgency;
+          } else {
+            duplicatedWith = customer.duplicatedWith;
+          }
 
           var duplicatedRow = [
             duplicatedWith.customer_id,
@@ -219,6 +229,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           }
 
           rowData.push(customer.batch);
+
           writeToFile(outputWorkbook, outputSheetName, duplicatedRow).then((workbook) => {
             writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
               if (rowNumber % 1000 === 0) {
@@ -335,7 +346,7 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(20).border = row.getCell(1).border;
     row.getCell(20).alignment = row.getCell(1).alignment;
 
-    if (outputSheetName.endsWith('Duplication')) {
+    if (outputSheetName.endsWith('Duplication') || outputSheetName.endsWith('Duplication With Another Agency')) {
       row.getCell(21).font = row.getCell(1).font;
       row.getCell(21).border = row.getCell(1).border;
       row.getCell(21).alignment = row.getCell(1).alignment;

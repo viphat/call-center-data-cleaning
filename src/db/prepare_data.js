@@ -17,12 +17,14 @@ export const setupDatabase = () => {
 }
 
 function addColumnsToCustomers() {
+  // db.run('ALTER TABLE customers\
+  //   ADD collectedDay INTEGER');
   db.run('ALTER TABLE customers\
-    ADD collectedDay INTEGER');
-  db.run('ALTER TABLE customers\
-    ADD collectedMonth INTEGER');
-  db.run('ALTER TABLE customers\
-    ADD collectedYear INTEGER');
+    ADD duplicatedWithAnotherAgency INTEGER DEFAULT 0');
+  // db.run('ALTER TABLE customers\
+  //   ADD collectedMonth INTEGER');
+  // db.run('ALTER TABLE customers\
+  //   ADD collectedYear INTEGER');
 }
 
 function createTableCustomers() {
