@@ -120,9 +120,7 @@ export const createCustomer = (customer) => {
       db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
         customer.customer_id = row.customer_id;
         isPhoneDuplicate(customer).then((c1) => {
-          console.log(c1);
           isPhoneDuplicateWithAnotherAgency(c1).then((c2) => {
-            console.log(c2);
             resolve(c2);
           });
         });
