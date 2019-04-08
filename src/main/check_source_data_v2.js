@@ -135,6 +135,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         let missingData = isMissingData(customer, row);
         let illogicalData = isIllogicalData(customer, row);
         let duplicateData = customer.isPhoneDuplicated;
+
         let duplicateDataWithAnotherAgency = customer.isPhoneDuplicatedWithAnotherAgency;
 
         let rowData = [
@@ -215,7 +216,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.batch
           ]
 
-          if (duplicatedWith.batch == customer.batch) {
+          if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
             duplicatedWith.hasError = 1;
             duplicatedWith.duplicatedPhone = 1;
             if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
