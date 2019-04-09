@@ -10,7 +10,6 @@ export const setupDatabase = () => {
     // insertTableHospitals();
     // insertTableMatches();
     // createTableCustomers();
-    addColumnsToCustomers();
   });
 
   dialog.showMessageBox({type: 'info', title: 'Thông báo', message: 'Đã khởi tạo Database thành công, bạn có thể tiếp tục sử dụng ứng dụng.'});
@@ -19,12 +18,12 @@ export const setupDatabase = () => {
 function addColumnsToCustomers() {
   // db.run('ALTER TABLE customers\
   //   ADD collectedDay INTEGER');
-  db.run('ALTER TABLE customers\
-    ADD duplicatedWithAnotherAgency INTEGER DEFAULT 0');
   // db.run('ALTER TABLE customers\
   //   ADD collectedMonth INTEGER');
   // db.run('ALTER TABLE customers\
   //   ADD collectedYear INTEGER');
+  // db.run('ALTER TABLE customers\
+  //   ADD duplicatedWithAnotherAgency INTEGER DEFAULT 0');
 }
 
 function createTableCustomers() {
@@ -54,6 +53,10 @@ function createTableCustomers() {
   duplicatedPhoneBetweenS1AndS2 INTEGER DEFAULT 0,\
   duplicatedPhoneS1 DEFAULT 0, \
   duplicatedPhoneS2 INTEGER DEFAULT 0,\
+  duplicatedWithAnotherAgency INTEGER DEFAULT 0,\
+  collectedDay INTEGER,\
+  collectedMonth INTEGER,\
+  collectedYear INTEGER,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')
 }
 

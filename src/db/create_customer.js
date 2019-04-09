@@ -20,7 +20,8 @@ export const updateCustomer = (customer) => {
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
-      duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2 \
+      duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2, \
+      duplicatedWithAnotherAgency = $duplicatedWithAnotherAgency\
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
       $day: customer.day,
@@ -51,6 +52,7 @@ export const updateCustomer = (customer) => {
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
+      $duplicatedWithAnotherAgency: customer.duplicatedWithAnotherAgency || 0
     }, (err) => {
       if (err) {
         console.log(err);
