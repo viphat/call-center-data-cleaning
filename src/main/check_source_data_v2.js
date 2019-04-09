@@ -90,11 +90,17 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
 
     let collectedDate = row.getCell(collectedDateCol).value;
 
+    console.log(collectedDate);
     collectedDate = new Date(collectedDate);
+    console.log(collectedDate);
 
     let collectedDay = collectedDate.getDate();
     let collectedMonth = collectedDate.getMonth() + 1;
     let collectedYear = collectedDate.getFullYear();
+
+    if (collectedYear == 1970) {
+      return reject('Lỗi Ngày tháng ở dòng ' + rowNumber);
+    }
 
     getHospital(hospitalName).then((hospital) => {
       let customer = {
