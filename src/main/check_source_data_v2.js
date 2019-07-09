@@ -405,28 +405,31 @@ function isMissingData(customer, row) {
   //   customer.missingLastName = 1;
   // }
 
-  if (row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') {
+  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (customer.source !== 'OTB-Chatbot')) {
     missingFields.push('Tên');
     customer.missingFirstName = 1;
-  }
-
-  if (row.getCell(firstNameCol).value === null || row.getCell(firstNameCol).value === '') {
     customer.missingMomName = 1;
   }
 
-  if (row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') {
+  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (row.getCell(lastNameCol).value === null  || row.getCell(lastNameCol).value === '') && (customer.source === 'OTB-Chatbot')) {
+    missingFields.push('Tên');
+    customer.missingFirstName = 1;
+    customer.missingMomName = 1;
+  }
+
+  if ((row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') && (customer.source !== 'OTB-Chatbot')) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
     customer.missingEmail = 1;
   }
 
-  if (row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) {
+  if ((row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
     missingFields.push('Quận/Huyện');
     customer.missingDistrict = 1;
     customer.missingAddress = 1;
   }
 
-  if (row.getCell(provinceCol).value === null || row.getCell(provinceCol).value.length == 0) {
+  if ((row.getCell(provinceCol).value === null || row.getCell(provinceCol). value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
     missingFields.push('Tỉnh/Thành');
     customer.missingProvince = 1;
     customer.missingAddress = customer.missingAddress || 1;
@@ -497,7 +500,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if (lastName !== undefined && lastName !== null && firstName) {
+  if ((lastName !== undefined && lastName !== null && firstName) && (customer.source !== 'OTB-Chatbot')) {
     let fullName = '' + firstName + lastName;
     if (!isNaN(parseInt(fullName)) || hasSpecialCharacter(fullName)) {
       // If is a Number
@@ -514,7 +517,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if (province !== undefined && province !== null) {
+  if ((province !== undefined && province !== null) && (customer.source !== 'OTB-Chatbot')) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
     if (!isNaN(province) || (province.length > 0 &&  hasSpecialCharacter(province))) {
@@ -527,7 +530,6 @@ function isIllogicalData(customer, row) {
     customer.illogicalOther = 1;
     flag = true;
   }
-
 
   let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
   date = new Date(date);
