@@ -267,7 +267,7 @@ function fillData(batch, source, filterType) {
       }
     }
 
-    if (source == 'IMC' || source == 'OTB') {
+    if (source == 'IMC' || source == 'OTB' || source == 'OTB-Chatbot') {
       params = _.merge(params, {
         $source: source
       });
@@ -393,8 +393,9 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
     buildReportFirstColumnType1(worksheet, 9, 'Removed from OTB');
 
-    buildReportFirstColumnType2(worksheet, 10, 'Valid database for QC Calls ' + source);
+    buildReportFirstColumnType1(worksheet, 10, 'Removed from OTB-Chatbot');
 
+    buildReportFirstColumnType2(worksheet, 11, 'Valid database for QC Calls ' + source);
 
     // Total
     fillDataForSheetValidDatabase(batch, source, 'All').then((rowData) => {
@@ -485,7 +486,11 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
       worksheet.getCell('B9').alignment = { horizontal: 'right', vertical: 'middle' };
 
-      worksheet.getCell('B10').value = rowData.TotalBase - rowData.HasError -rowData.duplicatedCount;
+      if (source == 'OTB-Chatbot') {
+        worksheet.getCell('B10').value = rowData.duplicatedCount;
+      } else {
+        worksheet.getCell('B10').value = 0;
+      }
 
       worksheet.getCell('B10').border = {
         left: { style: 'thin' },
@@ -495,13 +500,28 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
       };
 
       worksheet.getCell('B10').font = {
+        size: 14, name: 'Calibri', family: 2
+      }
+
+      worksheet.getCell('B10').alignment = { horizontal: 'right', vertical: 'middle' };
+
+      worksheet.getCell('B11').value = rowData.TotalBase - rowData.HasError - rowData.duplicatedCount;
+
+      worksheet.getCell('B11').border = {
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+        top: { style: 'thin' },
+        bottom: { style: 'thin' }
+      };
+
+      worksheet.getCell('B11').font = {
         bold: true, size: 14, name: 'Calibri', family: 2,
         color: { theme: 0 }
       };
 
-      worksheet.getCell('B10').alignment = { vertical: 'middle' };
+      worksheet.getCell('B11').alignment = { vertical: 'middle' };
 
-      worksheet.getCell('B10').fill = {
+      worksheet.getCell('B11').fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF00B0F0' },
@@ -597,7 +617,11 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
         worksheet.getCell('C9').alignment = { horizontal: 'right', vertical: 'middle' };
 
-        worksheet.getCell('C10').value = rowData.TotalBase - rowData.HasError -rowData.duplicatedCount;
+        if (source == 'OTB-Chatbot') {
+          worksheet.getCell('C10').value = rowData.duplicatedCount;
+        } else {
+          worksheet.getCell('C10').value = 0;
+        }
 
         worksheet.getCell('C10').border = {
           left: { style: 'thin' },
@@ -607,13 +631,28 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
         };
 
         worksheet.getCell('C10').font = {
+          size: 14, name: 'Calibri', family: 2
+        }
+
+        worksheet.getCell('C10').alignment = { horizontal: 'right', vertical: 'middle' };
+
+        worksheet.getCell('C11').value = rowData.TotalBase - rowData.HasError -rowData.duplicatedCount;
+
+        worksheet.getCell('C11').border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+          top: { style: 'thin' },
+          bottom: { style: 'thin' }
+        };
+
+        worksheet.getCell('C11').font = {
           bold: true, size: 14, name: 'Calibri', family: 2,
           color: { theme: 0 }
         };
 
-        worksheet.getCell('C10').alignment = { vertical: 'middle' };
+        worksheet.getCell('C11').alignment = { vertical: 'middle' };
 
-        worksheet.getCell('C10').fill = {
+        worksheet.getCell('C11').fill = {
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: 'FF00B0F0' },
