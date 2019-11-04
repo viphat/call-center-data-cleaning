@@ -11,12 +11,11 @@ export const updateCustomer = (customer) => {
       missingFirstName = $missingFirstName, missingLastName = $missingLastName, missingMomName = $missingMomName,\
       missingDistrict = $missingDistrict, missingProvince = $missingProvince,\
       missingAddress = $missingAddress, missingPhone = $missingPhone,\
-      missingEmail = $missingEmail,\
       missingSampling = $missingSampling, missingDate = $missingDate,\
       missingMomStatus = $missingMomStatus,\
       illogicalData = $illogicalData, illogicalPhone = $illogicalPhone,\
       illogicalName = $illogicalName, illogicalSampling = $illogicalSampling,\
-      illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
+      illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
@@ -35,7 +34,6 @@ export const updateCustomer = (customer) => {
       $missingProvince: customer.missingProvince || 0,
       $missingAddress: customer.missingAddress || 0,
       $missingPhone: customer.missingPhone || 0,
-      $missingEmail: customer.missingEmail || 0,
       $missingSampling: customer.missingSampling || 0,
       $missingDate: customer.missingDate || 0,
       $missingMomStatus: customer.missingMomStatus || 0,
@@ -43,7 +41,6 @@ export const updateCustomer = (customer) => {
       $illogicalPhone: customer.illogicalPhone || 0,
       $illogicalName: customer.illogicalName || 0,
       $illogicalSampling: customer.illogicalSampling || 0,
-      $illogicalEmail: customer.illogicalEmail || 0,
       $illogicalAddress: customer.illogicalAddress || 0,
       $illogicalDate: customer.illogicalDate || 0,
       $illogicalOther: customer.illogicalOther || 0,
@@ -85,19 +82,18 @@ export const createCustomer = (customer) => {
     }
 
     db.run('INSERT INTO customers(\
-        first_name, last_name, email,\
+        first_name, last_name,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
         illogicalSampling,\
         hospital_id, batch) \
-        VALUES($firstName, $lastName, $email,\
+        VALUES($firstName, $lastName, \
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
         $illogicalSampling,\
         $hospital_id, $batch);',
     {
       $firstName: customer.firstName,
       $lastName: customer.lastName,
-      $email: customer.email,
       $district: customer.district,
       $province: customer.province,
       $phone: customer.phone,
@@ -134,7 +130,7 @@ export function isPhoneDuplicate(customer) {
     }
 
     db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
-    customers.email, customers.district, customers.province, customers.phone,\
+    customers.district, customers.province, customers.phone,\
     customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \

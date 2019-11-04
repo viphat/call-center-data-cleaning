@@ -3,7 +3,7 @@ const Excel = require('exceljs');
 const fs = require('fs');
 import { db } from '../db/prepare_data.js';
 
-const hospitalNameCol = 9;
+const hospitalNameCol = 10;
 const startRow = 4;
 let notFoundHospitalNames = [];
 

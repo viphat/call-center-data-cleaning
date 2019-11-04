@@ -60,11 +60,14 @@ function assignFormValues() {
 }
 
 function isFormInvalid() {
-  return outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '' || document.querySelector('input[name="txtSource"]:checked') === null
+  return outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === ''
 }
 
 document.getElementById('btnReport').addEventListener('click', _ => {
   assignFormValues();
+
+  // outputDirectory = ['/Users/viphat/Downloads/Test'];
+  // batch = 'W1';
 
   if (batch === undefined || batch === null || batch === '') {
     dialog.showErrorBox('Notification', 'You must fill in batch field before processing.');
@@ -120,6 +123,11 @@ document.getElementById('btnClearBatch').addEventListener('click', _ => {
 
 document.getElementById('btnProcess').addEventListener('click', _ => {
   assignFormValues();
+
+  // inputFile = ['/Users/viphat/Downloads/Data huggies platinum từ 21.10-27.10.xlsx'];
+  // outputDirectory = ['/Users/viphat/Downloads/Test'];
+  // batch = 'W1';
+
   if (isFormInvalid()) {
     dialog.showErrorBox('Notification', 'You must fill out this form before processing.');
     return null;
@@ -143,8 +151,6 @@ document.getElementById('btnProcess').addEventListener('click', _ => {
 });
 
 document.getElementById('btnCheck').addEventListener('click', _ => {
-  // inputFile = ['/Users/viphat/Downloads/hosca/OTB_Report Huggies 4.03- 10.03_11791 data.xlsx'];
-  // outputDirectory = ['/Users/viphat/Downloads/hosca/output'];
   assignFormValues();
 
   if (outputDirectory === undefined || inputFile === undefined) {
