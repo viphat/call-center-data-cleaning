@@ -1,5 +1,4 @@
 import { db } from '../db/prepare_data.js';
-const _  = require('lodash');
 const Excel = require('exceljs');
 
 export const importMatchesFromFile = (excelFile) => {

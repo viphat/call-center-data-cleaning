@@ -7,7 +7,7 @@ const padStart = require('string.prototype.padstart');
 
 import { db } from '../db/prepare_data';
 
-import { buildTemplate } from '../main/build_excel_template_v2';
+import { buildTemplate } from '../main/build_excel_template';
 import { createCustomer, updateCustomer } from '../db/create_customer';
 
 const dataBeginRow = 2;
@@ -27,9 +27,7 @@ const s1Col = 11;
 const s2Col = 12;
 const hospitalNameCol = 13;
 
-let collectedDateCol = 17; // 17 for OTB or 19 for IMC
-
-export const validateSourceData = (excelFile, batch, source, outputDirectory) => {
+export const validateSourceData = (excelFile, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
     if ( !_.endsWith(outputDirectory, '/') ) {
       outputDirectory += '/';
@@ -41,34 +39,30 @@ export const validateSourceData = (excelFile, batch, source, outputDirectory) =>
       fs.mkdirSync(dir)
     }
 
-    dir = dir + '/' + source;
+    dir = dir + '/';
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
     }
 
-    if (source == 'IMC') {
-      collectedDateCol = 19;
-    }
-
-    resolve(readFile(excelFile, batch, source, dir));
+    resolve(readFile(excelFile, batch, dir));
   });
 }
 
-function readFile(excelFile, batch, source, outputDirectory) {
+function readFile(excelFile, batch, outputDirectory) {
   return new Promise((resolve, reject) => {
     let workbook = new Excel.Workbook();
     workbook.xlsx.readFile(excelFile).then(() => {
       let worksheet = workbook.getWorksheet(1);
       let rowNumber = dataBeginRow;
-      let outputPath = outputDirectory + '/' + batch + '_' + source + '_cleaned_data.xlsx';
+      let outputPath = outputDirectory + '/' + batch + '_cleaned_data.xlsx';
 
       if (fs.existsSync(outputPath)) {
         fs.unlinkSync(outputPath);
       }
 
       buildTemplate(outputPath).then((outputWorkbook) => {
-        return readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNumber);
+        return readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber);
       }).then((outputWorkbook) => {
         resolve(outputWorkbook.xlsx.writeFile(outputPath));
       });
@@ -76,7 +70,7 @@ function readFile(excelFile, batch, source, outputDirectory) {
   });
 }
 
-function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNumber) {
+function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
   return new Promise((resolve, reject) => {
     let row = worksheet.getRow(rowNumber);
     console.log('Row: ' + rowNumber);
@@ -87,20 +81,6 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
 
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
-
-    let collectedDate = row.getCell(collectedDateCol).value;
-
-    console.log(collectedDate);
-    collectedDate = new Date(collectedDate);
-    console.log(collectedDate);
-
-    let collectedDay = collectedDate.getDate();
-    let collectedMonth = collectedDate.getMonth() + 1;
-    let collectedYear = collectedDate.getFullYear();
-
-    if (collectedYear == 1970) {
-      return reject('Lỗi Ngày tháng ở dòng ' + rowNumber);
-    }
 
     getHospital(hospitalName).then((hospital) => {
       let customer = {
@@ -115,12 +95,8 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         year: row.getCell(yearCol).value,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
-        collectedDay: collectedDay,
-        collectedMonth: collectedMonth,
-        collectedYear: collectedYear,
         hospital_id: hospital.hospital_id,
-        batch: batch,
-        source: source
+        batch: batch
       }
 
       if (row.getCell(s1Col).value === 'S1') {
@@ -134,15 +110,13 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
       // Insert Data to Database
       createCustomer(customer).then((response) => {
         if (response.alreadyImported === true) {
-          return resolve(readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNumber + 1));
+          return resolve(readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber + 1));
         }
 
         customer = response;
         let missingData = isMissingData(customer, row);
         let illogicalData = isIllogicalData(customer, row);
         let duplicateData = customer.isPhoneDuplicated;
-
-        let duplicateDataWithAnotherAgency = customer.isPhoneDuplicatedWithAnotherAgency;
 
         let rowData = [
           customer.customer_id,
@@ -160,11 +134,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           hospital.hospital_name,
           hospital.province_name,
           hospital.area_channel,
-          hospital.area_name,
-          customer.source,
-          customer.collectedDay,
-          customer.collectedMonth,
-          customer.collectedYear
+          hospital.area_name
         ];
 
         let outputSheetName = 'Valid';
@@ -172,8 +142,6 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           outputSheetName = 'Invalid';
         } else if (duplicateData === true) {
           outputSheetName = 'Duplication';
-        } else if (duplicateDataWithAnotherAgency === true) {
-          outputSheetName = 'Duplication With Another Agency';
         }
 
         if (duplicateData == true || missingData == true || illogicalData == true) {
@@ -189,14 +157,9 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
 
         updateCustomer(customer);
 
-        if (duplicateData == true || duplicateDataWithAnotherAgency == true) {
+        if (duplicateData == true) {
           var duplicatedWith
-
-          if (duplicateDataWithAnotherAgency) {
-            duplicatedWith = customer.duplicateWithAnotherAgency;
-          } else {
-            duplicatedWith = customer.duplicatedWith;
-          }
+          duplicatedWith = customer.duplicatedWith;
 
           var duplicatedRow = [
             duplicatedWith.customer_id,
@@ -215,14 +178,10 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.province_name,
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
-            duplicatedWith.source,
-            duplicatedWith.collectedDay,
-            duplicatedWith.collectedMonth,
-            duplicatedWith.collectedYear,
             duplicatedWith.batch
           ]
 
-          if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
+          if (duplicatedWith.batch == customer.batch) {
             duplicatedWith.hasError = 1;
             duplicatedWith.duplicatedPhone = 1;
             if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
@@ -241,10 +200,10 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
               if (rowNumber % 1000 === 0) {
                 setTimeout(function(){
-                  resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                  resolve(readEachRow(excelFile, workbook, batch, worksheet, rowNumber+1));
                 }, 0);
               } else {
-                resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                resolve(readEachRow(excelFile, workbook, batch, worksheet, rowNumber+1));
               }
             });
           });
@@ -252,10 +211,10 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
             if (rowNumber % 1000 === 0) {
                 setTimeout(function(){
-                  resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                  resolve(readEachRow(excelFile, workbook, batch, worksheet, rowNumber+1));
                 }, 0);
               } else {
-                resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
+                resolve(readEachRow(excelFile, workbook, batch, worksheet, rowNumber+1));
               }
           });
         }
@@ -405,31 +364,31 @@ function isMissingData(customer, row) {
   //   customer.missingLastName = 1;
   // }
 
-  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '')) {
     missingFields.push('Tên');
     customer.missingFirstName = 1;
     customer.missingMomName = 1;
   }
 
-  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (row.getCell(lastNameCol).value === null  || row.getCell(lastNameCol).value === '') && (customer.source === 'OTB-Chatbot')) {
+  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (row.getCell(lastNameCol).value === null  || row.getCell(lastNameCol).value === '')) {
     missingFields.push('Tên');
     customer.missingFirstName = 1;
     customer.missingMomName = 1;
   }
 
-  if ((row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(emailCol).value === null || row.getCell(emailCol).value == '')) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
     customer.missingEmail = 1;
   }
 
-  if ((row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0)) {
     missingFields.push('Quận/Huyện');
     customer.missingDistrict = 1;
     customer.missingAddress = 1;
   }
 
-  if ((row.getCell(provinceCol).value === null || row.getCell(provinceCol). value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(provinceCol).value === null || row.getCell(provinceCol). value.length == 0)) {
     missingFields.push('Tỉnh/Thành');
     customer.missingProvince = 1;
     customer.missingAddress = customer.missingAddress || 1;
@@ -500,7 +459,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if ((lastName !== undefined && lastName !== null && firstName) && (customer.source !== 'OTB-Chatbot')) {
+  if ((lastName !== undefined && lastName !== null && firstName)) {
     let fullName = '' + firstName + lastName;
     if (!isNaN(parseInt(fullName)) || hasSpecialCharacter(fullName)) {
       // If is a Number
@@ -517,7 +476,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if ((province !== undefined && province !== null) && (customer.source !== 'OTB-Chatbot')) {
+  if ((province !== undefined && province !== null)) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
     if (!isNaN(province) || (province.length > 0 &&  hasSpecialCharacter(province))) {
