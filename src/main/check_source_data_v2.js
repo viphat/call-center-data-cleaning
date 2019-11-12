@@ -18,10 +18,13 @@ const districtCol = 4;
 const provinceCol = 5;
 const phoneCol = 6;
 
-const dateCol = 7;
-const s1Col = 8;
-const s2Col = 9;
-const hospitalNameCol = 10;
+const dayCol = 7;
+const monthCol = 8;
+const yearCol = 9;
+
+const s1Col = 10;
+const s2Col = 11;
+const hospitalNameCol = 12;
 
 export const validateSourceData = (excelFile, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -78,14 +81,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
-    let date = row.getCell(dateCol).value;
-    console.log(date);
-    date = new Date(date);
-    console.log(date);
-
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
+    let day = row.getCell(dayCol).value;
+    let month = row.getCell(monthCol).value;
+    let year = row.getCell(yearCol).value;
 
     getHospital(hospitalName).then((hospital) => {
       let customer = {
@@ -326,9 +324,11 @@ function isEmptyRow(row) {
       row.getCell(districtCol).value === null      &&
       row.getCell(provinceCol).value === null      &&
       row.getCell(phoneCol).value === null         &&
-      row.getCell(dateCol).value === null           &&
-      row.getCell(s1Col).value === null         &&
-      row.getCell(s2Col).value === null          &&
+      row.getCell(dayCol).value === null           &&
+      row.getCell(monthCol).value === null         &&
+      row.getCell(yearCol).value === null          &&
+      row.getCell(s1Col).value === null            &&
+      row.getCell(s2Col).value === null            &&
       row.getCell(hospitalNameCol).value === null
     ) {
     // Empty Row
@@ -381,7 +381,7 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  if (row.getCell(dateCol).value === null) {
+  if (row.getCell(dayCol).value === null || row.getCell(monthCol).value === null || row.getCell(yearCol).value === null) {
     customer.missingDate = 1;
     customer.missingMomStatus = 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
@@ -454,16 +454,14 @@ function isIllogicalData(customer, row) {
   }
 
   // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
-  let date = row.getCell(dateCol).value;
+  let day = row.getCell(dayCol).value;
+  let month = row.getCell(monthCol).value;
+  let year = row.getCell(yearCol).value;
+  let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
   date = new Date(date);
 
   if (date !== null && date !== undefined) {
-    let day, month, year;
-    let projectStartDate = new Date('2019-10-01');
-
-    day = customer.day;
-    month = customer.month;
-    year = customer.year;
+    let projectStartDate = new Date('2019-08-01');
 
     if (date == 'Invalid Date') {
       customer.illogicalDate = 1;
@@ -483,9 +481,9 @@ function isIllogicalData(customer, row) {
       var next9Months = today.setMonth(today.getMonth() + 9);
       next9Months = new Date(next9Months);
 
-      today = new Date();
-      var previousMonth = today.setMonth(today.getMonth() - 1);
-      previousMonth = new Date(previousMonth);
+      // today = new Date();
+      // var previousMonth = today.setMonth(today.getMonth() - 1);
+      // previousMonth = new Date(previousMonth);
 
       var currentYear = today.getFullYear();
 
@@ -509,11 +507,10 @@ function isIllogicalData(customer, row) {
           customer.illogicalDate = 1;
           flag = true;
         }
-
-        if (sampling == 'S1' && date <= previousMonth) {
-          customer.illogicalDate = 1;
-          flag = true;
-        }
+        // if (sampling == 'S1' && date <= previousMonth) {
+        //   customer.illogicalDate = 1;
+        //   flag = true;
+        // }
       }
     }
   }
