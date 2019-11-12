@@ -110,27 +110,16 @@ function createTableHospitals() {
 
 function insertTableHospitals() {
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 1, 'Bệnh viện An Sinh', 1);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 2, 'Bệnh viện An Thịnh', 2);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 3, 'Bệnh viện Đa Khoa Gia Đình', 3);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 4, 'Bệnh Viện Đa Khoa Hồng Đức', 1);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 5, 'Bệnh viện Đa Khoa Quốc Tế Thiên Đức', 2);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 6, 'Bệnh viện Đa Khoa Vạn Phúc 1', 23); // Bình Dương
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 7, 'Bệnh viện Đại Học Y Dược HCM', 1);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 8, 'Bệnh viện Green Hải Phòng', 6);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 9, 'Bệnh viện Hoàn Mỹ Sài Gòn', 1);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 10, 'Bệnh Viện Quốc Tế Mỹ', 1);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 11, 'Bệnh viện Sản Nhi Bình Dương', 23);
-
   db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 12, 'Phòng Khám Sản Khoa Nhi Khoa & Bảo Sanh Sài Gòn', 1);
 }
 

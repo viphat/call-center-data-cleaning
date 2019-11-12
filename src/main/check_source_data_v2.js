@@ -79,13 +79,14 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
     let date = row.getCell(dateCol).value;
-    console.log(date);
-    date = new Date(date);
-    console.log(date);
+    let day, month, year;
+    day = parseInt(date.split('-')[2]);
+    month = parseInt(date.split('-')[1]);
+    year = parseInt(date.split('-')[0]);
 
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
+    // day = date.getDate();
+    // month = date.getMonth() + 1;
+    // year = date.getFullYear();
 
     getHospital(hospitalName).then((hospital) => {
       let customer = {
@@ -455,15 +456,19 @@ function isIllogicalData(customer, row) {
 
   // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
   let date = row.getCell(dateCol).value;
+  let day, month, year;
+  day = parseInt(date.split('-')[2]);
+  month = parseInt(date.split('-')[1]);
+  year = parseInt(date.split('-')[0]);
+  date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
   date = new Date(date);
 
   if (date !== null && date !== undefined) {
-    let day, month, year;
-    let projectStartDate = new Date('2019-10-01');
+    let projectStartDate = new Date('2019-08-01');
 
-    day = customer.day;
-    month = customer.month;
-    year = customer.year;
+    // day = customer.day;
+    // month = customer.month;
+    // year = customer.year;
 
     if (date == 'Invalid Date') {
       customer.illogicalDate = 1;
@@ -483,9 +488,9 @@ function isIllogicalData(customer, row) {
       var next9Months = today.setMonth(today.getMonth() + 9);
       next9Months = new Date(next9Months);
 
-      today = new Date();
-      var previousMonth = today.setMonth(today.getMonth() - 1);
-      previousMonth = new Date(previousMonth);
+      // today = new Date();
+      // var previousMonth = today.setMonth(today.getMonth() - 1);
+      // previousMonth = new Date(previousMonth);
 
       var currentYear = today.getFullYear();
 
@@ -509,11 +514,10 @@ function isIllogicalData(customer, row) {
           customer.illogicalDate = 1;
           flag = true;
         }
-
-        if (sampling == 'S1' && date <= previousMonth) {
-          customer.illogicalDate = 1;
-          flag = true;
-        }
+        // if (sampling == 'S1' && date <= previousMonth) {
+        //   customer.illogicalDate = 1;
+        //   flag = true;
+        // }
       }
     }
   }
