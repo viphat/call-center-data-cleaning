@@ -15,8 +15,7 @@ import { validateSourceData } from './main/check_source_data_v2';
 import { checkHospitalNames, writeReportToExcelFile } from './main/check_hospital_names_v2';
 import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
-import { generateReport } from './main/generate_report_v2';
-import { exportFullData, exportFullReport, exportFullBatchData } from './main/export_full_data';
+import { generateReport } from './main/generate_report';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -41,11 +40,11 @@ function importMatches(inputFile) {
   });
 }
 
-function processData(inputFile, batch, source, outputDirectory) {
+function processData(inputFile, batch, outputDirectory) {
   inputFile = _.first(inputFile);
   outputDirectory = _.first(outputDirectory);
   return new Promise((resolve, reject) => {
-    validateSourceData(inputFile, batch, source, outputDirectory).then((result) => {
+    validateSourceData(inputFile, batch, outputDirectory).then((result) => {
       resolve('Xử lý thành công! Vui lòng kiểm tra kết quả ở thư mục ' + outputDirectory);
     });
   });
@@ -74,9 +73,6 @@ exports.checkData = checkData;
 exports.importMatches = importMatches;
 exports.clearBatchData = clearBatchData;
 exports.generateReport = generateReport;
-exports.exportFullData = exportFullData;
-exports.exportFullReport = exportFullReport;
-exports.exportFullBatchData = exportFullBatchData;
 
 const setApplicationMenu = () => {
   const menus = [mainMenuTemplate];

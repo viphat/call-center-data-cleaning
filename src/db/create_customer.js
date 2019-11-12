@@ -11,17 +11,15 @@ export const updateCustomer = (customer) => {
       missingFirstName = $missingFirstName, missingLastName = $missingLastName, missingMomName = $missingMomName,\
       missingDistrict = $missingDistrict, missingProvince = $missingProvince,\
       missingAddress = $missingAddress, missingPhone = $missingPhone,\
-      missingEmail = $missingEmail,\
       missingSampling = $missingSampling, missingDate = $missingDate,\
       missingMomStatus = $missingMomStatus,\
       illogicalData = $illogicalData, illogicalPhone = $illogicalPhone,\
       illogicalName = $illogicalName, illogicalSampling = $illogicalSampling,\
-      illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
+      illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
-      duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2, \
-      duplicatedWithAnotherAgency = $duplicatedWithAnotherAgency\
+      duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2 \
       WHERE customer_id = $customer_id', {
       $customer_id: customer.customer_id,
       $day: customer.day,
@@ -36,7 +34,6 @@ export const updateCustomer = (customer) => {
       $missingProvince: customer.missingProvince || 0,
       $missingAddress: customer.missingAddress || 0,
       $missingPhone: customer.missingPhone || 0,
-      $missingEmail: customer.missingEmail || 0,
       $missingSampling: customer.missingSampling || 0,
       $missingDate: customer.missingDate || 0,
       $missingMomStatus: customer.missingMomStatus || 0,
@@ -44,15 +41,13 @@ export const updateCustomer = (customer) => {
       $illogicalPhone: customer.illogicalPhone || 0,
       $illogicalName: customer.illogicalName || 0,
       $illogicalSampling: customer.illogicalSampling || 0,
-      $illogicalEmail: customer.illogicalEmail || 0,
       $illogicalAddress: customer.illogicalAddress || 0,
       $illogicalDate: customer.illogicalDate || 0,
       $illogicalOther: customer.illogicalOther || 0,
       $duplicatedPhone: customer.duplicatedPhone || 0,
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
-      $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
-      $duplicatedWithAnotherAgency: customer.duplicatedWithAnotherAgency || 0
+      $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0
     }, (err) => {
       if (err) {
         console.log(err);
@@ -87,21 +82,18 @@ export const createCustomer = (customer) => {
     }
 
     db.run('INSERT INTO customers(\
-        first_name, last_name, email,\
+        first_name, last_name,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
-        collectedDay, collectedMonth, collectedYear,\
         illogicalSampling,\
-        hospital_id, batch, source) \
-        VALUES($firstName, $lastName, $email,\
+        hospital_id, batch) \
+        VALUES($firstName, $lastName, \
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
-        $collectedDay, $collectedMonth, $collectedYear,\
         $illogicalSampling,\
-        $hospital_id, $batch, $source);',
+        $hospital_id, $batch);',
     {
       $firstName: customer.firstName,
       $lastName: customer.lastName,
-      $email: customer.email,
       $district: customer.district,
       $province: customer.province,
       $phone: customer.phone,
@@ -111,65 +103,18 @@ export const createCustomer = (customer) => {
       $s1: customer.s1,
       $s2: customer.s2,
       $sampling: customer.sampling,
-      $collectedDay: customer.collectedDay,
-      $collectedMonth: customer.collectedMonth,
-      $collectedYear: customer.collectedYear,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
-      $batch: customer.batch,
-      $source: customer.source
+      $batch: customer.batch
     }, (errRes) => {
       db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
         customer.customer_id = row.customer_id;
-        isPhoneDuplicate(customer).then((c1) => {
-          isPhoneDuplicateWithAnotherAgency(c1).then((c2) => {
-            resolve(c2);
-          });
+        isPhoneDuplicate(customer).then((customer) => {
+          resolve(customer);
         });
       });
     });
   });
-}
-
-export function isPhoneDuplicateWithAnotherAgency(customer) {
-  return new Promise((resolve, reject) => {
-
-    if (customer.phone === undefined || customer.phone === null) {
-      return resolve(customer);
-    }
-
-    if (customer.phone.length < 8 || customer.phone.length > 12 || isNaN(parseInt(customer.phone))) {
-      return resolve(customer);
-    }
-
-    db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
-    customers.email, customers.district, customers.province, customers.phone,\
-    customers.day, customers.month, customers.year,\
-    customers.s1, customers.s2, hospitals.name as hospital_name, \
-    provinces.name as province_name, areas.channel as area_channel, \
-    areas.name as area_name,\
-    customers.sampling, customers.batch, customers.source,\
-    customers.collectedDay, customers.collectedMonth, customers.collectedYear\
-    from customers JOIN hospitals ON \
-    hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
-    hospitals.province_id = provinces.province_id JOIN areas ON \
-    areas.area_id = provinces.area_id \
-    WHERE customers.phone = ? AND customers.customer_id != ? AND customers.source != ?',
-      customer.phone, customer.customer_id, customer.source, (err, res) => {
-      if (err) {
-        return reject(err);
-      }
-
-      if (res === undefined || res === null) {
-        resolve(customer);
-      } else {
-        customer.duplicateWithAnotherAgency = res;
-        customer.duplicatedWithAnotherAgency = 1;
-        customer.isPhoneDuplicatedWithAnotherAgency = true;
-        resolve(customer);
-      }
-    });
-  })
 }
 
 export function isPhoneDuplicate(customer) {
@@ -185,19 +130,18 @@ export function isPhoneDuplicate(customer) {
     }
 
     db.get('SELECT customers.customer_id, customers.last_name, customers.first_name,\
-    customers.email, customers.district, customers.province, customers.phone,\
+    customers.district, customers.province, customers.phone,\
     customers.day, customers.month, customers.year,\
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
-    customers.sampling, customers.batch, customers.source,\
-    customers.collectedDay, customers.collectedMonth, customers.collectedYear\
+    customers.sampling, customers.batch\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
     areas.area_id = provinces.area_id \
-    WHERE customers.phone = ? AND customers.customer_id != ? AND customers.source = ?',
-      customer.phone, customer.customer_id, customer.source, (err, res) => {
+    WHERE customers.phone = ? AND customers.customer_id != ?',
+      customer.phone, customer.customer_id, (err, res) => {
       if (err) {
         return reject(err);
       }
