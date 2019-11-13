@@ -124,6 +124,7 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
           customer.customer_id,
           customer.lastName,
           customer.firstName,
+          '', // Email
           customer.district,
           customer.province,
           row.getCell(phoneCol).value,
@@ -166,6 +167,7 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
             duplicatedWith.customer_id,
             duplicatedWith.last_name,
             duplicatedWith.first_name,
+            '', // Email
             duplicatedWith.district,
             duplicatedWith.province,
             duplicatedWith.phone,
@@ -292,10 +294,14 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(15).border = row.getCell(1).border;
     row.getCell(15).alignment = row.getCell(1).alignment;
 
+    row.getCell(16).font = row.getCell(1).font;
+    row.getCell(16).border = row.getCell(1).border;
+    row.getCell(16).alignment = row.getCell(1).alignment;
+
     if (outputSheetName.endsWith('Duplication')) {
-      row.getCell(16).font = row.getCell(1).font;
-      row.getCell(16).border = row.getCell(1).border;
-      row.getCell(16).alignment = row.getCell(1).alignment;
+      row.getCell(17).font = row.getCell(1).font;
+      row.getCell(17).border = row.getCell(1).border;
+      row.getCell(17).alignment = row.getCell(1).alignment;
     }
 
     resolve(workbook);
