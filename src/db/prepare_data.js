@@ -5,17 +5,17 @@ export const db = new sqlite3.Database('db.sqlite3');
 
 export const setupDatabase = () => {
   db.serialize(()=>{
-    createTableAreas();
-    insertTableAreas();
-
-    createTableProvinces();
-    insertTableProvinces();
-
-    createTableHospitals();
-    insertTableHospitals();
-
-    createTableMatches();
-    insertTableMatches();
+//     createTableAreas();
+//     insertTableAreas();
+//
+//     createTableProvinces();
+//     insertTableProvinces();
+//
+//     createTableHospitals();
+//     insertTableHospitals();
+//
+//     createTableMatches();
+//     insertTableMatches();
 
     createTableCustomers();
   });
@@ -28,6 +28,9 @@ function createTableCustomers() {
   db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT,\
   email TEXT, district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
   sampling TEXT, hospital_id INTEGER, batch TEXT,\
+  collectedDay INTEGER,\
+  collectedMonth INTEGER,\
+  collectedYear INTEGER,\
   hasError INTEGER DEFAULT 0,\
   missingData INTEGER DEFAULT 0,\
   missingFirstName INTEGER DEFAULT 0, \

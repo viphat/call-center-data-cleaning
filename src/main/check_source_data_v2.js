@@ -25,6 +25,9 @@ const yearCol = 9;
 const s1Col = 10;
 const s2Col = 11;
 const hospitalNameCol = 12;
+const collectedDayCol = 13;
+const collectedMonthCol = 14;
+const collectedYearCol = 15;
 
 export const validateSourceData = (excelFile, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -85,6 +88,10 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     let month = row.getCell(monthCol).value;
     let year = row.getCell(yearCol).value;
 
+    let collectedDay = row.getCell(collectedDayCol).value;
+    let collectedMonth = row.getCell(collectedMonthCol).value;
+    let collectedYear = row.getCell(collectedYearCol).value;
+
     getHospital(hospitalName).then((hospital) => {
       let customer = {
         lastName: row.getCell(lastNameCol).value,
@@ -97,6 +104,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
         year: year,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
+        collectedDay: collectedDay,
+        collectedMonth: collectedMonth,
+        collectedYear: collectedYear,
         hospital_id: hospital.hospital_id,
         batch: batch
       }
@@ -136,7 +146,10 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
           hospital.hospital_name,
           hospital.province_name,
           hospital.area_channel,
-          hospital.area_name
+          hospital.area_name,
+          customer.collectedDay,
+          customer.collectedMonth,
+          customer.collectedYear
         ];
 
         let outputSheetName = 'Valid';
@@ -180,6 +193,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
             duplicatedWith.province_name,
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
+            duplicatedWith.collectedDay,
+            duplicatedWith.collectedMonth,
+            duplicatedWith.collectedYear,
             duplicatedWith.batch
           ]
 
