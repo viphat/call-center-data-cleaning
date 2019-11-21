@@ -18,16 +18,18 @@ const districtCol = 4;
 const provinceCol = 5;
 const phoneCol = 6;
 
-const dayCol = 7;
-const monthCol = 8;
-const yearCol = 9;
+const dateCol = 7;
+// const dayCol = 7;
+// const monthCol = 8;
+// const yearCol = 9;
 
-const s1Col = 10;
-const s2Col = 11;
-const hospitalNameCol = 12;
-const collectedDayCol = 13;
-const collectedMonthCol = 14;
-const collectedYearCol = 15;
+const s1Col = 8;
+const s2Col = 9;
+const hospitalNameCol = 10;
+const collectedDateCol = 11;
+// const collectedDayCol = 13;
+// const collectedMonthCol = 14;
+// const collectedYearCol = 15;
 
 export const validateSourceData = (excelFile, batch, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -84,13 +86,22 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
-    let day = row.getCell(dayCol).value;
-    let month = row.getCell(monthCol).value;
-    let year = row.getCell(yearCol).value;
+    let date = row.getCell(dateCol).value;
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getYear();
+    // let day = row.getCell(dayCol).value;
+    // let month = row.getCell(monthCol).value;
+    // let year = row.getCell(yearCol).value;
 
-    let collectedDay = row.getCell(collectedDayCol).value;
-    let collectedMonth = row.getCell(collectedMonthCol).value;
-    let collectedYear = row.getCell(collectedYearCol).value;
+    let collectedDate = row.getCell(dateCol).value;
+    let collectedDay = collectedDate.getDate();
+    let collectedMonth = collectedDate.getMonth() + 1;
+    let collectedYear = collectedDate.getYear();
+
+    // let collectedDay = row.getCell(collectedDayCol).value;
+    // let collectedMonth = row.getCell(collectedMonthCol).value;
+    // let collectedYear = row.getCell(collectedYearCol).value;
 
     getHospital(hospitalName).then((hospital) => {
       let customer = {
@@ -346,9 +357,7 @@ function isEmptyRow(row) {
       row.getCell(districtCol).value === null      &&
       row.getCell(provinceCol).value === null      &&
       row.getCell(phoneCol).value === null         &&
-      row.getCell(dayCol).value === null           &&
-      row.getCell(monthCol).value === null         &&
-      row.getCell(yearCol).value === null          &&
+      row.getCell(dateCol).value === null           &&
       row.getCell(s1Col).value === null            &&
       row.getCell(s2Col).value === null            &&
       row.getCell(hospitalNameCol).value === null
@@ -403,7 +412,7 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  if (row.getCell(dayCol).value === null || row.getCell(monthCol).value === null || row.getCell(yearCol).value === null) {
+  if (row.getCell(dateCol).value === null || row.getCell(dateCol).value === undefined || row.getCell(dateCol).value === '') {
     customer.missingDate = 1;
     customer.missingMomStatus = 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
@@ -476,16 +485,21 @@ function isIllogicalData(customer, row) {
   }
 
   // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
-  let day = row.getCell(dayCol).value;
-  let month = row.getCell(monthCol).value;
-  let year = row.getCell(yearCol).value;
-  let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
-  date = new Date(date);
+  let date = row.getCell(dateCol).value;
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getYear();
+
+  // let day = row.getCell(dayCol).value;
+  // let month = row.getCell(monthCol).value;
+  // let year = row.getCell(yearCol).value;
+  // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
+  // date = new Date(date);
 
   if (date !== null && date !== undefined) {
     let projectStartDate = new Date('2019-08-01');
 
-    if (date == 'Invalid Date') {
+    if (date === 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
     } else {
