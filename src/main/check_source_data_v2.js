@@ -473,7 +473,7 @@ function isIllogicalData(customer, row) {
   if ((province !== undefined && province !== null)) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
-    if (!isNaN(province) || (province.length > 0 &&  hasSpecialCharacter(province))) {
+    if (province.length > 0 &&  hasSpecialCharacter(province)) {
       customer.illogicalAddress = 1;
       flag = true;
     }
