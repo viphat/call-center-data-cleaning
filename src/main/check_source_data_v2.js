@@ -84,21 +84,21 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     }
 
     let hospitalName = row.getCell(hospitalNameCol).value;
+
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
     let date = row.getCell(dateCol).value;
     let day = date.getDate();
     let month = date.getMonth() + 1;
-    let year = date.getYear();
+    let year = date.getFullYear();
     // let day = row.getCell(dayCol).value;
     // let month = row.getCell(monthCol).value;
     // let year = row.getCell(yearCol).value;
 
-    let collectedDate = row.getCell(dateCol).value;
+    let collectedDate = row.getCell(collectedDateCol).value;
     let collectedDay = collectedDate.getDate();
     let collectedMonth = collectedDate.getMonth() + 1;
-    let collectedYear = collectedDate.getYear();
-
+    let collectedYear = collectedDate.getFullYear();
     // let collectedDay = row.getCell(collectedDayCol).value;
     // let collectedMonth = row.getCell(collectedMonthCol).value;
     // let collectedYear = row.getCell(collectedYearCol).value;
@@ -488,7 +488,7 @@ function isIllogicalData(customer, row) {
   let date = row.getCell(dateCol).value;
   let day = date.getDate();
   let month = date.getMonth() + 1;
-  let year = date.getYear();
+  let year = date.getFullYear();
 
   // let day = row.getCell(dayCol).value;
   // let month = row.getCell(monthCol).value;
