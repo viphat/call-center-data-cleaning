@@ -497,7 +497,7 @@ function isIllogicalData(customer, row) {
   // date = new Date(date);
 
   if (date !== null && date !== undefined) {
-    let projectStartDate = new Date('2019-08-01');
+    // let projectStartDate = new Date('2019-08-01');
 
     if (date === 'Invalid Date') {
       customer.illogicalDate = 1;
@@ -528,10 +528,10 @@ function isIllogicalData(customer, row) {
         flag = true;
       }
 
-      if (date < projectStartDate) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
+      // if (date < projectStartDate) {
+      //   customer.illogicalDate = 1;
+      //   flag = true;
+      // }
 
       today = new Date();
       if (sampling == 'S2' && date >= today) {
