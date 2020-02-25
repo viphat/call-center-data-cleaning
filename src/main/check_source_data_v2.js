@@ -536,7 +536,7 @@ function isIllogicalData(customer, row) {
 
   if (date !== null && date !== undefined) {
     let day, month, year;
-    let projectStartDate = new Date('2019-01-01');
+    // let projectStartDate = new Date('2019-01-01');
 
     day = customer.day;
     month = customer.month;
@@ -565,10 +565,10 @@ function isIllogicalData(customer, row) {
         flag = true;
       }
 
-      if (date < projectStartDate) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
+      // if (date < projectStartDate) {
+      //   customer.illogicalDate = 1;
+      //   flag = true;
+      // }
 
       if (sampling == 'S2' && date >= today) {
         // Ngày sinh của em bé không được lớn hơn hoặc bằng ngày import
