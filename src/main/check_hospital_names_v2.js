@@ -3,8 +3,8 @@ const Excel = require('exceljs');
 const fs = require('fs');
 import { db } from '../db/prepare_data.js';
 
-const hospitalNameCol = 10;
-const startRow = 4;
+const hospitalNameCol = 13;
+const startRow = 2;
 let notFoundHospitalNames = [];
 
 export const writeReportToExcelFile = (outputFolder, notFoundHospitalNames) => {

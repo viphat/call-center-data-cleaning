@@ -10,23 +10,23 @@ import { db } from '../db/prepare_data';
 import { buildTemplate } from '../main/build_excel_template';
 import { createCustomer, updateCustomer } from '../db/create_customer';
 
-const dataBeginRow = 4;
+const dataBeginRow = 2;
 const indexCol = 1;
 const lastNameCol = 2;
 const firstNameCol = 3;
-const districtCol = 4;
-const provinceCol = 5;
-const phoneCol = 6;
+const districtCol = 5;
+const provinceCol = 6;
+const phoneCol = 7;
 
-const dateCol = 7;
-// const dayCol = 7;
-// const monthCol = 8;
-// const yearCol = 9;
+// const dateCol = 7;
+const dayCol = 8;
+const monthCol = 9;
+const yearCol = 10;
 
-const s1Col = 8;
-const s2Col = 9;
-const hospitalNameCol = 10;
-const collectedDateCol = 11;
+const s1Col = 11;
+const s2Col = 12;
+const hospitalNameCol = 13;
+const collectedDateCol = 16;
 // const collectedDayCol = 13;
 // const collectedMonthCol = 14;
 // const collectedYearCol = 15;
@@ -87,13 +87,13 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
 
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
-    let date = row.getCell(dateCol).value;
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    // let day = row.getCell(dayCol).value;
-    // let month = row.getCell(monthCol).value;
-    // let year = row.getCell(yearCol).value;
+    // let date = row.getCell(dateCol).value;
+    // let day = date.getDate();
+    // let month = date.getMonth() + 1;
+    // let year = date.getFullYear();
+    let day = row.getCell(dayCol).value;
+    let month = row.getCell(monthCol).value;
+    let year = row.getCell(yearCol).value;
 
     let collectedDate = row.getCell(collectedDateCol).value;
     let collectedDay = collectedDate.getDate();
@@ -357,7 +357,9 @@ function isEmptyRow(row) {
       row.getCell(districtCol).value === null      &&
       row.getCell(provinceCol).value === null      &&
       row.getCell(phoneCol).value === null         &&
-      row.getCell(dateCol).value === null           &&
+      row.getCell(dayCol).value === null           &&
+      row.getCell(monthCol).value === null         &&
+      row.getCell(yearCol).value === null          &&
       row.getCell(s1Col).value === null            &&
       row.getCell(s2Col).value === null            &&
       row.getCell(hospitalNameCol).value === null
@@ -412,7 +414,7 @@ function isMissingData(customer, row) {
     customer.missingMomStatus = 1;
   }
 
-  if (row.getCell(dateCol).value === null || row.getCell(dateCol).value === undefined || row.getCell(dateCol).value === '') {
+  if (row.getCell(dayCol).value === null || row.getCell(monthCol).value === null || row.getCell(yearCol).value === null) {
     customer.missingDate = 1;
     customer.missingMomStatus = 1;
     missingFields.push('Ngày dự sinh/Ngày sinh');
@@ -485,16 +487,16 @@ function isIllogicalData(customer, row) {
   }
 
   // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
-  let date = row.getCell(dateCol).value;
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
+  // let date = row.getCell(dateCol).value;
+  // let day = date.getDate();
+  // let month = date.getMonth() + 1;
+  // let year = date.getFullYear();
 
-  // let day = row.getCell(dayCol).value;
-  // let month = row.getCell(monthCol).value;
-  // let year = row.getCell(yearCol).value;
-  // let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
-  // date = new Date(date);
+  let day = row.getCell(dayCol).value;
+  let month = row.getCell(monthCol).value;
+  let year = row.getCell(yearCol).value;
+  let date = year + '-' + padStart(month, 2, 0) + '-' + padStart(day, 2, 0);
+  date = new Date(date);
 
   if (date !== null && date !== undefined) {
     // let projectStartDate = new Date('2019-08-01');
