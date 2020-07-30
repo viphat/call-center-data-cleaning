@@ -26,7 +26,7 @@ const yearCol = 10;
 const s1Col = 11;
 const s2Col = 12;
 const hospitalNameCol = 13;
-const collectedDateCol = 16;
+const collectedDateCol = 17;
 // const collectedDayCol = 13;
 // const collectedMonthCol = 14;
 // const collectedYearCol = 15;
@@ -94,6 +94,7 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
     let day = row.getCell(dayCol).value;
     let month = row.getCell(monthCol).value;
     let year = row.getCell(yearCol).value;
+
 
     let collectedDate = row.getCell(collectedDateCol).value;
     let collectedDay = collectedDate.getDate();
