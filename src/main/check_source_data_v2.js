@@ -215,8 +215,6 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
             duplicatedWith.collectedDate,
-            // duplicatedWith.collectedMonth,
-            // duplicatedWith.collectedYear,
             duplicatedWith.batch
           ]
 

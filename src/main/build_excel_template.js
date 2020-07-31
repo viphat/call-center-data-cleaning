@@ -260,12 +260,12 @@ function writeBaseTemplate(workbook, worksheet, title) {
   // End Table Headers
 
   if (worksheet.name.endsWith('Duplication')) {
-    worksheet.mergeCells('T5:T6');
-    worksheet.getCell('T5').font = worksheet.getCell('A5').font;
-    worksheet.getCell('T5').fill = worksheet.getCell('A5').fill;
-    worksheet.getCell('T5').alignment = worksheet.getCell('A5').alignment;
-    worksheet.getCell('T5').border = worksheet.getCell('A5').border;
-    worksheet.getCell('T5').value = 'Tuần';
+    worksheet.mergeCells('R5:R6');
+    worksheet.getCell('R5').font = worksheet.getCell('A5').font;
+    worksheet.getCell('R5').fill = worksheet.getCell('A5').fill;
+    worksheet.getCell('R5').alignment = worksheet.getCell('A5').alignment;
+    worksheet.getCell('R5').border = worksheet.getCell('A5').border;
+    worksheet.getCell('R5').value = 'Tuần';
   }
 
   // Add Logo
