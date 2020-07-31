@@ -146,8 +146,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
         if (batch !== 'W1') {
           missingData = isMissingData(customer, row);
           illogicalData = isIllogicalData(customer, row);
-          duplicateData = customer.isPhoneDuplicated;
         }
+
+        duplicateData = customer.isPhoneDuplicated;
 
         let rowData = [
           customer.customer_id,
