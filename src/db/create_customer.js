@@ -85,12 +85,12 @@ export const createCustomer = (customer) => {
         first_name, last_name,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
-        collectedDay, collectedMonth, collectedYear,\
+        collectedDate,\
         illogicalSampling,\
         hospital_id, batch) \
         VALUES($firstName, $lastName, \
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
-        $collectedDay, $collectedMonth, $collectedYear,\
+        $collectedDate,\
         $illogicalSampling,\
         $hospital_id, $batch);',
     {
@@ -105,9 +105,7 @@ export const createCustomer = (customer) => {
       $s1: customer.s1,
       $s2: customer.s2,
       $sampling: customer.sampling,
-      $collectedDay: customer.collectedDay,
-      $collectedMonth: customer.collectedMonth,
-      $collectedYear: customer.collectedYear,
+      $collectedDate: customer.collectedDate,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
       $batch: customer.batch

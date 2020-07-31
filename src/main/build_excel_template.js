@@ -61,9 +61,7 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getColumn('N').width = 23.8;
   worksheet.getColumn('O').width = 23.8;
   worksheet.getColumn('P').width = 23.8;
-  worksheet.getColumn('Q').width = 9.5;
-  worksheet.getColumn('R').width = 9.5;
-  worksheet.getColumn('S').width = 9.5;
+  worksheet.getColumn('Q').width = 13.8;
 
   worksheet.getRow('5').height = 30;
 
@@ -253,30 +251,12 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getCell('P6').border = worksheet.getCell('A5').border;
   worksheet.getCell('P6').value = 'Khu vực';
 
-  worksheet.mergeCells('Q5:S5');
+  worksheet.mergeCells('Q5:Q6');
   worksheet.getCell('Q5').font = worksheet.getCell('A5').font;
   worksheet.getCell('Q5').fill = worksheet.getCell('A5').fill;
   worksheet.getCell('Q5').alignment = worksheet.getCell('A5').alignment;
   worksheet.getCell('Q5').border = worksheet.getCell('A5').border;
   worksheet.getCell('Q5').value = 'Thời gian lấy mẫu';
-
-  worksheet.getCell('Q6').font = worksheet.getCell('A5').font;
-  worksheet.getCell('Q6').fill = worksheet.getCell('A5').fill;
-  worksheet.getCell('Q6').alignment = worksheet.getCell('A5').alignment;
-  worksheet.getCell('Q6').border = worksheet.getCell('A5').border;
-  worksheet.getCell('Q6').value = 'Ngày';
-
-  worksheet.getCell('R6').font = worksheet.getCell('A5').font;
-  worksheet.getCell('R6').fill = worksheet.getCell('A5').fill;
-  worksheet.getCell('R6').alignment = worksheet.getCell('A5').alignment;
-  worksheet.getCell('R6').border = worksheet.getCell('A5').border;
-  worksheet.getCell('R6').value = 'Tháng';
-
-  worksheet.getCell('S6').font = worksheet.getCell('A5').font;
-  worksheet.getCell('S6').fill = worksheet.getCell('A5').fill;
-  worksheet.getCell('S6').alignment = worksheet.getCell('A5').alignment;
-  worksheet.getCell('S6').border = worksheet.getCell('A5').border;
-  worksheet.getCell('S6').value = 'Năm';
   // End Table Headers
 
   if (worksheet.name.endsWith('Duplication')) {

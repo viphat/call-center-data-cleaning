@@ -97,9 +97,10 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
 
 
     let collectedDate = row.getCell(collectedDateCol).value;
-    let collectedDay = collectedDate.getDate();
-    let collectedMonth = collectedDate.getMonth() + 1;
-    let collectedYear = collectedDate.getFullYear();
+    // let collectedDay = collectedDate.getDate();
+    // let collectedMonth = collectedDate.getMonth() + 1;
+    // let collectedYear = collectedDate.getFullYear();
+
     // let collectedDay = row.getCell(collectedDayCol).value;
     // let collectedMonth = row.getCell(collectedMonthCol).value;
     // let collectedYear = row.getCell(collectedYearCol).value;
@@ -116,9 +117,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
         year: year,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
-        collectedDay: collectedDay,
-        collectedMonth: collectedMonth,
-        collectedYear: collectedYear,
+        collectedDate: collectedDate,
+        // collectedMonth: collectedMonth,
+        // collectedYear: collectedYear,
         hospital_id: hospital.hospital_id,
         batch: batch
       }
@@ -138,9 +139,15 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
         }
 
         customer = response;
-        let missingData = isMissingData(customer, row);
-        let illogicalData = isIllogicalData(customer, row);
-        let duplicateData = customer.isPhoneDuplicated;
+        let missingData = false;
+        let illogicalData = false;
+        let duplicateData = false;
+
+        if (batch !== 'W1') {
+          missingData = isMissingData(customer, row);
+          illogicalData = isIllogicalData(customer, row);
+          duplicateData = customer.isPhoneDuplicated;
+        }
 
         let rowData = [
           customer.customer_id,
@@ -159,9 +166,10 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
           hospital.province_name,
           hospital.area_channel,
           hospital.area_name,
-          customer.collectedDay,
-          customer.collectedMonth,
-          customer.collectedYear
+          // customer.collectedDay,
+          // customer.collectedMonth,
+          // customer.collectedYear,
+          customer.collectedDate
         ];
 
         let outputSheetName = 'Valid';
@@ -205,9 +213,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
             duplicatedWith.province_name,
             duplicatedWith.area_channel,
             duplicatedWith.area_name,
-            duplicatedWith.collectedDay,
-            duplicatedWith.collectedMonth,
-            duplicatedWith.collectedYear,
+            duplicatedWith.collectedDate,
+            // duplicatedWith.collectedMonth,
+            // duplicatedWith.collectedYear,
             duplicatedWith.batch
           ]
 
@@ -326,10 +334,14 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(16).border = row.getCell(1).border;
     row.getCell(16).alignment = row.getCell(1).alignment;
 
+    row.getCell(17).font = row.getCell(1).font;
+    row.getCell(17).border = row.getCell(1).border;
+    row.getCell(17).alignment = row.getCell(1).alignment;
+
     if (outputSheetName.endsWith('Duplication')) {
-      row.getCell(17).font = row.getCell(1).font;
-      row.getCell(17).border = row.getCell(1).border;
-      row.getCell(17).alignment = row.getCell(1).alignment;
+      row.getCell(18).font = row.getCell(1).font;
+      row.getCell(18).border = row.getCell(1).border;
+      row.getCell(18).alignment = row.getCell(1).alignment;
     }
 
     resolve(workbook);
