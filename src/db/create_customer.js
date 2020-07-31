@@ -138,7 +138,7 @@ export function isPhoneDuplicate(customer) {
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
-    customers.sampling, customers.batch\
+    customers.sampling, customers.collectedDate, customers.batch\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
