@@ -97,9 +97,13 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
 
 
     let collectedDate = row.getCell(collectedDateCol).value;
-    // let collectedDay = collectedDate.getDate();
-    // let collectedMonth = collectedDate.getMonth() + 1;
-    // let collectedYear = collectedDate.getFullYear();
+
+    if (collectedDate instanceof Date) {
+      let collectedDay = collectedDate.getDate();
+      let collectedMonth = collectedDate.getMonth() + 1;
+      let collectedYear = collectedDate.getFullYear();
+      collectedDate = collectedDay + '/' + collectedMonth + '/' + collectedYear
+    }
 
     // let collectedDay = row.getCell(collectedDayCol).value;
     // let collectedMonth = row.getCell(collectedMonthCol).value;
