@@ -98,13 +98,14 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
 
 
     let collectedDate = row.getCell(collectedDateCol).value;
-    let collectedDay, collectedMonth, collectedYear
+    let collectedDay, collectedMonth, collectedYear;
 
     if (collectedDate instanceof Date) {
-      let collectedDay = collectedDate.getDate();
-      let collectedMonth = collectedDate.getMonth() + 1;
-      let collectedYear = collectedDate.getFullYear();
-      collectedDate = collectedDay + '/' + collectedMonth + '/' + collectedYear
+      collectedDay = collectedDate.getDate();
+      collectedMonth = collectedDate.getMonth() + 1;
+      collectedYear = collectedDate.getFullYear();
+      // collectedDate = collectedDay + '/' + collectedMonth + '/' + collectedYear
+      collectedDate = ''
     }
 
     let note = row.getCell(noteCol).value;
