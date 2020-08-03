@@ -86,11 +86,19 @@ export const createCustomer = (customer) => {
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
         collectedDate,\
+        collectedDay,\
+        collectedMonth,\
+        collectedYear,\
+        note,\
         illogicalSampling,\
         hospital_id, batch) \
         VALUES($firstName, $lastName, \
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
         $collectedDate,\
+        $collectedDay,\
+        $collectedMonth,\
+        $collectedYear,\
+        $note,\
         $illogicalSampling,\
         $hospital_id, $batch);',
     {
@@ -106,6 +114,10 @@ export const createCustomer = (customer) => {
       $s2: customer.s2,
       $sampling: customer.sampling,
       $collectedDate: customer.collectedDate,
+      $collectedDay: customer.collectedDay,
+      $collectedMonth: customer.collectedMonth,
+      $collectedYear: customer.collectedYear,
+      $note: customer.note,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
       $batch: customer.batch
@@ -138,7 +150,9 @@ export function isPhoneDuplicate(customer) {
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
-    customers.sampling, customers.collectedDate, customers.batch\
+    customers.sampling,\
+    customers.collectedDay, customers.collectedMonth, customers.collectedYear, customers.collectedDate, customers.note,\
+    customers.batch\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \

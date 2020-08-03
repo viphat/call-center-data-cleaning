@@ -29,6 +29,10 @@ function createTableCustomers() {
   email TEXT, district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
   sampling TEXT, hospital_id INTEGER, batch TEXT,\
   collectedDate TEXT,\
+  collectedDay INTEGER,\
+  collectedMonth INTEGER,\
+  collectedYear INTEGER,\
+  note TEXT,\
   hasError INTEGER DEFAULT 0,\
   missingData INTEGER DEFAULT 0,\
   missingFirstName INTEGER DEFAULT 0, \
