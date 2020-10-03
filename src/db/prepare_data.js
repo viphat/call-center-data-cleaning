@@ -26,35 +26,31 @@ export const setupDatabase = () => {
 function createTableCustomers() {
   db.run('DROP TABLE IF EXISTS customers;');
   db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT,\
-  email TEXT, district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT, s1 TEXT, s2 TEXT,\
-  sampling TEXT, hospital_id INTEGER, batch TEXT,\
+  district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT,\
+  hospital_id INTEGER, campaignName TEXT, brand TEXT,\
+  babyWeight INTEGER, babySize TEXT, giftSize TEXT\
+  batch TEXT,\
   collectedDate TEXT,\
   collectedDay INTEGER,\
   collectedMonth INTEGER,\
   collectedYear INTEGER,\
-  note TEXT,\
   hasError INTEGER DEFAULT 0,\
   missingData INTEGER DEFAULT 0,\
   missingFirstName INTEGER DEFAULT 0, \
   missingLastName INTEGER DEFAULT 0,\
-  missingMomName INTEGER DEFAULT 0, \
-  missingDistrict INTEGER DEFAULT 0, \
-  missingProvince INTEGER DEFAULT 0,\
-  missingAddress INTEGER DEFAULT 0,\
+  missingLivingCity INTEGER DEFAULT 0, \
   missingPhone INTEGER DEFAULT 0, \
-  missingEmail INTEGER DEFAULT 0,\
-  missingSampling INTEGER DEFAULT 0, \
-  missingDate INTEGER DEFAULT 0,\
-  missingMomStatus INTEGER DEFAULT 0,\
+  missingDeliveryDate INTEGER DEFAULT 0,\
+  missingHospital INTEGER DEFAULT 0,\
+  missingBrand INTEGER DEFAULT 0,\
+  missingOtherInformation INTEGER DEFAULT 0,\
   illogicalData INTEGER DEFAULT 0,\
-  illogicalPhone INTEGER DEFAULT 0, illogicalName INTEGER DEFAULT 0,\
-  illogicalSampling INTEGER DEFAULT 0, illogicalEmail INTEGER DEFAULT 0,\
-  illogicalAddress INTEGER DEFAULT 0, illogicalDate INTEGER DEFAULT 0,\
-  illogicalOther INTEGER DEFAULT 0, \
+  illogicalPhone INTEGER DEFAULT 0,\
+  illogicalDeliveryDate INTEGER DEFAULT 0,\
+  illogicalSize INTEGER DEFAULT 0,\
+  illogicalBrand INTEGER DEFAULT 0, \
+  illogicalBabyWeight INTEGER DEFAULT 0, \
   duplicatedPhone INTEGER DEFAULT 0,\
-  duplicatedPhoneBetweenS1AndS2 INTEGER DEFAULT 0,\
-  duplicatedPhoneS1 DEFAULT 0, \
-  duplicatedPhoneS2 INTEGER DEFAULT 0,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')
 }
 
@@ -64,15 +60,11 @@ function createTableAreas() {
 }
 
 function insertTableAreas() {
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 1, 'Hồ Chí Minh', 'Key Urban 1');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 2, 'Hà Nội', 'Key Urban 1');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 6, 'Hải Phòng', 'Key Urban 1');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 3, 'Đà Nẵng', 'Key Urban 2');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 4, 'Cần  Thơ', 'Key Urban 2');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 7, 'Miền Bắc', 'Urban');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 8, 'Miền Trung', 'Urban');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 10, 'Miền Tây', 'Urban');
-  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 9, 'Miền Đông', 'Urban');
+  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 1, 'Hồ Chí Minh', 'Key Urban');
+  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 2, 'Đà Nẵng', 'Key Urban');
+  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 3, 'Hà Nội', 'Key Urban');
+  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 4, 'Miền Bắc', 'Urban');
+  db.run('INSERT INTO areas(area_id, name, channel) VALUES(?, ?, ?);', 5, 'Miền Trung', 'Urban');
 }
 
 function createTableProvinces() {
@@ -82,10 +74,19 @@ function createTableProvinces() {
 
 function insertTableProvinces() {
   db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 1, 'Hồ Chí Minh', 1);
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 2, 'Hà Nội', 2);
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 3, 'Đà Nẵng', 3);
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 4, 'Hải Phòng', 6);
-  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 5, 'Bình Dương', 9);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 2, 'Đà Nẵng', 2);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 3, 'Nha Trang', 5);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 4, 'Hà Nội', 3);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 5, 'Bắc Ninh', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 6, 'Vĩnh Phúc', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 7, 'Hải Phòng', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 8, 'Thái Nguyên', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 9, 'Hải Dương', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 10, 'Thái Bình', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 11, 'Nghệ An', 5);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 12, 'Thanh Hóa', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 13, 'Hưng Yên', 4);
+  db.run('INSERT INTO provinces(province_id, name, area_id) VALUES(?,?,?);', 14, 'Ninh Bình', 4);
 }
 
 function createTableHospitals() {
@@ -94,22 +95,28 @@ function createTableHospitals() {
 }
 
 function insertTableHospitals() {
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 1, 'Bệnh viện Becamex Bình Dương', 5);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 2, 'Bệnh viện Đa Khoa Gia Đình', 3);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 3, 'Bệnh viện Đại Học Y Dược HCM', 1);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 4, 'Bệnh viện Sản Nhi Bình Dương', 5);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 5, 'Bệnh viện An Sinh', 1);
-
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 6, 'Bệnh viện An Sinh - Hội Thảo', 1);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 7, 'Bệnh Viện Đa Khoa Hồng Đức', 1);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 8, 'Bệnh viện Đa Khoa Vạn Phúc 1', 5);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 9, 'Bệnh viện Hoàn Mỹ Sài Gòn - Hội Thảo', 1);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 10, 'Bệnh Viện Quốc Tế Mỹ', 1);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 11, 'Bệnh viện Đa Khoa Quốc Tế Hải Phòng', 4);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 12, 'Bệnh viện Green Hải Phòng', 4);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 13, 'Bệnh viện An Thịnh', 2);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 14, 'Bệnh viện Việt Pháp', 2);
-  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 15, 'Phòng Khám BS Mỹ Nhi', 1);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 1, 'Bệnh viện Đa Khoa Hưng Hà', 13);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 2, 'Bệnh viện Đa Khoa Huyện Tiên Du', 5);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 3, 'Bệnh viện Đa Khoa Huyện Từ Sơn', 5);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 4, 'Bệnh viện Đa Khoa Khánh Hòa', 3);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 5, 'Bệnh viện Đa Khoa Trung Ương Thái Nguyên', 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 6, 'Bệnh viện Nhi Đồng Thành Phố', 1);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 7, 'Bệnh viện Nhi Thái Bình', 10);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 8, 'Bệnh viện Nhi Thanh Hóa', 12);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 9, 'Bệnh viện Quận Thủ Đức', 1);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 10, 'Bệnh viện Sản Nhi Hưng Yên', 13);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 11, 'Bệnh viện Sản Nhi Nghệ An', 11);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 12, 'Bệnh viện Sản Nhi Ninh Bình', 14);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 13, 'Bệnh viện Thành phố Vinh', 11);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 14, 'Bệnh viện Trẻ Em Hải Phòng', 7);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 15, 'Phòng Khám Đa Khoa Đức Minh', 9);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 16, 'Tiêm Chủng Polyvac Vĩnh Hưng', 4);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 17, 'Trung Tâm Kiểm Soát Bệnh Tật Nghệ An', 11);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 18, 'Viện Kiểm Định Quốc Gia Vắc xin Và Sinh Phẩm Y Tế', 4);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 19, 'Viện Vệ Sinh Dịch Tể Trung Ương - 131 Lò Đúc', 4);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 20, 'Bệnh viện Đa Khoa Phúc Yên', 6);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 21, 'Bệnh viện Quốc Tế Thái Nguyên ', 8);
+  db.run('INSERT INTO hospitals(hospital_id, name, province_id) VALUES(?, ?, ?)', 22, 'Trung Tâm Kiểm Soát Bệnh Tật Hải Dương', 9);
 }
 
 function createTableMatches() {
@@ -118,5 +125,5 @@ function createTableMatches() {
 }
 
 function insertTableMatches() {
-  db.run('INSERT INTO matches(match_id, hospital_id, name) VALUES(?, ?, ?)', 1, 10, 'Bênh viện Quốc Tế Mỹ');
+  // db.run('INSERT INTO matches(match_id, hospital_id, name) VALUES(?, ?, ?)', 1, 10, 'Bênh viện Quốc Tế Mỹ');
 }
