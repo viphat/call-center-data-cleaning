@@ -130,7 +130,7 @@ export function isPhoneDuplicate(customer) {
     provinces.name as province_name,\
     areas.name as area_name,\
     customers.campaignName, customers.babyWeight, customers.babySize, customers.brand, customers.giftSize,\
-    customers.collectedDate, customers.week, customers.batch\
+    customers.collectedDate, customers.collectedDay, customers.collectedMonth, customers.collectedYear, customers.week, customers.batch\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \

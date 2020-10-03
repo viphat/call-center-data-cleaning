@@ -163,7 +163,9 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
           customer.babySize,
           customer.brand,
           customer.giftSize,
-          customer.collectedDate,
+          customer.collectedDay,
+          customer.collectedMonth,
+          customer.collectedYear,
           customer.week
         ];
 
@@ -209,9 +211,10 @@ function readEachRow(excelFile, outputWorkbook, batch, worksheet, rowNumber) {
             duplicatedWith.babySize,
             duplicatedWith.brand,
             duplicatedWith.giftSize,
-            duplicatedWith.collectedDate,
-            duplicatedWith.week,
-            duplicatedWith.batch
+            duplicatedWith.collectedDay,
+            duplicatedWith.collectedMonth,
+            duplicatedWith.collectedYear,
+            duplicatedWith.week
           ]
 
           if (duplicatedWith.batch == customer.batch) {
@@ -334,11 +337,13 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(19).border = row.getCell(1).border;
     row.getCell(19).alignment = row.getCell(1).alignment;
 
-    if (outputSheetName.endsWith('Duplication')) {
-      row.getCell(20).font = row.getCell(1).font;
-      row.getCell(20).border = row.getCell(1).border;
-      row.getCell(20).alignment = row.getCell(1).alignment;
-    }
+    row.getCell(20).font = row.getCell(1).font;
+    row.getCell(20).border = row.getCell(1).border;
+    row.getCell(20).alignment = row.getCell(1).alignment;
+
+    row.getCell(21).font = row.getCell(1).font;
+    row.getCell(21).border = row.getCell(1).border;
+    row.getCell(21).alignment = row.getCell(1).alignment;
 
     resolve(workbook);
   });
@@ -521,7 +526,7 @@ function isIllogicalData(customer, row) {
 
   let babyWeight = row.getCell(babyWeightCol).value;
 
-  if (babyWeight && babyWeight < 6 && babyWeight > 11) {
+  if (babyWeight !== null && (parseInt(babyWeight) < 6 || parseInt(babyWeight) > 11)) {
     customer.illogicalBabyWeight = 1
     flag = true;
   }
