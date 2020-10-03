@@ -15,73 +15,61 @@ export const generateReport = (batch, outputDirectory) => {
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'C');
       }).then(() => {
-        return fillData(batch, 'Key Urban');
+        return fillData(batch, { provinceId: 1 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'D');
       }).then(() => {
-        return fillData(batch, { areaId: 1 });
+        return fillData(batch, { provinceId: 2 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'E');
       }).then(() => {
-        return fillData(batch, { areaId: 2 });
+        return fillData(batch, { provinceId: 3 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'F');
       }).then(() => {
-        return fillData(batch, { areaId: 3 });
+        return fillData(batch, { provinceId: 4 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'G');
       }).then(() => {
-        return fillData(batch, { areaId: 4 });
+        return fillData(batch, { provinceId: 5 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'H');
       }).then(() => {
-        return fillData(batch, { areaId: 5 });
+        return fillData(batch, { provinceId: 6 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'I');
       }).then(() => {
-        return fillData(batch, { areaId: 6 });
+        return fillData(batch, { provinceId: 7 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'J');
       }).then(() => {
-        return fillData(batch, 'Urban');
+        return fillData(batch, { provinceId: 8 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'K');
       }).then(() => {
-        return fillData(batch, { areaId: 7 });
+        return fillData(batch, { provinceId: 9 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'L');
       }).then(() => {
-        return fillData(batch, { areaId: 8 });
+        return fillData(batch, { provinceId: 10 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'M');
       }).then(() => {
-        return fillData(batch, { areaId: 9 });
+        return fillData(batch, { provinceId: 11 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'N');
       }).then(() => {
-        return fillData(batch, { areaId: 10 });
+        return fillData(batch, { provinceId: 12 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'O');
       }).then(() => {
-        return fillData(batch, 'Rural');
+        return fillData(batch, { provinceId: 13 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'P');
       }).then(() => {
-        return fillData(batch, { areaId: 11 });
+        return fillData(batch, { provinceId: 14 });
       }).then((rowData) => {
         return writeToTemplate(reportFilePath, rowData, 'Q');
-      }).then(() => {
-        return fillData(batch, { areaId: 12 });
-      }).then((rowData) => {
-        return writeToTemplate(reportFilePath, rowData, 'R');
-      }).then(() => {
-        return fillData(batch, 'S1');
-      }).then((rowData) => {
-        return writeToTemplate(reportFilePath, rowData, 'S');
-      }).then(() => {
-        return fillData(batch, 'S2');
-      }).then((rowData) => {
-        return writeToTemplate(reportFilePath, rowData, 'T');
       }).then(() => {
         resolve(reportFilePath);
       });
@@ -105,28 +93,28 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       row.getCell(cellIndex).value = rowData.MissingData;
 
       row = worksheet.getRow(8);
-      row.getCell(cellIndex).value = rowData.MissingMomName;
+      row.getCell(cellIndex).value = rowData.MissingName;
 
       row = worksheet.getRow(9);
-      row.getCell(cellIndex).value = rowData.MissingAddress;
+      row.getCell(cellIndex).value = rowData.MissingLivingCity;
 
       row = worksheet.getRow(10);
       row.getCell(cellIndex).value = rowData.MissingPhone;
 
       row = worksheet.getRow(11);
-      row.getCell(cellIndex).value = rowData.MissingDate;
+      row.getCell(cellIndex).value = rowData.MissingDeliveryDate;
 
       row = worksheet.getRow(12);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
+      row.getCell(cellIndex).value = rowData.MissingHospital;
 
       row = worksheet.getRow(13);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhoneBetweenS1AndS2;
+      row.getCell(cellIndex).value = rowData.MissingBrand;
 
       row = worksheet.getRow(14);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS1;
+      row.getCell(cellIndex).value = rowData.MissingOtherInformation;
 
       row = worksheet.getRow(15);
-      row.getCell(cellIndex).value = rowData.DuplicatedPhoneS2;
+      row.getCell(cellIndex).value = rowData.DuplicatedPhone;
 
       row = worksheet.getRow(16);
       row.getCell(cellIndex).value = rowData.IllogicalData;
@@ -135,12 +123,21 @@ function writeToTemplate(reportFilePath, rowData, cellIndex) {
       row.getCell(cellIndex).value = rowData.IllogicalPhone;
 
       row = worksheet.getRow(18);
-      row.getCell(cellIndex).value = rowData.IllogicalDate;
+      row.getCell(cellIndex).value = rowData.IllogicalDeliveryDate;
 
       row = worksheet.getRow(19);
-      row.getCell(cellIndex).value = rowData.IllogicalOther;
+      row.getCell(cellIndex).value = rowData.IllogicalSize;
 
       row = worksheet.getRow(20);
+      row.getCell(cellIndex).value = rowData.IllogicalBrand;
+
+      row = worksheet.getRow(21);
+      row.getCell(cellIndex).value = rowData.IllogicalBabyWeight;
+
+      row = worksheet.getRow(22);
+      row.getCell(cellIndex).value = rowData.IllogicalOthers;
+
+      row = worksheet.getRow(23);
       row.getCell(cellIndex).value = rowData.TotalBase - rowData.HasError;
 
       resolve(workbook.xlsx.writeFile(reportFilePath));
@@ -152,42 +149,31 @@ function fillData(batch, filterType) {
   return new Promise((resolve, reject) => {
     let baseQuery = 'SELECT COUNT(*) AS TotalBase, coalesce(SUM(hasError),0) AS HasError,\
     coalesce(SUM(missingData),0) AS MissingData,\
-    coalesce(SUM(missingMomName),0) AS MissingMomName, coalesce(SUM(missingAddress),0) AS MissingAddress,\
+    coalesce(SUM(missingName),0) AS MissingName, coalesce(SUM(missingLivingCity),0) AS MissingLivingCity,\
     coalesce(SUM(missingPhone),0) AS MissingPhone, \
-    coalesce(SUM(missingDate),0) As MissingDate, \
-    coalesce(SUM(missingMomStatus),0) AS MissingMomStatus, \
+    coalesce(SUM(missingDeliveryDate),0) As MissingDeliveryDate, \
+    coalesce(SUM(missingHospital),0) AS MissingHospital, \
+    coalesce(SUM(missingBrand),0) AS MissingBrand, \
+    coalesce(SUM(missingOtherInformation),0) AS MissingOtherInformation, \
     coalesce(SUM(illogicalData),0) As IllogicalData, \
-    coalesce(SUM(illogicalDate),0) As IllogicalDate, \
+    coalesce(SUM(illogicalDeliveryDate),0) As IllogicalDeliveryDate, \
     coalesce(SUM(illogicalPhone),0) AS IllogicalPhone,\
-    coalesce(SUM(illogicalOther),0) AS IllogicalOther,\
-    coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone, \
-    coalesce(SUM(duplicatedPhoneBetweenS1AndS2),0) As DuplicatedPhoneBetweenS1AndS2, \
-    coalesce(SUM(duplicatedPhoneS1),0) AS DuplicatedPhoneS1,\
-    coalesce(SUM(duplicatedPhoneS2),0) AS DuplicatedPhoneS2 FROM customers'
+    coalesce(SUM(illogicalSize),0) AS IllogicalSize,\
+    coalesce(SUM(illogicalBrand),0) AS IllogicalBrand,\
+    coalesce(SUM(illogicalBabyWeight),0) AS IllogicalBabyWeight,\
+    coalesce(SUM(illogicalOthers),0) AS IllogicalOthers,\
+    coalesce(SUM(duplicatedPhone),0) As DuplicatedPhone FROM customers'
 
     let whereCondition = '';
     let joinTable = '';
     let params = {};
 
-    if (filterType === 'Key Urban' || filterType === 'Urban' || filterType === 'Rural') {
-      joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
-        JOIN provinces ON hospitals.province_id = provinces.province_id \
-        JOIN areas ON provinces.area_id = areas.area_id';
-      whereCondition = 'WHERE areas.channel = $channel';
-      params = {
-        $channel: filterType
-      }
-    } else if (filterType === 'S1' || filterType === 'S2'){
-      whereCondition = 'WHERE customers.sampling = $sampling';
-      params = {
-        $sampling: filterType
-      }
-    } else if (filterType.areaId !== undefined && filterType.areaId !== null) {
+    if (filterType.provinceId !== undefined && filterType.provinceId !== null) {
       joinTable = 'JOIN hospitals ON customers.hospital_id = hospitals.hospital_id \
         JOIN provinces ON hospitals.province_id = provinces.province_id';
-      whereCondition = 'WHERE provinces.area_id = $areaId'
+      whereCondition = 'WHERE provinces.province_id = $provinceId'
       params = {
-        $areaId: filterType.areaId
+        $provinceId: filterType.provinceId
       }
     }
 
@@ -259,13 +245,9 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     worksheet.getColumn('O').width = 30;
     worksheet.getColumn('P').width = 30;
     worksheet.getColumn('Q').width = 30;
-    worksheet.getColumn('R').width = 30;
-
-    worksheet.getColumn('S').width = 30;
-    worksheet.getColumn('T').width = 30;
     // A1
 
-    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2019 PROJECT';
+    worksheet.getCell('B1').value = 'HUGGIES AB CALL CENTER 2020 PROJECT';
 
     worksheet.getCell('B1').font = {
       bold: true, size: 26, name: 'Calibri', family: 2,
@@ -310,58 +292,55 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     worksheet.getCell('A5').value = batch;
 
     // A6, A20
-    buildReportFirstColumnType3(worksheet, 6, 'Raw data received from K-C');
-    buildReportFirstColumnType3(worksheet, 20, 'Valid database (value) - base all');
+    buildReportFirstColumnType3(worksheet, 6, 'Raw data received from Agency');
+    buildReportFirstColumnType3(worksheet, 23, 'Valid database (value) - base all');
 
     // A7, A12, A16
     buildReportFirstColumnType2(worksheet, 7, 'Data missing');
-    buildReportFirstColumnType2(worksheet, 12, 'Duplicated Data (Checking vs. total database since 1st week)');
+    buildReportFirstColumnType2(worksheet, 15, 'Duplicated Data (Checking vs. total database since 1st week)');
     buildReportFirstColumnType2(worksheet, 16, 'Illogical data');
 
     // A8 - A11, A13 - A15, A17-A19
-    buildReportFirstColumnType1(worksheet, 8, "Mom's name");
-    buildReportFirstColumnType1(worksheet, 9, "Address (District, Province, City)");
-    buildReportFirstColumnType1(worksheet, 10, "Telephone number");
-    buildReportFirstColumnType1(worksheet, 11, "Date of pregnancy/Baby Delivery");
-    buildReportFirstColumnType1(worksheet, 13, "% duplication between S1 and S2");
-    buildReportFirstColumnType1(worksheet, 14, "% duplication within S1");
-    buildReportFirstColumnType1(worksheet, 15, "% duplication within S2");
-    buildReportFirstColumnType1(worksheet, 17, "Illogical phone number");
-    buildReportFirstColumnType1(worksheet, 18, "Illogical Date of pregnancy/Baby Delivery");
-    buildReportFirstColumnType1(worksheet, 19, "Illogical Other");
+    buildReportFirstColumnType1(worksheet, 8, "Respondent's name (column C)");
+    buildReportFirstColumnType1(worksheet, 9, "Living city (missing one of the column D+E)");
+    buildReportFirstColumnType1(worksheet, 10, "Phone number (column F)");
+    buildReportFirstColumnType1(worksheet, 11, "Delivery Data (missing one of the column  G+H+I)");
+    buildReportFirstColumnType1(worksheet, 12, "Hospital (missing one of the column J+K+L)");
+    buildReportFirstColumnType1(worksheet, 13, "Brand using (column P)");
+    buildReportFirstColumnType1(worksheet, 14, "Other information (missing one of the column N+O+Q)");
 
+    buildReportFirstColumnType1(worksheet, 17, "Illogical phone number format");
+    buildReportFirstColumnType1(worksheet, 18, "Illogical date format");
+    buildReportFirstColumnType1(worksheet, 19, "Illogical size (column O/ Q ≠ 'M')");
+    buildReportFirstColumnType1(worksheet, 20, "Illogical brand (column P = 'Huggies')");
+    buildReportFirstColumnType1(worksheet, 21, "Illogic baby weight (column N not among '6-11')");
+    buildReportFirstColumnType1(worksheet, 22, "Illogical Others");
     // Done 1st Col
 
     // Row 4 - D4, K4, P4, S4
-    buildReportRow4(worksheet, 'D', 'D4:J4', 'KEY URBAN');
-    buildReportRow4(worksheet, 'K', 'K4:O4', 'URBAN');
-    buildReportRow4(worksheet, 'P', 'P4:R4', 'RURAL');
-    buildReportRow4(worksheet, 'S', 'S4:T4', 'SAMPLING');
+    buildReportRow4(worksheet, 'D', 'D4:Q4', 'Break-down by city (based on column K)');
 
     // // Row 5, B4-T4
     buildReportRow5(worksheet, 'B', 'Total Project');
     buildReportRow5(worksheet, 'C', 'Total ' + batch);
-    buildReportRow5(worksheet, 'D', 'Total Key Urban');
-    buildReportRow5(worksheet, 'E', 'HCM');
-    buildReportRow5(worksheet, 'F', 'Hà Nội');
-    buildReportRow5(worksheet, 'G', 'Đà Nẵng');
-    buildReportRow5(worksheet, 'H', 'Cần  Thơ');
-    buildReportRow5(worksheet, 'I', 'Khánh Hòa');
+    buildReportRow5(worksheet, 'D', 'Hồ Chí Minh');
+    buildReportRow5(worksheet, 'E', 'Đà Nẵng');
+    buildReportRow5(worksheet, 'F', 'Nha Trang');
+    buildReportRow5(worksheet, 'G', 'Hà Nội');
+    buildReportRow5(worksheet, 'H', 'Bắc Ninh');
+    buildReportRow5(worksheet, 'I', 'Vĩnh Phúc');
     buildReportRow5(worksheet, 'J', 'Hải Phòng');
-    buildReportRow5(worksheet, 'K', 'Total Urban');
-    buildReportRow5(worksheet, 'L', 'Miền Bắc');
-    buildReportRow5(worksheet, 'M', 'Miền Trung');
-    buildReportRow5(worksheet, 'N', 'Miền Đông');
-    buildReportRow5(worksheet, 'O', 'Miền Tây');
-    buildReportRow5(worksheet, 'P', 'Total Rural');
-    buildReportRow5(worksheet, 'Q', 'Miền Bắc');
-    buildReportRow5(worksheet, 'R', 'Miền Trung');
-    buildReportRow5(worksheet, 'S', 'Pregnant Mom');
-    buildReportRow5(worksheet, 'T', 'New Mom');
+    buildReportRow5(worksheet, 'K', 'Thái Nguyên');
+    buildReportRow5(worksheet, 'L', 'Hải Dương');
+    buildReportRow5(worksheet, 'M', 'Thái Bình');
+    buildReportRow5(worksheet, 'N', 'Nghệ An');
+    buildReportRow5(worksheet, 'O', 'Thanh Hóa');
+    buildReportRow5(worksheet, 'P', 'Hưng Yên');
+    buildReportRow5(worksheet, 'Q', 'Ninh Bình');
 
     // Data
-    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
-    let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    let colArr = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+    let rowArr = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
     for (let rowArrIndex = 0; rowArrIndex < rowArr.length; rowArrIndex += 1) {
       for (let colArrIndex = 0; colArrIndex < colArr.length; colArrIndex += 1 ) {
@@ -374,7 +353,6 @@ export const generateReportTemplate = (batch, outputDirectory) => {
     workbook.xlsx.writeFile(reportFilePath).then((res) => {
       resolve(reportFilePath);
     });
-
   });
 };
 
@@ -570,11 +548,11 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
   let bold = false;
   let color = { argb: 'FF000000' };
 
-  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20) {
+  if (rowIndex == 6 || rowIndex == 7 || rowIndex == 15 || rowIndex == 16 || rowIndex == 23) {
     bold = true;
   }
 
-  if (rowIndex == 7 || rowIndex == 12 || rowIndex == 16) {
+  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 16) {
     row.getCell(cellIndex).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -583,7 +561,7 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
     };
   }
 
-  if (rowIndex == 20) {
+  if (rowIndex == 23) {
     row.getCell(cellIndex).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -596,7 +574,7 @@ function buildDataRow(worksheet, rowIndex, cellIndex) {
     color = { argb: 'FFFF0000' };
   }
 
-  if (rowIndex == 7 || rowIndex == 12 || rowIndex == 16 || rowIndex == 20) {
+  if (rowIndex == 7 || rowIndex == 15 || rowIndex == 16 || rowIndex == 23) {
     color = { theme: 0 };
   }
 
