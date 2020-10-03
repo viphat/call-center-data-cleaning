@@ -28,7 +28,8 @@ function createTableCustomers() {
   db.run('CREATE TABLE customers(customer_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT,\
   district TEXT, province TEXT, phone TEXT, day TEXT, month TEXT, year TEXT,\
   hospital_id INTEGER, campaignName TEXT, brand TEXT,\
-  babyWeight INTEGER, babySize TEXT, giftSize TEXT\
+  babyWeight INTEGER, babySize TEXT, giftSize TEXT,\
+  week TEXT,\
   batch TEXT,\
   collectedDate TEXT,\
   collectedDay INTEGER,\
@@ -36,8 +37,7 @@ function createTableCustomers() {
   collectedYear INTEGER,\
   hasError INTEGER DEFAULT 0,\
   missingData INTEGER DEFAULT 0,\
-  missingFirstName INTEGER DEFAULT 0, \
-  missingLastName INTEGER DEFAULT 0,\
+  missingName INTEGER DEFAULT 0, \
   missingLivingCity INTEGER DEFAULT 0, \
   missingPhone INTEGER DEFAULT 0, \
   missingDeliveryDate INTEGER DEFAULT 0,\
@@ -50,6 +50,7 @@ function createTableCustomers() {
   illogicalSize INTEGER DEFAULT 0,\
   illogicalBrand INTEGER DEFAULT 0, \
   illogicalBabyWeight INTEGER DEFAULT 0, \
+  illogicalOthers INTEGER DEFAULT 0, \
   duplicatedPhone INTEGER DEFAULT 0,\
   FOREIGN KEY(hospital_id) REFERENCES hospitals(hospital_id));')
 }
