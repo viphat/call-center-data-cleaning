@@ -545,7 +545,7 @@ function isIllogicalData(customer, row) {
   if (date !== null && date !== undefined) {
     // let projectStartDate = new Date('2019-08-01');
 
-    if (date === 'Invalid Date') {
+    if (date.toString() === 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
     } else {
