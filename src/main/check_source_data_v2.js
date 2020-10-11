@@ -542,7 +542,7 @@ function isIllogicalData(customer, row) {
     month = customer.month;
     year = customer.year;
 
-    if (date == 'Invalid Date') {
+    if (date.toString() === 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
     } else {

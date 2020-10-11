@@ -480,7 +480,7 @@ function isIllogicalData(customer, row) {
       year = date.getFullYear();
     } else {
       date = new Date(date);
-      if (date == 'Invalid Date') {
+      if (date.toString() === 'Invalid Date') {
         let dateArr = customer.day.split('/');
         if (dateArr.length == 1) {
           dateArr = customer.day.split('-');
@@ -507,7 +507,7 @@ function isIllogicalData(customer, row) {
 
     date = new Date(year + '-' + month + '-' + day);
 
-    if (date == 'Invalid Date') {
+    if (date.toString() === 'Invalid Date') {
       customer.illogicalDate = 1;
       flag = true;
     } else {
