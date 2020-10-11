@@ -478,7 +478,7 @@ function isIllogicalData(customer, row) {
   date = new Date(date);
 
   if (date !== null && date !== undefined) {
-    if (date === 'Invalid Date') {
+    if (date.toString() === 'Invalid Date') {
       customer.illogicalDeliveryDate = 1;
       flag = true;
     } else {
