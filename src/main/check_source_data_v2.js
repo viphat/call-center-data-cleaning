@@ -519,7 +519,7 @@ function isIllogicalData(customer, row) {
   let babySize = row.getCell(babySizeCol).value;
   let giftSize = row.getCell(giftSizeCol).value;
 
-  if (babySize !== 'M' && giftSize !== 'M') {
+  if (babySize !== 'M' || giftSize !== 'M') {
     customer.illogicalSize = 1
     flag = true;
   }
