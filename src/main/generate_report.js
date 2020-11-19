@@ -311,7 +311,7 @@ export const generateReportTemplate = (batch, outputDirectory) => {
 
     buildReportFirstColumnType1(worksheet, 17, "Illogical phone number format");
     buildReportFirstColumnType1(worksheet, 18, "Illogical date format");
-    buildReportFirstColumnType1(worksheet, 19, "Illogical size (column O/ Q ≠ 'M')");
+    buildReportFirstColumnType1(worksheet, 19, "Illogical size (column Q ≠ 'M')");
     buildReportFirstColumnType1(worksheet, 20, "Illogical brand (column P = 'Huggies')");
     buildReportFirstColumnType1(worksheet, 21, "Illogic baby weight (column N not among '6-11')");
     buildReportFirstColumnType1(worksheet, 22, "Illogical Others");
