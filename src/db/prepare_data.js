@@ -25,8 +25,10 @@ function addColumnsToCustomers() {
   //   ADD collectedMonth INTEGER');
   // db.run('ALTER TABLE customers\
   //   ADD collectedYear INTEGER');
+  // db.run('ALTER TABLE customers\
+  //   ADD staff TEXT');
   db.run('ALTER TABLE customers\
-    ADD staff INTEGER DEFAULT 0');
+    ADD note TEXT');
 }
 
 function createTableCustomers() {

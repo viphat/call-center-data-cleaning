@@ -29,6 +29,7 @@ const hospitalNameCol = 13;
 
 let collectedDateCol = 17; // 17 for OTB or 19 for IMC
 let staffCol = 18; // 18 for OTB or 20 for IMC
+let noteCol = 19;
 
 export const validateSourceData = (excelFile, batch, source, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -51,6 +52,7 @@ export const validateSourceData = (excelFile, batch, source, outputDirectory) =>
     if (source == 'IMC') {
       collectedDateCol = 19;
       staffCol = 20;
+      noteCol = 21;
     }
 
     resolve(readFile(excelFile, batch, source, dir));
@@ -121,6 +123,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         collectedMonth: collectedMonth,
         collectedYear: collectedYear,
         staff: row.getCell(staffCol).value,
+        note: row.getCell(noteCol).value,
         hospital_id: hospital.hospital_id,
         batch: batch,
         source: source
@@ -168,7 +171,8 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           customer.collectedDay,
           customer.collectedMonth,
           customer.collectedYear,
-          customer.staff
+          customer.staff,
+          customer.note
         ];
 
         let outputSheetName = 'Valid';
@@ -224,6 +228,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.collectedMonth,
             duplicatedWith.collectedYear,
             duplicatedWith.staff,
+            duplicatedWith.note,
             duplicatedWith.batch
           ]
 
@@ -362,10 +367,14 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(21).border = row.getCell(1).border;
     row.getCell(21).alignment = row.getCell(1).alignment;
 
+    row.getCell(22).font = row.getCell(1).font;
+    row.getCell(22).border = row.getCell(1).border;
+    row.getCell(22).alignment = row.getCell(1).alignment;
+
     if (outputSheetName.endsWith('Duplication') || outputSheetName.endsWith('Duplication With Another Agency')) {
-      row.getCell(22).font = row.getCell(1).font;
-      row.getCell(22).border = row.getCell(1).border;
-      row.getCell(22).alignment = row.getCell(1).alignment;
+      row.getCell(23).font = row.getCell(1).font;
+      row.getCell(23).border = row.getCell(1).border;
+      row.getCell(23).alignment = row.getCell(1).alignment;
     }
 
     resolve(workbook);
