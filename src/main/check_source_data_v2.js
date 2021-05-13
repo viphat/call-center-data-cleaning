@@ -11,23 +11,27 @@ import { buildTemplate } from '../main/build_excel_template_v2';
 import { createCustomer, updateCustomer } from '../db/create_customer';
 
 const dataBeginRow = 2;
+
 const indexCol = 1;
 const lastNameCol = 2;
-const firstNameCol = 3;
+let firstNameCol = 3; // 2 For OTB-LHTS
 const emailCol = 4;
 const districtCol = 5;
 const provinceCol = 6;
-const phoneCol = 7;
+let phoneCol = 7; // 6 For OTB-LHTS
 
-const dayCol = 8;
-const monthCol = 9;
-const yearCol = 10;
+let dayCol = 8; // 3 For OTB-LHTS
+let monthCol = 9; // 4 For OTB-LHTS
+let yearCol = 10; // 5 For OTB-LHTS
 
 const s1Col = 11;
 const s2Col = 12;
-const hospitalNameCol = 13;
+let hospitalNameCol = 13; // 10 For OTB-LHTS
 
-let collectedDateCol = 17; // 17 for OTB or 19 for IMC
+let collectedDateCol = 17; // 17 for OTB | 19 for IMC
+let collectedDayCol = 7; // For OTB-LHTS
+let collectedMonthCol = 8; // For OTB-LHTS
+let collectedYearCol = 9; // For OTB-LHTS
 let staffCol = 18; // 18 for OTB or 20 for IMC
 let noteCol = 19;
 
@@ -53,6 +57,17 @@ export const validateSourceData = (excelFile, batch, source, outputDirectory) =>
       collectedDateCol = 19;
       staffCol = 20;
       noteCol = 21;
+    }
+
+    if (source == 'OTB-LHTS') {
+      firstNameCol = 2;
+      phoneCol = 6; // 6 For OTB-LHTS
+
+      dayCol = 3; // 3 For OTB-LHTS
+      monthCol = 4; // 4 For OTB-LHTS
+      yearCol = 5; // 5 For OTB-LHTS
+
+      hospitalNameCol = 10; // 10 For OTB-LHTS
     }
 
     resolve(readFile(excelFile, batch, source, dir));
@@ -92,27 +107,57 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
     let hospitalName = row.getCell(hospitalNameCol).value;
     hospitalName = hospitalName.trim().replace(/\s+/g, ' ');
 
-    let collectedDate = row.getCell(collectedDateCol).value;
+    let collectedDate
+    let collectedDay;
+    let collectedMonth;
+    let collectedYear;
 
-    console.log(collectedDate);
-    collectedDate = new Date(collectedDate);
-    console.log(collectedDate);
+    if (source === 'OTB-LHTS') {
+      collectedDay = row.getCell(collectedDayCol).value;
+      collectedMonth = row.getCell(collectedMonthCol).value;
+      collectedYear = row.getCell(collectedYearCol).value;
+    } else {
+      collectedDate = row.getCell(collectedDateCol).value;
+      console.log(collectedDate);
+      collectedDate = new Date(collectedDate);
+      console.log(collectedDate);
 
-    let collectedDay = collectedDate.getDate();
-    let collectedMonth = collectedDate.getMonth() + 1;
-    let collectedYear = collectedDate.getFullYear();
+      collectedDay = collectedDate.getDate();
+      collectedMonth = collectedDate.getMonth() + 1;
+      collectedYear = collectedDate.getFullYear();
+    }
 
     if (collectedYear == 1970) {
       return reject('Lỗi Ngày tháng ở dòng ' + rowNumber);
     }
 
+    let lastName = row.getCell(lastNameCol).value;
+    if (source === 'OTB-LHTS') {
+      lastName = '';
+    }
+
+    let email = row.getCell(emailCol).value;
+    if (source === 'OTB-LHTS') {
+      email = '';
+    }
+
+    let district = row.getCell(districtCol).value;
+    if (source === 'OTB-LHTS') {
+      district = '';
+    }
+
+    let province = row.getCell(provinceCol).value;
+    if (source === 'OTB-LHTS') {
+      province = '';
+    }
+
     getHospital(hospitalName).then((hospital) => {
       let customer = {
-        lastName: row.getCell(lastNameCol).value,
+        lastName: lastName,
         firstName: row.getCell(firstNameCol).value,
-        email: row.getCell(emailCol).value,
-        district: row.getCell(districtCol).value,
-        province: row.getCell(provinceCol).value,
+        email: email,
+        district: district,
+        province: province,
         phone: row.getCell(phoneCol).value,
         day: row.getCell(dayCol).value,
         month: row.getCell(monthCol).value,
@@ -398,15 +443,15 @@ function getHospital(hospitalName) {
 }
 
 function isEmptyRow(row) {
-  if (row.getCell(firstNameCol).value === null     &&
-      row.getCell(lastNameCol).value === null      &&
-      row.getCell(districtCol).value === null      &&
-      row.getCell(provinceCol).value === null      &&
-      row.getCell(phoneCol).value === null         &&
-      row.getCell(dayCol).value === null           &&
-      row.getCell(monthCol).value === null         &&
-      row.getCell(yearCol).value === null          &&
-      row.getCell(hospitalNameCol).value === null
+  if (row.getCell(1).value === null      &&
+      row.getCell(2).value === null      &&
+      row.getCell(3).value === null      &&
+      row.getCell(4).value === null      &&
+      row.getCell(5).value === null      &&
+      row.getCell(6).value === null      &&
+      row.getCell(7).value === null      &&
+      row.getCell(8).value === null      &&
+      row.getCell(9).value === null
     ) {
     // Empty Row
     return true;
@@ -429,25 +474,25 @@ function isMissingData(customer, row) {
     customer.missingMomName = 1;
   }
 
-  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (row.getCell(lastNameCol).value === null  || row.getCell(lastNameCol).value === '') && (customer.source === 'OTB-Chatbot')) {
+  if ((row.getCell(firstNameCol).value === null  || row.getCell(firstNameCol).value === '') && (row.getCell(lastNameCol).value === null  || row.getCell(lastNameCol).value === '') && (customer.source === 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     missingFields.push('Tên');
     customer.missingFirstName = 1;
     customer.missingMomName = 1;
   }
 
-  if ((row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(emailCol).value === null || row.getCell(emailCol).value == '') && (customer.source !== 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     // Tạm thời không làm gì cả
     // Không đưa vào Invalid List
     customer.missingEmail = 1;
   }
 
-  if ((row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(districtCol).value === null || row.getCell(districtCol).value.length == 0) && (customer.source !== 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     missingFields.push('Quận/Huyện');
     customer.missingDistrict = 1;
     customer.missingAddress = 1;
   }
 
-  if ((row.getCell(provinceCol).value === null || row.getCell(provinceCol). value.length == 0) && (customer.source !== 'OTB-Chatbot')) {
+  if ((row.getCell(provinceCol).value === null || row.getCell(provinceCol). value.length == 0) && (customer.source !== 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     missingFields.push('Tỉnh/Thành');
     customer.missingProvince = 1;
     customer.missingAddress = customer.missingAddress || 1;
@@ -458,7 +503,7 @@ function isMissingData(customer, row) {
     customer.missingPhone = 1;
   }
 
-  if (row.getCell(s1Col).value !== 'S1' && row.getCell(s2Col).value !== 'S2') {
+  if (customer.source !== 'OTB-LHTS' && row.getCell(s1Col).value !== 'S1' && row.getCell(s2Col).value !== 'S2') {
     missingFields.push('Đối tượng đặt mẫu');
     customer.missingSampling = 1;
     customer.missingMomStatus = 1;
@@ -518,7 +563,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if ((lastName !== undefined && lastName !== null && firstName) && (customer.source !== 'OTB-Chatbot')) {
+  if ((lastName !== undefined && lastName !== null && firstName) && (customer.source !== 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     let fullName = '' + firstName + lastName;
     if (!isNaN(parseInt(fullName)) || hasSpecialCharacter(fullName)) {
       // If is a Number
@@ -535,7 +580,7 @@ function isIllogicalData(customer, row) {
     }
   }
 
-  if ((province !== undefined && province !== null) && (customer.source !== 'OTB-Chatbot')) {
+  if ((province !== undefined && province !== null) && (customer.source !== 'OTB-Chatbot' && customer.source !== 'OTB-LHTS')) {
     province = '' + province;
     province = province.trim().replace(/\s+/g, ' ');
     if (!isNaN(province) || (province.length > 0 &&  hasSpecialCharacter(province))) {

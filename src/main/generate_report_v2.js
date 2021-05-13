@@ -267,7 +267,7 @@ function fillData(batch, source, filterType) {
       }
     }
 
-    if (source == 'IMC' || source == 'OTB' || source == 'OTB-Chatbot') {
+    if (source == 'IMC' || source == 'OTB' || source == 'OTB-LHTS') {
       params = _.merge(params, {
         $source: source
       });
@@ -393,7 +393,7 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
     buildReportFirstColumnType1(worksheet, 9, 'Removed from OTB');
 
-    buildReportFirstColumnType1(worksheet, 10, 'Removed from OTB-Chatbot');
+    buildReportFirstColumnType1(worksheet, 10, 'Removed from OTB-LHTS');
 
     buildReportFirstColumnType2(worksheet, 11, 'Valid database for QC Calls ' + source);
 
@@ -486,7 +486,7 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
       worksheet.getCell('B9').alignment = { horizontal: 'right', vertical: 'middle' };
 
-      if (source == 'OTB-Chatbot') {
+      if (source == 'OTB-LHTS') {
         worksheet.getCell('B10').value = rowData.duplicatedCount;
       } else {
         worksheet.getCell('B10').value = 0;
@@ -617,7 +617,7 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
 
         worksheet.getCell('C9').alignment = { horizontal: 'right', vertical: 'middle' };
 
-        if (source == 'OTB-Chatbot') {
+        if (source == 'OTB-LHTS') {
           worksheet.getCell('C10').value = rowData.duplicatedCount;
         } else {
           worksheet.getCell('C10').value = 0;
