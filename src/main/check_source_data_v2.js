@@ -500,7 +500,7 @@ function isIllogicalData(customer, row) {
       customer.illogicalPhone = 1;
       flag = true;
     } else {
-      if (phone.length < 8 || phone.length > 12) {
+      if (phone.length !== 10) {
         customer.illogicalPhone = 1;
         flag = true;
       }
