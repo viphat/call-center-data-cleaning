@@ -27,8 +27,10 @@ function addColumnsToCustomers() {
   //   ADD collectedYear INTEGER');
   // db.run('ALTER TABLE customers\
   //   ADD staff TEXT');
+  // db.run('ALTER TABLE customers\
+  //   ADD note TEXT');
   db.run('ALTER TABLE customers\
-    ADD note TEXT');
+    ADD pgCode INTEGER');
 }
 
 function createTableCustomers() {

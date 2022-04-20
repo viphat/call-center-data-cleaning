@@ -90,12 +90,12 @@ export const createCustomer = (customer) => {
         first_name, last_name, email,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
-        collectedDay, collectedMonth, collectedYear, staff,\
+        collectedDay, collectedMonth, collectedYear, staff, note, pgCode\
         illogicalSampling,\
         hospital_id, batch, source) \
         VALUES($firstName, $lastName, $email,\
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
-        $collectedDay, $collectedMonth, $collectedYear, $staff,\
+        $collectedDay, $collectedMonth, $collectedYear, $staff, $note, $pgCode\
         $illogicalSampling,\
         $hospital_id, $batch, $source);',
     {
@@ -115,6 +115,8 @@ export const createCustomer = (customer) => {
       $collectedMonth: customer.collectedMonth,
       $collectedYear: customer.collectedYear,
       $staff: customer.staff,
+      $note: customer.note,
+      $pgCode: customer.pgCode,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
       $batch: customer.batch,
@@ -150,7 +152,7 @@ export function isPhoneDuplicateWithAnotherAgency(customer) {
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
     customers.sampling, customers.batch, customers.source,\
-    customers.staff, customers.collectedDay, customers.collectedMonth, customers.collectedYear\
+    customers.staff, customers.note, customers.pgCode, customers.collectedDay, customers.collectedMonth, customers.collectedYear\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
@@ -191,7 +193,7 @@ export function isPhoneDuplicate(customer) {
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
-    customers.sampling, customers.batch, customers.source, customers.staff,\
+    customers.sampling, customers.batch, customers.source, customers.staff, customers.note, customers.pgCode,\
     customers.collectedDay, customers.collectedMonth, customers.collectedYear\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \

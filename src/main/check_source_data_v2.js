@@ -34,6 +34,7 @@ let collectedMonthCol = 8; // For OTB-LHTS
 let collectedYearCol = 9; // For OTB-LHTS
 let staffCol = 18; // 18 for OTB or 20 for IMC
 let noteCol = 19;
+let pgCodeCol = 20;
 
 export const validateSourceData = (excelFile, batch, source, outputDirectory) => {
   return new Promise((resolve, reject) => {
@@ -57,6 +58,7 @@ export const validateSourceData = (excelFile, batch, source, outputDirectory) =>
       collectedDateCol = 19;
       staffCol = 20;
       noteCol = 21;
+      pgCodeCol = 22;
     }
 
     if (source == 'OTB-LHTS') {
@@ -169,6 +171,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         collectedYear: collectedYear,
         staff: row.getCell(staffCol).value,
         note: row.getCell(noteCol).value,
+        pgCode: row.getCell(pgCodeCol).value,
         hospital_id: hospital.hospital_id,
         batch: batch,
         source: source
@@ -217,7 +220,8 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           customer.collectedMonth,
           customer.collectedYear,
           customer.staff,
-          customer.note
+          customer.note,
+          customer.pgCode
         ];
 
         let outputSheetName = 'Valid';
@@ -274,6 +278,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.collectedYear,
             duplicatedWith.staff,
             duplicatedWith.note,
+            duplicatedWith.pgCode,
             duplicatedWith.batch
           ]
 
@@ -416,10 +421,14 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
     row.getCell(22).border = row.getCell(1).border;
     row.getCell(22).alignment = row.getCell(1).alignment;
 
+    row.getCell(23).font = row.getCell(1).font;
+    row.getCell(23).border = row.getCell(1).border;
+    row.getCell(23).alignment = row.getCell(1).alignment;
+
     if (outputSheetName.endsWith('Duplication') || outputSheetName.endsWith('Duplication With Another Agency')) {
-      row.getCell(23).font = row.getCell(1).font;
-      row.getCell(23).border = row.getCell(1).border;
-      row.getCell(23).alignment = row.getCell(1).alignment;
+      row.getCell(24).font = row.getCell(1).font;
+      row.getCell(24).border = row.getCell(1).border;
+      row.getCell(24).alignment = row.getCell(1).alignment;
     }
 
     resolve(workbook);
