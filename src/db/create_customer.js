@@ -90,12 +90,12 @@ export const createCustomer = (customer) => {
         first_name, last_name, email,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
-        collectedDay, collectedMonth, collectedYear, staff, note, pgCode\
+        collectedDay, collectedMonth, collectedYear, staff, note, pgCode,\
         illogicalSampling,\
         hospital_id, batch, source) \
         VALUES($firstName, $lastName, $email,\
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
-        $collectedDay, $collectedMonth, $collectedYear, $staff, $note, $pgCode\
+        $collectedDay, $collectedMonth, $collectedYear, $staff, $note, $pgCode,\
         $illogicalSampling,\
         $hospital_id, $batch, $source);',
     {
@@ -122,6 +122,8 @@ export const createCustomer = (customer) => {
       $batch: customer.batch,
       $source: customer.source
     }, (errRes) => {
+      console.log(errRes)
+
       db.get('SELECT last_insert_rowid() as customer_id', (err, row) => {
         customer.customer_id = row.customer_id;
         isPhoneDuplicate(customer).then((c1) => {
