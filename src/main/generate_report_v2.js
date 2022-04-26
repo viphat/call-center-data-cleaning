@@ -341,7 +341,7 @@ function generateSheetValidDatabase(batch, source, reportFilePath) {
     worksheet.getColumn('B').width = 30;
     worksheet.getColumn('C').width = 30;
 
-    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2019 PROJECT';
+    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2022 PROJECT';
 
     worksheet.getCell('B1').font = {
       bold: true, size: 26, name: 'Calibri', family: 2,
@@ -729,7 +729,7 @@ export const generateReportTemplate = (batch, source, outputDirectory) => {
     worksheet.getColumn('AG').width = 30;
     // A1
 
-    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2019 PROJECT';
+    worksheet.getCell('B1').value = 'HUGGIES CALL CENTER 2022 PROJECT';
 
     worksheet.getCell('B1').font = {
       bold: true, size: 26, name: 'Calibri', family: 2,
