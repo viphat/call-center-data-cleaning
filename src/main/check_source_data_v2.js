@@ -120,9 +120,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
       collectedYear = row.getCell(collectedYearCol).value;
     } else {
       collectedDate = row.getCell(collectedDateCol).value;
-      console.log(collectedDate);
       collectedDate = new Date(collectedDate);
-      console.log(collectedDate);
 
       collectedDay = collectedDate.getDate();
       collectedMonth = collectedDate.getMonth() + 1;
@@ -166,12 +164,12 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         year: row.getCell(yearCol).value,
         s1: row.getCell(s1Col).value,
         s2: row.getCell(s2Col).value,
-        collectedDay: collectedDay,
-        collectedMonth: collectedMonth,
-        collectedYear: collectedYear,
+        collectedDay: parseInt(collectedDay),
+        collectedMonth: parseInt(collectedMonth),
+        collectedYear: parseInt(collectedYear),
         staff: row.getCell(staffCol).value,
         note: row.getCell(noteCol).value,
-        pgCode: row.getCell(pgCodeCol).value,
+        pgCode: parseInt(row.getCell(pgCodeCol).value),
         hospital_id: hospital.hospital_id,
         batch: batch,
         source: source
