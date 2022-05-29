@@ -29,8 +29,18 @@ function addColumnsToCustomers() {
   //   ADD staff TEXT');
   // db.run('ALTER TABLE customers\
   //   ADD note TEXT');
+  // db.run('ALTER TABLE customers\
+  //   ADD pgCode INTEGER');
   db.run('ALTER TABLE customers\
-    ADD pgCode INTEGER');
+    ADD qrCode TEXT');
+  db.run('ALTER TABLE customers\
+    ADD duplicatedWithSameYear INTEGER DEFAULT 0');
+  db.run('ALTER TABLE customers\
+    ADD duplicatedWith2019 INTEGER DEFAULT 0');
+  db.run('ALTER TABLE customers\
+    ADD duplicatedWith2020 INTEGER DEFAULT 0');
+  db.run('ALTER TABLE customers\
+    ADD duplicatedWith2021 INTEGER DEFAULT 0');
 }
 
 function createTableCustomers() {

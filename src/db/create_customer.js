@@ -19,6 +19,10 @@ export const updateCustomer = (customer) => {
       illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
+      duplicatedWithSameYear = $duplicatedWithSameYear,\
+      duplicatedWith2019 = $duplicatedWith2019,\
+      duplicatedWith2020 = $duplicatedWith2020,\
+      duplicatedWith2021 = $duplicatedWith2021,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2, \
       duplicatedWithAnotherAgency = $duplicatedWithAnotherAgency\
@@ -49,6 +53,10 @@ export const updateCustomer = (customer) => {
       $illogicalDate: customer.illogicalDate || 0,
       $illogicalOther: customer.illogicalOther || 0,
       $duplicatedPhone: customer.duplicatedPhone || 0,
+      $duplicatedWithSameYear: customer.duplicatedWithSameYear || 0,
+      $duplicatedWith2019: customer.duplicatedWith2019 || 0,
+      $duplicatedWith2020: customer.duplicatedWith2020 || 0,
+      $duplicatedWith2021: customer.duplicatedWith2021 || 0,
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
@@ -90,12 +98,13 @@ export const createCustomer = (customer) => {
         first_name, last_name, email,\
         district, province, phone,\
         day, month, year, s1, s2, sampling,\
-        collectedDay, collectedMonth, collectedYear, staff, note, pgCode,\
+        collectedDay, collectedMonth, collectedYear, staff, \
+        note, pgCode, qrCode, \
         illogicalSampling,\
         hospital_id, batch, source) \
         VALUES($firstName, $lastName, $email,\
         $district, $province, $phone, $day, $month, $year, $s1, $s2, $sampling,\
-        $collectedDay, $collectedMonth, $collectedYear, $staff, $note, $pgCode,\
+        $collectedDay, $collectedMonth, $collectedYear, $staff, $note, $pgCode, $qrCode, \
         $illogicalSampling,\
         $hospital_id, $batch, $source);',
     {
@@ -117,6 +126,7 @@ export const createCustomer = (customer) => {
       $staff: customer.staff,
       $note: customer.note,
       $pgCode: customer.pgCode,
+      $qrCode: customer.qrCode,
       $illogicalSampling: customer.illogicalSampling,
       $hospital_id: customer.hospital_id,
       $batch: customer.batch,
@@ -154,7 +164,7 @@ export function isPhoneDuplicateWithAnotherAgency(customer) {
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
     customers.sampling, customers.batch, customers.source,\
-    customers.staff, customers.note, customers.pgCode, customers.collectedDay, customers.collectedMonth, customers.collectedYear\
+    customers.staff, customers.note, customers.pgCode, customers.qrCode, customers.collectedDay, customers.collectedMonth, customers.collectedYear\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
     hospitals.province_id = provinces.province_id JOIN areas ON \
@@ -170,6 +180,19 @@ export function isPhoneDuplicateWithAnotherAgency(customer) {
       } else {
         customer.duplicateWithAnotherAgency = res;
         customer.duplicatedWithAnotherAgency = 1;
+
+        if (res.collectedYear) {
+          if (res.collectedYear == 2022) {
+            customer.duplicatedWithSameYear = 1;
+          } else if (res.collectedYear == 2021) {
+            customer.duplicatedWith2021 = 1;
+          } else if (res.collectedYear == 2020) {
+            customer.duplicatedWith2020 = 1;
+          } else if (res.collectedYear == 2019) {
+            customer.duplicatedWith2019 = 1;
+          }
+        }
+
         customer.isPhoneDuplicatedWithAnotherAgency = true;
         resolve(customer);
       }
@@ -195,7 +218,7 @@ export function isPhoneDuplicate(customer) {
     customers.s1, customers.s2, hospitals.name as hospital_name, \
     provinces.name as province_name, areas.channel as area_channel, \
     areas.name as area_name,\
-    customers.sampling, customers.batch, customers.source, customers.staff, customers.note, customers.pgCode,\
+    customers.sampling, customers.batch, customers.source, customers.staff, customers.note, customers.pgCode, customers.qrCode, \
     customers.collectedDay, customers.collectedMonth, customers.collectedYear\
     from customers JOIN hospitals ON \
     hospitals.hospital_id = customers.hospital_id JOIN provinces ON \
@@ -213,6 +236,19 @@ export function isPhoneDuplicate(customer) {
         customer.duplicatedWith = res;
         customer.isPhoneDuplicated = true;
         customer.duplicatedPhone = 1;
+
+        if (res.collectedYear) {
+          if (res.collectedYear == 2022) {
+            customer.duplicatedWithSameYear = 1;
+          } else if (res.collectedYear == 2021) {
+            customer.duplicatedWith2021 = 1;
+          } else if (res.collectedYear == 2020) {
+            customer.duplicatedWith2020 = 1;
+          } else if (res.collectedYear == 2019) {
+            customer.duplicatedWith2019 = 1;
+          }
+        }
+
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {
           resolve(customer);
         } else {

@@ -5,7 +5,7 @@ const fs = require('fs');
 const valid_title = 'DATA CLEANING RESULT - VALID LIST';
 const invalid_title = 'DATA CLEANING RESULT - INVALID LIST';
 const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST';
-const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENCY LIST';
+const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENC LIST';
 const logoPath = './app/vendor/logo.png';
 
 export const buildTemplate = (outputPath) => {
@@ -72,7 +72,8 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getColumn('U').width = 10;
   worksheet.getColumn('V').width = 10;
   worksheet.getColumn('W').width = 10;
-  worksheet.getColumn('X').width = 10;
+  worksheet.getColumn('X').width = 25;
+  worksheet.getColumn('Y').width = 10;
 
   worksheet.getRow('5').height = 30;
 
@@ -311,15 +312,22 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getCell('W5').alignment = worksheet.getCell('A5').alignment;
   worksheet.getCell('W5').border = worksheet.getCell('A5').border;
   worksheet.getCell('W5').value = 'Mã PG';
+
+  worksheet.mergeCells('W5:W6');
+  worksheet.getCell('X5').font = worksheet.getCell('A5').font;
+  worksheet.getCell('X5').fill = worksheet.getCell('A5').fill;
+  worksheet.getCell('X5').alignment = worksheet.getCell('A5').alignment;
+  worksheet.getCell('X5').border = worksheet.getCell('A5').border;
+  worksheet.getCell('X5').value = 'QR Code';
   // End Table Headers
 
   if (worksheet.name.endsWith('Duplication') || worksheet.name.endsWith('Duplication With Another Agency')) {
-    worksheet.mergeCells('X5:X6');
-    worksheet.getCell('X5').font = worksheet.getCell('A5').font;
-    worksheet.getCell('X5').fill = worksheet.getCell('A5').fill;
-    worksheet.getCell('X5').alignment = worksheet.getCell('A5').alignment;
-    worksheet.getCell('X5').border = worksheet.getCell('A5').border;
-    worksheet.getCell('X5').value = 'Tuần';
+    worksheet.mergeCells('Y5:Y6');
+    worksheet.getCell('Y5').font = worksheet.getCell('A5').font;
+    worksheet.getCell('Y5').fill = worksheet.getCell('A5').fill;
+    worksheet.getCell('Y5').alignment = worksheet.getCell('A5').alignment;
+    worksheet.getCell('Y5').border = worksheet.getCell('A5').border;
+    worksheet.getCell('Y5').value = 'Tuần';
   }
 
   // Add Logo
