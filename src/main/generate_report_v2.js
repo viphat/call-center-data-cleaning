@@ -237,7 +237,7 @@ function fillData(batch, source, filterType) {
     coalesce(SUM(duplicatedWithSameYear),0) AS DuplicatedWithSameYear,\
     coalesce(SUM(duplicatedWith2021),0) AS DuplicatedWith2021,\
     coalesce(SUM(duplicatedWith2020),0) AS DuplicatedWith2020,\
-    coalesce(SUM(duplicatedWith20219),0) AS DuplicatedWith2019\ FROM customers'
+    coalesce(SUM(duplicatedWith2019),0) AS DuplicatedWith2019\ FROM customers'
 
     let whereCondition = '';
     let joinTable = '';

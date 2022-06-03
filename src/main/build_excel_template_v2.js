@@ -5,7 +5,7 @@ const fs = require('fs');
 const valid_title = 'DATA CLEANING RESULT - VALID LIST';
 const invalid_title = 'DATA CLEANING RESULT - INVALID LIST';
 const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST';
-const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENC LIST';
+const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENCY LIST';
 const logoPath = './app/vendor/logo.png';
 
 export const buildTemplate = (outputPath) => {
@@ -313,7 +313,7 @@ function writeBaseTemplate(workbook, worksheet, title) {
   worksheet.getCell('W5').border = worksheet.getCell('A5').border;
   worksheet.getCell('W5').value = 'Mã PG';
 
-  worksheet.mergeCells('W5:W6');
+  worksheet.mergeCells('X5:X6');
   worksheet.getCell('X5').font = worksheet.getCell('A5').font;
   worksheet.getCell('X5').fill = worksheet.getCell('A5').fill;
   worksheet.getCell('X5').alignment = worksheet.getCell('A5').alignment;
