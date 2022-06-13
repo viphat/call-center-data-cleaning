@@ -285,18 +285,18 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.batch
           ]
 
-          if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
-            duplicatedWith.hasError = 1;
-            duplicatedWith.duplicatedPhone = 1;
-            if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
-              duplicatedWith.duplicatedPhoneS1 = 1;
-            } else if (customer.sampling === 'S2' && duplicatedWith.sampling === 'S2') {
-              duplicatedWith.duplicatedPhoneS2 = 1;
-            } else {
-              duplicatedWith.duplicatedPhoneBetweenS1AndS2 = 1;
-            }
-            updateCustomer(duplicatedWith);
-          }
+          // if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
+          //   duplicatedWith.hasError = 1;
+          //   duplicatedWith.duplicatedPhone = 1;
+          //   if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
+          //     duplicatedWith.duplicatedPhoneS1 = 1;
+          //   } else if (customer.sampling === 'S2' && duplicatedWith.sampling === 'S2') {
+          //     duplicatedWith.duplicatedPhoneS2 = 1;
+          //   } else {
+          //     duplicatedWith.duplicatedPhoneBetweenS1AndS2 = 1;
+          //   }
+          //   updateCustomer(duplicatedWith);
+          // }
 
           rowData.push(customer.batch);
 
