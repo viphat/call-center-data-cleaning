@@ -285,7 +285,9 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             duplicatedWith.batch
           ]
 
-          // if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
+          var toHighlight = false;
+          if (duplicatedWith.batch == customer.batch && duplicatedWith.source == customer.source) {
+            toHighlight = true;
           //   duplicatedWith.hasError = 1;
           //   duplicatedWith.duplicatedPhone = 1;
           //   if (customer.sampling === 'S1' && duplicatedWith.sampling === 'S1') {
@@ -296,12 +298,12 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
           //     duplicatedWith.duplicatedPhoneBetweenS1AndS2 = 1;
           //   }
           //   updateCustomer(duplicatedWith);
-          // }
+          }
 
           rowData.push(customer.batch);
 
-          writeToFile(outputWorkbook, outputSheetName, duplicatedRow).then((workbook) => {
-            writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
+          writeToFile(outputWorkbook, outputSheetName, duplicatedRow, toHighlight).then((workbook) => {
+            writeToFile(outputWorkbook, outputSheetName, rowData, toHighlight).then((workbook) => {
               if (rowNumber % 1000 === 0) {
                 setTimeout(function(){
                   resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
@@ -312,7 +314,7 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
             });
           });
         } else {
-          writeToFile(outputWorkbook, outputSheetName, rowData).then((workbook) => {
+          writeToFile(outputWorkbook, outputSheetName, rowData, false).then((workbook) => {
             if (rowNumber % 1000 === 0) {
                 setTimeout(function(){
                   resolve(readEachRow(excelFile, workbook, batch, source, worksheet, rowNumber+1));
@@ -327,15 +329,26 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
   });
 }
 
-export const writeToFile = (outputWorkbook, outputSheetName, rowData) => {
+export const writeToFile = (outputWorkbook, outputSheetName, rowData, toHighlight) => {
   return new Promise((resolve, reject) => {
     let workbook = outputWorkbook;
     let worksheet = workbook.getWorksheet(outputSheetName);
     let row = worksheet.addRow(rowData);
 
-    row.getCell(1).font = {
+    let highlight = {
+      bold: true, size: 10, name: 'Arial', family: 2,
+      color: { argb: 'FFFF0000' }
+    }
+
+    let normal = {
       size: 10, color: { theme: 1 }, name: 'Arial', family: 2
-    };
+    }
+
+    if (toHighlight) {
+      row.getCell(1).font = highlight;
+    } else {
+      row.getCell(1).font = normal;
+    }
 
     row.getCell(1).border = worksheet.getCell('A5').border;
     row.getCell(1).alignment = worksheet.getCell('A5').alignment;
