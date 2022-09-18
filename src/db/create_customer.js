@@ -183,7 +183,13 @@ export function isPhoneDuplicateWithAnotherAgency(customer) {
 
         if (res.collectedYear) {
           if (res.collectedYear == 2022) {
-            customer.duplicatedWithSameYear = 1;
+            if (res.collectedMonth <= 7) {
+              customer.duplicatedWith2021 = 1;
+            } else if (customer.collectedMonth === 8 && customer.collectedDay < 4) {
+              customer.duplicatedWith2021 = 1;
+            } else {
+              customer.duplicatedWithSameYear = 1;
+            }
           } else if (res.collectedYear == 2021) {
             customer.duplicatedWith2021 = 1;
           } else if (res.collectedYear == 2020) {
