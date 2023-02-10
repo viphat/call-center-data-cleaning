@@ -23,6 +23,7 @@ export const updateCustomer = (customer) => {
       duplicatedWith2019 = $duplicatedWith2019,\
       duplicatedWith2020 = $duplicatedWith2020,\
       duplicatedWith2021 = $duplicatedWith2021,\
+      duplicatedWith2022 = $duplicatedWith2022,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2, \
       duplicatedWithAnotherAgency = $duplicatedWithAnotherAgency\
@@ -57,6 +58,7 @@ export const updateCustomer = (customer) => {
       $duplicatedWith2019: customer.duplicatedWith2019 || 0,
       $duplicatedWith2020: customer.duplicatedWith2020 || 0,
       $duplicatedWith2021: customer.duplicatedWith2021 || 0,
+      $duplicatedWith2022: customer.duplicatedWith2022 || 0,
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
@@ -226,14 +228,10 @@ export function isPhoneDuplicate(customer) {
         customer.duplicatedPhone = 1;
 
         if (res.collectedYear) {
-          if (res.collectedYear == 2022) {
-            if (res.collectedMonth <= 7) {
-              customer.duplicatedWith2021 = 1;
-            } else if (res.collectedMonth === 8 && res.collectedDay < 4) {
-              customer.duplicatedWith2021 = 1;
-            } else {
-              customer.duplicatedWithSameYear = 1;
-            }
+          if (res.collectedYear == 2023) {
+            customer.duplicatedWithSameYear = 1;
+          } else if (res.collectedYear == 2022) {
+            customer.duplicatedWith2022 = 1;
           } else if (res.collectedYear == 2021) {
             customer.duplicatedWith2021 = 1;
           } else if (res.collectedYear == 2020) {
