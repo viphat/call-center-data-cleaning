@@ -17,6 +17,7 @@ import { importMatchesFromFile } from './main/import_hospital_matches';
 import { clearBatchData } from './main/clear_customers_data';
 import { generateReport } from './main/generate_report_v2';
 import { exportFullData, exportFullReport, exportFullBatchData } from './main/export_full_data';
+import { exportMonthlyData } from './main/export_monthly_data';
 
 const electron = require('electron');
 const ipcMain = electron.ipcMain;
@@ -77,6 +78,7 @@ exports.generateReport = generateReport;
 exports.exportFullData = exportFullData;
 exports.exportFullReport = exportFullReport;
 exports.exportFullBatchData = exportFullBatchData;
+exports.exportMonthlyData = exportMonthlyData;
 
 const setApplicationMenu = () => {
   const menus = [mainMenuTemplate];

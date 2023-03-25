@@ -69,6 +69,39 @@ function isFormInvalid() {
   return outputDirectory === undefined || inputFile === undefined || batch === undefined || batch === null || batch === '' || document.querySelector('input[name="txtSource"]:checked') === null
 }
 
+document.getElementById('btnExportMonthlyData').addEventListener('click', _ => {
+  var monthYear = document.getElementById('txtMonthYear').value;
+
+  if (monthYear === undefined || monthYear === null) {
+    dialog.showErrorBox('Notification', 'You must fill in Month/Year Field before processing.');
+    return null;
+  }
+
+  if (outputDirectory === undefined || outputDirectory === null) {
+    dialog.showErrorBox('Notification', 'You must fill in output directory before processing.');
+    return null;
+  }
+
+  if (isProcessing === true) {
+    dialog.showErrorBox('Notification', 'Processing...');
+    return null;
+  }
+
+  isProcessing = true;
+  resetAlertAndShowSpinner();
+
+  var month = monthYear.split('/')[0]
+  var year = monthYear.split('/')[1]
+
+  mainProcess.exportMonthlyData(month, year, outputDirectory).then((response) => {
+    disableSpinner();
+    showSucceedBox('Data Exported. Please check output folder');
+  }, (errRes) => {
+    disableSpinner();
+    showFailedBox(errRes);
+  });
+});
+
 // document.getElementById('btnFullBatchData').addEventListener('click', _ => {
 //   // batch = 'W2';
 //   // outputDirectory = ['/Users/viphat/projects/dct/output'];
