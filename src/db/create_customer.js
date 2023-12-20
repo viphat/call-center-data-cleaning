@@ -24,6 +24,7 @@ export const updateCustomer = (customer) => {
       duplicatedWith2020 = $duplicatedWith2020,\
       duplicatedWith2021 = $duplicatedWith2021,\
       duplicatedWith2022 = $duplicatedWith2022,\
+      duplicatedWith2023 = $duplicatedWith2023,\
       duplicatedPhoneBetweenS1AndS2= $duplicatedPhoneBetweenS1AndS2,\
       duplicatedPhoneS1 = $duplicatedPhoneS1, duplicatedPhoneS2 = $duplicatedPhoneS2, \
       duplicatedWithAnotherAgency = $duplicatedWithAnotherAgency\
@@ -59,6 +60,7 @@ export const updateCustomer = (customer) => {
       $duplicatedWith2020: customer.duplicatedWith2020 || 0,
       $duplicatedWith2021: customer.duplicatedWith2021 || 0,
       $duplicatedWith2022: customer.duplicatedWith2022 || 0,
+      $duplicatedWith2023: customer.duplicatedWith2023 || 0,
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
@@ -228,8 +230,18 @@ export function isPhoneDuplicate(customer) {
         customer.duplicatedPhone = 1;
 
         if (res.collectedYear) {
-          if (res.collectedYear == 2023) {
+          if (res.collectedYear == 2024) {
             customer.duplicatedWithSameYear = 1;
+          } else if (res.collectedYear == 2023) {
+            if (res.source === 'IMC') {
+              if (res.collectedMonth >= 10) {
+                customer.duplicatedWith2023 = 1;
+              } else {
+                customer.duplicatedWith2022 = 1;
+              }
+            } else {
+              customer.duplicatedWith2023 = 1;
+            }
           } else if (res.collectedYear == 2022) {
             customer.duplicatedWith2022 = 1;
           } else if (res.collectedYear == 2021) {
@@ -244,8 +256,6 @@ export function isPhoneDuplicate(customer) {
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {
           resolve(customer);
         } else {
-          // Chưa hiểu đoạn này lắm, sao mình phải vào database lấy record này ra lần nữa nhỉ?
-          // Để làm gì nhỉ?
           db.get('SELECT customer_id FROM customers \
             WHERE customers.customer_id != ? AND customers.phone = ? AND customers.sampling = ?',
             customer.customer_id, customer.phone, customer.sampling, (err, subRes) => {

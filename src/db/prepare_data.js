@@ -41,8 +41,10 @@ function addColumnsToCustomers() {
   //   ADD duplicatedWith2020 INTEGER DEFAULT 0');
   // db.run('ALTER TABLE customers\
   //   ADD duplicatedWith2021 INTEGER DEFAULT 0');
+  // db.run('ALTER TABLE customers\
+  //   ADD duplicatedWith2022 INTEGER DEFAULT 0');
   db.run('ALTER TABLE customers\
-    ADD duplicatedWith2022 INTEGER DEFAULT 0');
+    ADD duplicatedWith2023 INTEGER DEFAULT 0');
 }
 
 function createTableCustomers() {
