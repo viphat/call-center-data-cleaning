@@ -12,7 +12,7 @@ import { createCustomer, updateCustomer } from '../db/create_customer';
 
 const dataBeginRow = 2;
 
-const indexCol = 1;
+// const indexCol = 1;
 const lastNameCol = 2;
 let firstNameCol = 3; // 2 For OTB-LHTS
 const emailCol = 4;
@@ -230,7 +230,11 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         if (missingData || illogicalData) {
           outputSheetName = 'Invalid';
         } else if (duplicateData === true) {
-          outputSheetName = 'Duplication';
+          if (customer.duplicatedWithinPast2Years === 1) {
+            outputSheetName = 'Duplication - Within 24 Months';
+          } else {
+            outputSheetName = 'Duplication - Over 24 Months';
+          }
         } else if (duplicateDataWithAnotherAgency === true) {
           outputSheetName = 'Duplication With Another Agency';
         }
@@ -445,7 +449,7 @@ export const writeToFile = (outputWorkbook, outputSheetName, rowData, toHighligh
     row.getCell(24).border = row.getCell(1).border;
     row.getCell(24).alignment = row.getCell(1).alignment;
 
-    if (outputSheetName.endsWith('Duplication') || outputSheetName.endsWith('Duplication With Another Agency')) {
+    if (outputSheetName.startsWith('Duplication')) {
       row.getCell(25).font = row.getCell(1).font;
       row.getCell(25).border = row.getCell(1).border;
       row.getCell(25).alignment = row.getCell(1).alignment;

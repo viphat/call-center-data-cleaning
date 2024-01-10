@@ -19,6 +19,8 @@ export const updateCustomer = (customer) => {
       illogicalEmail = $illogicalEmail, illogicalAddress = $illogicalAddress,\
       illogicalDate = $illogicalDate, illogicalOther = $illogicalOther, \
       duplicatedPhone = $duplicatedPhone,\
+      duplicatedWithinPast2Years = $duplicatedWithinPast2Years,\
+      duplicatedOverPast2Years = $duplicatedOverPast2Years,\
       duplicatedWithSameYear = $duplicatedWithSameYear,\
       duplicatedWith2019 = $duplicatedWith2019,\
       duplicatedWith2020 = $duplicatedWith2020,\
@@ -61,6 +63,8 @@ export const updateCustomer = (customer) => {
       $duplicatedWith2021: customer.duplicatedWith2021 || 0,
       $duplicatedWith2022: customer.duplicatedWith2022 || 0,
       $duplicatedWith2023: customer.duplicatedWith2023 || 0,
+      $duplicatedWithinPast2Years: customer.duplicatedWithinPast2Years || 0,
+      $duplicatedOverPast2Years: customer.duplicatedOverPast2Years || 0,
       $duplicatedPhoneBetweenS1AndS2: customer.duplicatedPhoneBetweenS1AndS2 || 0,
       $duplicatedPhoneS1: customer.duplicatedPhoneS1 || 0,
       $duplicatedPhoneS2: customer.duplicatedPhoneS2 || 0,
@@ -230,28 +234,46 @@ export function isPhoneDuplicate(customer) {
         customer.duplicatedPhone = 1;
 
         if (res.collectedYear) {
-          if (res.collectedYear == 2024) {
-            customer.duplicatedWithSameYear = 1;
-          } else if (res.collectedYear == 2023) {
-            if (res.source === 'IMC') {
-              if (res.collectedMonth >= 10) {
-                customer.duplicatedWith2023 = 1;
-              } else {
-                customer.duplicatedWith2022 = 1;
-              }
+          var duplicatedRecordCollectedDate = new Date(res.collectedYear, res.collectedMonth - 1, res.collectedDay);
+          var currentCollectedDate = new Date(customer.collectedYear, customer.collectedMonth - 1, customer.collectedDay);
+
+          if (currentCollectedDate.getTime() < duplicatedRecordCollectedDate.getTime() + 2 * 365 * 24 * 60 * 60 * 1000) {
+            customer.duplicatedWithinPast2Years = 1;
+            customer.duplicatedOverPast2Years = 0;
+          } else {
+            if (customer.collectedYear == res.collectedYear + 2 && customer.collectedMonth == res.collectedMonth && customer.collectedDay == res.collectedDay) {
+              customer.duplicatedWithinPast2Years = 1;
+              customer.duplicatedOverPast2Years = 0;
             } else {
-              customer.duplicatedWith2023 = 1;
+              customer.duplicatedOverPast2Years = 1;
+              customer.duplicatedWithinPast2Years = 0;
             }
-          } else if (res.collectedYear == 2022) {
-            customer.duplicatedWith2022 = 1;
-          } else if (res.collectedYear == 2021) {
-            customer.duplicatedWith2021 = 1;
-          } else if (res.collectedYear == 2020) {
-            customer.duplicatedWith2020 = 1;
-          } else if (res.collectedYear == 2019) {
-            customer.duplicatedWith2019 = 1;
           }
         }
+
+        // if (res.collectedYear) {
+        //   if (res.collectedYear == 2024) {
+        //     customer.duplicatedWithSameYear = 1;
+        //   } else if (res.collectedYear == 2023) {
+        //     if (res.source === 'IMC') {
+        //       if (res.collectedMonth >= 10) {
+        //         customer.duplicatedWith2023 = 1;
+        //       } else {
+        //         customer.duplicatedWith2022 = 1;
+        //       }
+        //     } else {
+        //       customer.duplicatedWith2023 = 1;
+        //     }
+        //   } else if (res.collectedYear == 2022) {
+        //     customer.duplicatedWith2022 = 1;
+        //   } else if (res.collectedYear == 2021) {
+        //     customer.duplicatedWith2021 = 1;
+        //   } else if (res.collectedYear == 2020) {
+        //     customer.duplicatedWith2020 = 1;
+        //   } else if (res.collectedYear == 2019) {
+        //     customer.duplicatedWith2019 = 1;
+        //   }
+        // }
 
         if (customer.sampling !== 'S1' && customer.sampling !== 'S2' ) {
           resolve(customer);

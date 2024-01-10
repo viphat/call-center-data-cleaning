@@ -4,7 +4,8 @@ const fs = require('fs');
 
 const valid_title = 'DATA CLEANING RESULT - VALID LIST';
 const invalid_title = 'DATA CLEANING RESULT - INVALID LIST';
-const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST';
+const duplication_title = 'DATA CLEANING RESULT - DUPLICATION LIST (WITHIN 24 MONTHS)';
+const duplication_over_24_months_title = 'DATA CLEANING RESULT - DUPLICATION LIST (OVER 24 MONTHS)';
 const duplication_with_another_agency_title = 'DATA CLEANING RESULT - DUPLICATION WITH ANOTHER AGENCY LIST';
 const logoPath = './app/vendor/logo.png';
 
@@ -35,9 +36,12 @@ function writeTemplate(outputPath, workbook) {
     sheetName = 'Invalid';
     worksheet = workbook.addWorksheet(sheetName, {});
     writeBaseTemplate(workbook, worksheet, invalid_title);
-    sheetName = 'Duplication';
+    sheetName = 'Duplication - Within 24 Months';
     worksheet = workbook.addWorksheet(sheetName, {});
     writeBaseTemplate(workbook, worksheet, duplication_title);
+    sheetName = 'Duplication - Over 24 Months';
+    worksheet = workbook.addWorksheet(sheetName, {});
+    writeBaseTemplate(workbook, worksheet, duplication_over_24_months_title);
     sheetName = 'Duplication With Another Agency';
     worksheet = workbook.addWorksheet(sheetName, {});
     writeBaseTemplate(workbook, worksheet, duplication_with_another_agency_title);
