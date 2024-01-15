@@ -652,10 +652,10 @@ function isIllogicalData(customer, row) {
       var next9Months = today.setMonth(today.getMonth() + 9);
       var currentYear = today.getFullYear();
 
-      if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
-        customer.illogicalDate = 1;
-        flag = true;
-      }
+      // if (date.getFullYear() < currentYear - 1 || date.getFullYear() > currentYear + 1) {
+      //   customer.illogicalDate = 1;
+      //   flag = true;
+      // }
 
       // if (date < projectStartDate) {
       //   customer.illogicalDate = 1;
