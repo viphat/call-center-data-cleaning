@@ -44,11 +44,11 @@ function addColumnsToCustomers() {
   // db.run('ALTER TABLE customers\
   //   ADD duplicatedWith2022 INTEGER DEFAULT 0');
   // db.run('ALTER TABLE customers\
-  //   ADD duplicatedWith2023 INTEGER DEFAULT 0');
+  //    ADD duplicatedWith2023 INTEGER DEFAULT 0');
   db.run('ALTER TABLE customers\
-    ADD duplicatedWithinPast2Years INTEGER DEFAULT 0');
+   ADD duplicatedWithinPast2Years INTEGER DEFAULT 0');
   db.run('ALTER TABLE customers\
-    ADD duplicatedOverPast2Years INTEGER DEFAULT 0');
+  ADD duplicatedOverPast2Years INTEGER DEFAULT 0');
 }
 
 function createTableCustomers() {

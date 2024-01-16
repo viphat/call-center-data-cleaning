@@ -237,11 +237,16 @@ export function isPhoneDuplicate(customer) {
           var duplicatedRecordCollectedDate = new Date(res.collectedYear, res.collectedMonth - 1, res.collectedDay);
           var currentCollectedDate = new Date(customer.collectedYear, customer.collectedMonth - 1, customer.collectedDay);
 
-          if (currentCollectedDate.getTime() < duplicatedRecordCollectedDate.getTime() + 2 * 365 * 24 * 60 * 60 * 1000) {
+          var year = 2;
+          if (customer.source === 'IMC') {
+            year = 1;
+          }
+
+          if (currentCollectedDate.getTime() < duplicatedRecordCollectedDate.getTime() + year * 365 * 24 * 60 * 60 * 1000) {
             customer.duplicatedWithinPast2Years = 1;
             customer.duplicatedOverPast2Years = 0;
           } else {
-            if (customer.collectedYear == res.collectedYear + 2 && customer.collectedMonth == res.collectedMonth && customer.collectedDay == res.collectedDay) {
+            if (customer.collectedYear == res.collectedYear + year && customer.collectedMonth == res.collectedMonth && customer.collectedDay == res.collectedDay) {
               customer.duplicatedWithinPast2Years = 1;
               customer.duplicatedOverPast2Years = 0;
             } else {
