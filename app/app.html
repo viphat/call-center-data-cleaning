@@ -1,136 +1,232 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Hosca (Update: 2023-03-26)</title>
-  <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href="vendor/bootstrap4/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-
-  <div class="container" style='max-width: 800px; min-width: 500px;'>
-    <div class="col-md-12" style='text-align: center; margin-bottom: 10px;'>
-      <img src='vendor/logo.png' alt='Intage Vietnam' />
-    </div>
-    <h3 class='text-warning'>Hosca - Data Cleaning Tools</h3>
-    <div class='row'>
-      <div class="col-md-12">
-        <form class='form' class='form-horizontal' novalidate="">
-          <div class='form-group row'>
-            <label class='control-label col-sm-4 text-success' for='inputFile'>Input File (.xlsx file only)</label>
-            <div class='col-sm-8'>
-              <button type='button' id='inputFile' class='btn-sm btn btn-info'>Select File</button>
-              <span id='inputFileLabel'></span>
-            </div>
-          </div>
-          <div class='form-group row'>
-            <label class='control-label col-sm-4 text-success' for='outputDirectory'>Output Directory</label>
-            <div class='col-sm-8'>
-              <button type='button' id='outputDirectory' class='btn-sm btn btn-info'>Select a Directory</button>
-              <span id='outputDirectoryLabel'></span>
-            </div>
-          </div>
-          <div class='form-group row'>
-            <label class='text-success control-label col-sm-4' for='txtSource'>Source</label>
-            <div class='col-sm-8'>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="txtSource" value="IMC" style="margin-right: 10px;">IMC
-                </label>
+  <head>
+    <meta charset="utf-8" />
+    <title>POME 2024</title>
+    <link
+      href="vendor/font-awesome/css/font-awesome.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="vendor/bootstrap4/css/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="stylesheets/main.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="container" style="max-width: 800px; min-width: 500px">
+      <div class="col-md-12" style="text-align: center; margin-bottom: 10px">
+        <img src="vendor/logo.png" alt="Intage Vietnam" />
+      </div>
+      <h3 class="text-warning">POME 2024 - Data Cleaning Tools</h3>
+      <div class="row">
+        <div class="col-md-12">
+          <form class="form" class="form-horizontal" novalidate="">
+            <div class="form-group row">
+              <label class="control-label col-sm-4 text-success" for="inputFile"
+                >Input File (.xlsx file only)</label
+              >
+              <div class="col-sm-8">
+                <button
+                  type="button"
+                  id="inputFile"
+                  class="btn-sm btn btn-info"
+                >
+                  Select File
+                </button>
+                <span id="inputFileLabel"></span>
               </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="txtSource" value="OTB" style="margin-right: 10px;">OTB
-                </label>
+            </div>
+            <div class="form-group row">
+              <label
+                class="control-label col-sm-4 text-success"
+                for="outputDirectory"
+                >Output Directory</label
+              >
+              <div class="col-sm-8">
+                <button
+                  type="button"
+                  id="outputDirectory"
+                  class="btn-sm btn btn-info"
+                >
+                  Select a Directory
+                </button>
+                <span id="outputDirectoryLabel"></span>
               </div>
-              <!-- <div class="form-check-inline">
+            </div>
+            <div class="form-group row">
+              <label class="text-success control-label col-sm-4" for="txtSource"
+                >Source</label
+              >
+              <div class="col-sm-8">
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      type="radio"
+                      class="form-check-input"
+                      name="txtSource"
+                      value="IMC"
+                      style="margin-right: 10px"
+                    />IMC
+                  </label>
+                </div>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      type="radio"
+                      class="form-check-input"
+                      name="txtSource"
+                      value="OTB"
+                      style="margin-right: 10px"
+                    />OTB
+                  </label>
+                </div>
+                <!-- <div class="form-check-inline">
                 <label class="form-check-label">
                   <input type="radio" class="form-check-input" name="txtSource" value="OTB-Chatbot" style="margin-right: 10px;">OTB Chatbot
                 </label>
               </div> -->
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="txtSource" value="OTB-LHTS" style="margin-right: 10px;">OTB LHTS
-                </label>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      type="radio"
+                      class="form-check-input"
+                      name="txtSource"
+                      value="OTB-LHTS"
+                      style="margin-right: 10px"
+                    />OTB LHTS
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class='form-group row'>
-            <label class='text-success control-label col-sm-4' for='txtBatch'>Batch</label>
-            <div class='col-sm-6'>
-              <input type='text' class='form-control' id='txtBatch' name='txtBatch'/>
+            <div class="form-group row">
+              <label class="text-success control-label col-sm-4" for="txtBatch"
+                >Batch</label
+              >
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtBatch"
+                  name="txtBatch"
+                />
+              </div>
             </div>
-          </div>
 
-          <div class='form-group row'>
-            <label class='text-success control-label col-sm-4' for='txtMonthYear'>Xuất Data theo Tháng</label>
-            <div class='col-sm-6'>
-              <input type='text' class='form-control' id='txtMonthYear' name='txtMonthYear'/>
+            <div class="form-group row">
+              <label
+                class="text-success control-label col-sm-4"
+                for="txtMonthYear"
+                >Xuất Data theo Tháng</label
+              >
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtMonthYear"
+                  name="txtMonthYear"
+                />
+              </div>
             </div>
-            <div class='col-sm-2'>
-              Format: 1/2020, 3/2021, 10/2022, ...
-            </div>
-          </div>
 
-          <div class='form-group'>
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-success' id='btnCheck'>
-              <i class='fa fa-check-circle'></i>
-              <span style='margin-left: 5px;'>Kiểm tra Data</span>
-            </button>
+            <div class="form-group">
+              <button
+                style="margin-bottom: 10px"
+                type="button"
+                class="btn btn-success"
+                id="btnCheck"
+              >
+                <i class="fa fa-check-circle"></i>
+                <span style="margin-left: 5px">Kiểm tra Data</span>
+              </button>
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-danger' id='btnClearBatch'>
-              <i class='fa fa-close'></i>
-              <span style='margin-left: 5px;'>Xóa Data theo tuần</span>
-            </button>
+              <button
+                style="margin-bottom: 10px"
+                type="button"
+                class="btn btn-danger"
+                id="btnClearBatch"
+              >
+                <i class="fa fa-close"></i>
+                <span style="margin-left: 5px">Xóa Data theo tuần</span>
+              </button>
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-primary' id='btnProcess'>
-              <i class='fa fa-rocket'></i>
-              <span style='margin-left: 5px;'>Import Data</span>
-            </button>
+              <button
+                style="margin-bottom: 10px"
+                type="button"
+                class="btn btn-primary"
+                id="btnProcess"
+              >
+                <i class="fa fa-rocket"></i>
+                <span style="margin-left: 5px">Import Data</span>
+              </button>
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-warning' id='btnReport'>
-              <i class='fa fa-suitcase'></i>
-              <span style='margin-left: 5px;'>Xuất Report</span>
-            </button>
+              <button
+                style="margin-bottom: 10px"
+                type="button"
+                class="btn btn-warning"
+                id="btnReport"
+              >
+                <i class="fa fa-suitcase"></i>
+                <span style="margin-left: 5px">Xuất Report</span>
+              </button>
 
-            <button style='margin-bottom: 10px;' type='button' class='btn btn-danger' id='btnExportMonthlyData'>
-              <i class='fa fa-clock-o'></i>
-              <span style='margin-left: 5px;'>Xuất Data theo Tháng</span>
-            </button>
+              <button
+                style="margin-bottom: 10px"
+                type="button"
+                class="btn btn-danger"
+                id="btnExportMonthlyData"
+              >
+                <i class="fa fa-clock-o"></i>
+                <span style="margin-left: 5px">Xuất Data theo Tháng</span>
+              </button>
 
-<!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullData'>
+              <!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullData'>
               <i class='fa fa-trophy'></i>
               <span style='margin-left: 5px;'>Xuất Full Data & Report</span>
             </button>
  -->
 
-<!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullReport'>
+              <!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullReport'>
               <i class='fa fa-trophy'></i>
               <span style='margin-left: 5px;'>Xuất Full Report</span>
             </button> -->
 
-<!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullBatchData'>
+              <!--             <button style='margin-bottom: 10px;' type='button' class='btn btn-info' id='btnFullBatchData'>
               <i class='fa fa-superpowers'></i>
               <span style='margin-left: 5px;'>Xuất Full Data theo tuần</span>
             </button> -->
-          </div>
+            </div>
 
-          <div id='spinner' style='text-align: center; display: none;'>
-            <i class="text-danger fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-          </div>
+            <div id="spinner" style="text-align: center; display: none">
+              <i
+                class="text-danger fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+              ></i>
+              <span class="sr-only">Loading...</span>
+            </div>
 
-          <div id='succeedBox' style='display: none;' class='alert alert-success'></div>
+            <div
+              id="succeedBox"
+              style="display: none"
+              class="alert alert-success"
+            ></div>
 
-          <div id='failedBox' style='display: none;' class='alert alert-danger'></div>
-        </form>
+            <div
+              id="failedBox"
+              style="display: none"
+              class="alert alert-danger"
+            ></div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-  <script type="javascript" src="vendor/jquery/jquery-3.2.1.min.js"></script>
-  <script type="javascript" src="vendor/bootstrap4/js/bootstrap.min.js"></script>
-  <script src="app.js"></script>
-</body>
+    <script type="javascript" src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script
+      type="javascript"
+      src="vendor/bootstrap4/js/bootstrap.min.js"
+    ></script>
+    <script src="app.js"></script>
+  </body>
 </html>
