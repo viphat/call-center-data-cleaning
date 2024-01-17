@@ -227,14 +227,15 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         ];
 
         let outputSheetName = 'Valid';
-        if (missingData || illogicalData) {
-          outputSheetName = 'Invalid';
-        } else if (duplicateData === true) {
+
+        if (duplicateData === true) {
           if (customer.duplicatedWithinPast2Years === 1) {
             outputSheetName = 'Duplication - Within 24 Months';
           } else {
             outputSheetName = 'Duplication - Over 24 Months';
           }
+        } else if (missingData || illogicalData) {
+          outputSheetName = 'Invalid';
         } else if (duplicateDataWithAnotherAgency === true) {
           outputSheetName = 'Duplication With Another Agency';
         }
