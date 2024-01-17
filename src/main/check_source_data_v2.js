@@ -193,9 +193,9 @@ function readEachRow(excelFile, outputWorkbook, batch, source, worksheet, rowNum
         }
 
         customer = response;
+        let duplicateData = customer.isPhoneDuplicated;
         let missingData = isMissingData(customer, row);
         let illogicalData = isIllogicalData(customer, row);
-        let duplicateData = customer.isPhoneDuplicated;
 
         let duplicateDataWithAnotherAgency = customer.isPhoneDuplicatedWithAnotherAgency;
 
@@ -494,6 +494,10 @@ function isEmptyRow(row) {
 }
 
 function isMissingData(customer, row) {
+  if (customer.isPhoneDuplicated === true) {
+    return;
+  }
+
   // Kiểm tra thiếu thông tin
   let missingFields = [];
 
@@ -558,11 +562,14 @@ function isMissingData(customer, row) {
 
 
 function isIllogicalData(customer, row) {
+  if (customer.isPhoneDuplicated === true) {
+    return;
+  }
+
   let phone = row.getCell(phoneCol).value;
   let lastName = row.getCell(lastNameCol).value;
   let firstName = row.getCell(firstNameCol).value;
   let email = row.getCell(emailCol).value;
-  let district = row.getCell(districtCol).value;
   let province = row.getCell(provinceCol).value;
   let day = row.getCell(dayCol).value;
   let month = row.getCell(monthCol).value;
